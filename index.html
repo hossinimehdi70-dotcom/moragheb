@@ -4,7 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
 <meta name="theme-color" content="#8a6a2c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="مراقب سلامت">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="مراقب سلامت">
+<meta name="description" content="سامانه جامع مدیریت سلامت دانش‌آموزان ابتدایی">
 <title>سامانه مراقب سلامت مدارس</title>
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" type="image/svg+xml" href="./icons/icon.svg">
+<link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
+<link rel="apple-touch-icon" sizes="192x192" href="./icons/icon-192.png">
+<link rel="apple-touch-icon" sizes="512x512" href="./icons/icon-512.png">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html{font-size:17px}
@@ -343,6 +354,55 @@ tr.member-row:hover{background:var(--hover)}
 .whatsnew-list{list-style:none;padding:0;text-align:right;font-size:.86rem;line-height:2;margin-bottom:6px}
 .whatsnew-list li{padding:6px 12px;background:var(--soft);border-radius:8px;margin-bottom:6px;border-right:3px solid var(--primary)}
 
+/* ===== Consent Cards (6 per A4) ===== */
+.consent-cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:3mm;padding:0;max-width:100%;margin:0 auto}
+.consent-card{border:0.6pt solid #999;border-radius:2mm;padding:2.5mm 3mm;break-inside:avoid;page-break-inside:avoid;height:86mm;box-sizing:border-box;display:flex;flex-direction:column;font-size:7.8pt;line-height:1.45;background:#fff;color:#222;overflow:hidden}
+.consent-card .cc-head{text-align:center;border-bottom:0.6pt solid #8a6a2c;padding-bottom:1mm;margin-bottom:1.5mm;flex-shrink:0}
+.consent-card .cc-bism{font-size:7pt;color:#6a4f1f;font-weight:700}
+.consent-card .cc-title{font-weight:800;font-size:9.5pt;color:#6a4f1f;line-height:1.2}
+.consent-card .cc-school{font-size:7pt;color:#666;margin-top:0.5mm}
+.consent-card .cc-body{flex:1;overflow:hidden}
+.consent-card .cc-row{margin-bottom:0.6mm}
+.consent-card .cc-row b{color:#6a4f1f}
+.consent-card .cc-text{margin-top:1mm;padding-top:1mm;border-top:0.3pt dashed #ccc;font-size:7pt;line-height:1.55;text-align:justify;color:#333;max-height:36mm;overflow:hidden}
+.consent-card .cc-sign{display:flex;gap:2.5mm;margin-top:1mm;padding-top:1mm;border-top:0.3pt dashed #ccc;font-size:6.8pt;flex-shrink:0}
+.consent-card .cc-sig-item{flex:1;text-align:center}
+.consent-card .cc-sig-line{border-bottom:0.5pt solid #666;height:6mm;margin-top:1mm}
+.consent-card .cc-sig-box{border:0.5pt dashed #999;height:8mm;margin-top:1mm;border-radius:1mm;display:flex;align-items:center;justify-content:center;color:#999;font-size:6pt}
+
+/* ===== Incident Cards (compact, multiple per A4) ===== */
+.inc-cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:2.5mm;padding:0}
+.inc-card{border:0.5pt solid #ccc;border-right:2pt solid #c98a1f;border-radius:1.5mm;padding:2mm 2.5mm;break-inside:avoid;page-break-inside:avoid;font-size:7.5pt;line-height:1.45;background:#fffdf7;color:#222}
+.inc-card .ic-head{display:flex;justify-content:space-between;align-items:center;border-bottom:0.3pt dashed #ccc;padding-bottom:0.8mm;margin-bottom:1mm;gap:2mm}
+.inc-card .ic-num{font-weight:800;color:#8a6a2c;font-size:8.5pt}
+.inc-card .ic-date{font-size:6.8pt;color:#888;white-space:nowrap}
+.inc-card .ic-row{margin-bottom:0.4mm}
+.inc-card .ic-row b{color:#6a4f1f}
+.inc-card .ic-status{display:inline-block;padding:0 1.5mm;border-radius:1mm;font-size:6.5pt;font-weight:700}
+.inc-card .ic-status.resolved{background:#e5f6ee;color:#1f5a38}
+.inc-card .ic-status.ongoing{background:#fdf3e2;color:#8a5a08}
+
+/* ===== Ambassador Cards (3 rows × 2 cols per A4) ===== */
+.amb-cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:3mm;padding:0;max-width:100%;margin:0 auto}
+.amb-card{border:1.5pt solid #8a6a2c;border-radius:3mm;padding:2.5mm;height:87mm;box-sizing:border-box;display:flex;flex-direction:column;background:linear-gradient(180deg,#fffdf7 0%,#fdfbf4 100%);break-inside:avoid;page-break-inside:avoid;overflow:hidden;position:relative}
+.amb-card::before{content:"";position:absolute;top:0;right:0;width:100%;height:1.5mm;background:linear-gradient(90deg,#8a6a2c,#d4a017,#8a6a2c)}
+.amb-card-head{text-align:center;border-bottom:1pt solid #d4a017;padding:1mm 0 1.5mm;margin-bottom:2mm;padding-top:1mm}
+.amb-card-school{font-size:8pt;color:#6a4f1f;font-weight:700}
+.amb-card-title{font-size:11pt;font-weight:800;color:#8a6a2c;letter-spacing:.5px}
+.amb-card-subtitle{font-size:6.8pt;color:#999;letter-spacing:2px}
+.amb-card-body{display:flex;gap:2.5mm;align-items:center;margin-bottom:1.5mm;padding:1.5mm;background:rgba(212,160,23,.08);border-radius:2mm}
+.amb-card-avatar{width:13mm;height:13mm;border-radius:50%;background:linear-gradient(135deg,#8a6a2c,#d4a017);color:#fff;display:flex;align-items:center;justify-content:center;font-size:7mm;flex-shrink:0;box-shadow:0 1mm 2mm rgba(138,106,44,.3);border:0.5mm solid #fff}
+.amb-card-info{flex:1;font-size:8pt;line-height:1.6;min-width:0}
+.amb-card-info b{color:#6a4f1f}
+.amb-card-info div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.amb-card-text{flex:1;font-size:7.3pt;line-height:1.65;text-align:justify;padding:1.5mm 0;color:#333;overflow:hidden}
+.amb-card-text b{color:#6a4f1f}
+.amb-card-sign{display:flex;gap:2.5mm;font-size:6.8pt;margin-top:1mm;padding-top:1mm;border-top:0.3pt dashed #ccc}
+.amb-card-sign .amb-sig{flex:1;text-align:center}
+.amb-card-sign .amb-sig-line{border-bottom:0.5pt solid #666;height:5mm;margin-bottom:0.8mm}
+.amb-card-sign .amb-sig-box{border:0.5pt dashed #999;height:8mm;border-radius:1mm;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:6pt;margin-bottom:0.8mm}
+.amb-card-sign .amb-sig-label{color:#555;font-weight:700}
+
 @media print{
   body{overflow:visible;height:auto;display:block;background:#fff;color:#000}
   .topbar,.tabs,.btn,#toast,#splash,#pinScreen,.tools-nav,.filters,.modal-close,.settings-nav,.voice-btn,.search-wrap{display:none!important}
@@ -373,10 +433,11 @@ tr.member-row:hover{background:var(--hover)}
         <button type="submit" class="btn primary">ورود به سامانه</button>
         <button type="button" class="btn ghost" onclick="openModal('helpModal')">راهنما</button>
         <button type="button" class="btn ghost" onclick="openModal('aboutModal')">درباره سازنده</button>
+        <button type="button" class="btn ghost" id="splashCancelBtn" onclick="cancelEditProfile()" style="display:none">انصراف</button>
       </div>
     </form>
     <div class="splash-links"><button type="button" onclick="resetProfile()">پاک کردن اطلاعات</button></div>
-    <div class="version-badge"><span class="dot"></span> نسخه ۳.۲.۱</div>
+    <div class="version-badge"><span class="dot"></span> نسخه ۱.۲.۳</div>
   </div>
 </div>
 
@@ -423,7 +484,7 @@ tr.member-row:hover{background:var(--hover)}
   <nav class="tabs" id="tabsNav">
     <button data-view="dashboard" class="active">داشبورد</button>
     <button data-view="students">دانش‌آموزان</button>
-    <button data-view="trainings">آموزش‌ها</button>
+    <button data-view="trainings">آموزش‌ها و فعالیت‌های بهداشتی</button>
     <button data-view="ambassadors">سفیران</button>
     <button data-view="notes">یادداشت</button>
     <button data-view="add">ثبت</button>
@@ -547,9 +608,12 @@ tr.member-row:hover{background:var(--hover)}
       <div class="card">
         <h2>سفیران سلامت <span class="badge-count" id="ambassadorsCount">۰</span></h2>
         <p class="hint" style="margin-bottom:8px">ساختار درختی: زیرگروه‌ها به سرگروه، و اعضا به زیرگروه متصل می‌شوند.</p>
-        <div style="margin-bottom:10px"><button class="btn primary sm" onclick="printAmbassadorsPDF()">🖨️ خروجی PDF سفیران</button></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+          <button class="btn primary sm" onclick="printAmbassadorCards()">🎴 چاپ کارت همه سفیران</button>
+          <button class="btn gold sm" onclick="printAmbassadorsPDF()">🖨️ خروجی PDF فهرست</button>
+        </div>
         <div class="table-wrap">
-          <table><thead><tr><th>نام</th><th>پایه</th><th>نقش</th><th>مسئولیت</th><th>والد</th><th style="width:34px"></th></tr></thead>
+          <table><thead><tr><th>نام</th><th>پایه</th><th>نقش</th><th>مسئولیت</th><th>والد</th><th style="width:70px"></th></tr></thead>
           <tbody id="ambassadorRows"></tbody></table>
         </div>
       </div>
@@ -725,7 +789,7 @@ tr.member-row:hover{background:var(--hover)}
       </div></div>
       <div class="settings-panel" id="set-about"><div class="card"><h2>درباره</h2>
         <div class="info-row"><span>نام</span><b>سامانه مراقب سلامت مدارس</b></div>
-        <div class="info-row"><span>نسخه</span><b>۳.۲.۱</b></div>
+        <div class="info-row"><span>نسخه</span><b>۱.۲.۳</b></div>
         <div class="info-row"><span>سازنده</span><b>مهدی حسینی</b></div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">
           <button class="btn ghost sm" onclick="openModal('helpModal')">راهنما</button>
@@ -806,16 +870,18 @@ tr.member-row:hover{background:var(--hover)}
       <a onclick="scrollToHelp(3)">۳. دانش‌آموزان</a>
       <a onclick="scrollToHelp(4)">۴. جستجو و صوتی</a>
       <a onclick="scrollToHelp(5)">۵. سطح ریسک</a>
-      <a onclick="scrollToHelp(6)">۶. آموزش‌ها</a>
-      <a onclick="scrollToHelp(7)">۷. سفیران</a>
+      <a onclick="scrollToHelp(6)">۶. آموزش‌ها و فعالیت‌های بهداشتی</a>
+      <a onclick="scrollToHelp(7)">۷. سفیران و کارت سفیر</a>
       <a onclick="scrollToHelp(8)">۸. یادداشت</a>
       <a onclick="scrollToHelp(9)">۹. گزارش‌ها</a>
       <a onclick="scrollToHelp(10)">۱۰. پروفایل و WHO</a>
-      <a onclick="scrollToHelp(11)">۱۱. چاپ سریع</a>
-      <a onclick="scrollToHelp(12)">۱۲. CSV و تاریخ تولد</a>
-      <a onclick="scrollToHelp(13)">۱۳. پشتیبان ابری</a>
-      <a onclick="scrollToHelp(14)">۱۴. تنظیمات</a>
-      <a onclick="scrollToHelp(15)">۱۵. تغییرات نسخه</a>
+      <a onclick="scrollToHelp(11)">۱۱. ثبت موردی غربالگری</a>
+      <a onclick="scrollToHelp(12)">۱۲. چاپ سریع</a>
+      <a onclick="scrollToHelp(13)">۱۳. CSV و تاریخ تولد</a>
+      <a onclick="scrollToHelp(14)">۱۴. قفل خودکار</a>
+      <a onclick="scrollToHelp(15)">۱۵. تنظیمات</a>
+      <a onclick="scrollToHelp(16)">۱۶. تغییرات نسخه</a>
+      <a onclick="scrollToHelp(17)">۱۷. نصب روی گوشی (PWA)</a>
     </div>
   </div>
   <div class="help-section" id="help-1"><h4>🔑 ۱. ورود به سامانه</h4><p>ابتدا نام مدرسه، مراقب سلامت، مدیر و سال تحصیلی را در فرم شروع وارد کنید. سپس برای ورود امن به سامانه، باید یک <b>رمز ۵ رقمی</b> را با استفاده از صفحه‌کلید عددی روی صفحه وارد کنید.</p><p>اگر رمز را اشتباه وارد کنید، پیام خطا نمایش داده می‌شود و می‌توانید دوباره تلاش کنید. برای پاک کردن ارقام، دکمه «پاک» و برای حذف آخرین رقم، دکمه «⌫» را بزنید. برای بازگشت به صفحه قبل، دکمه «بازگشت» را بزنید.</p></div>
@@ -823,17 +889,19 @@ tr.member-row:hover{background:var(--hover)}
   <div class="help-section" id="help-3"><h4>👥 ۳. دانش‌آموزان و فیلترها</h4><p>گروه‌بندی خودکار بر اساس پایه + فیلترهای جستجو، پایه، BMI، وضعیت، سطح ریسک و <b>تاریخ تولد</b>.</p></div>
   <div class="help-section" id="help-4"><h4>🎤 ۴. جستجو و صوتی</h4><p>دکمه 🎤 برای جستجوی صوتی. جستجوی هوشمند غلط تایپی را تحمل می‌کند.</p></div>
   <div class="help-section" id="help-5"><h4>🚦 ۵. سطح ریسک</h4><p>پرخطر / تحت نظر / عادی بر اساس ترکیب یافته‌های غربالگری و هشدار تغییر وزن.</p></div>
-  <div class="help-section" id="help-6"><h4>📚 ۶. آموزش‌ها</h4><p>ثبت آموزش‌ها با عنوان، موضوع، تاریخ شمسی و خروجی PDF.</p></div>
-  <div class="help-section" id="help-7"><h4>★ ۷. سفیران سلسله‌مراتبی</h4><p>ساختار سه‌سطحی: سرگروه ← زیرگروه ← اعضا.</p></div>
+  <div class="help-section" id="help-6"><h4>📚 ۶. آموزش‌ها و فعالیت‌های بهداشتی</h4><p>ثبت آموزش‌ها با عنوان، موضوع، تاریخ شمسی و خروجی PDF. گزارش PDF به‌صورت <b>صعودی</b> (قدیمی‌ترین در بالا) مرتب می‌شود.</p></div>
+  <div class="help-section" id="help-7"><h4>★ ۷. سفیران و کارت سفیر</h4><p>ساختار سه‌سطحی: سرگروه ← زیرگروه ← اعضا.</p><p>برای چاپ کارت زیبای سفیران: دکمه «🎴 چاپ کارت همه سفیران» در بالای صفحه، ۶ کارت را در یک برگه A4 (۲ ستون × ۳ ردیف) چاپ می‌کند. برای چاپ تکی هر سفیر، از ستون عملیات در جدول استفاده کنید.</p><p>کارت شامل: نام مدرسه، نام و نام‌خانوادگی، پایه، نقش، مسئولیت، متن کوتاه انتصاب، محل امضای مراقب سلامت و مهر و امضای مدیر است.</p></div>
   <div class="help-section" id="help-8"><h4>📝 ۸. یادداشت و یادآور</h4><p>یادداشت با یادآور تاریخ/ساعت شمسی.</p></div>
-  <div class="help-section" id="help-9"><h4>📈 ۹. گزارش‌ها</h4><p>آمار کلی، پرخطرها، ماهانه، بیماری واگیر، حوادث، الگو، فرم وزارت و رضایت‌نامه گروهی.</p></div>
+  <div class="help-section" id="help-9"><h4>📈 ۹. گزارش‌ها</h4><p>آمار کلی، پرخطرها، ماهانه، بیماری واگیر، حوادث، الگو، فرم وزارت و رضایت‌نامه.</p><p><b>چاپ رضایت‌نامه:</b> ۶ رضایت‌نامه در یک برگه A4 (۲ ستون × ۳ ردیف).</p><p><b>گزارش حوادث:</b> چیدمان کارتی فشرده، چند حادثه در یک برگه A4.</p></div>
   <div class="help-section" id="help-10"><h4>👤 ۱۰. پروفایل و WHO</h4><p>نمودار WHO با استفاده از تاریخ تولد و جنسیت. اگر تاریخ تولد ثبت نشده باشد، بخش WHO نمایش داده نمی‌شود.</p></div>
-  <div class="help-section" id="help-11"><h4>🖨️ ۱۱. چاپ سریع</h4><p>با <span class="key">Ctrl</span>+<span class="key">P</span> فقط نمای فعال چاپ می‌شود.</p></div>
-  <div class="help-section" id="help-12"><h4>📥 ۱۲. CSV و تاریخ تولد</h4><p>هنگام ورود CSV می‌توانید ستون تاریخ تولد، کد ملی و جنسیت را مشخص کنید. اگر تاریخ تولد نبود، از کد ملی استخراج می‌شود.</p></div>
-  <div class="help-section" id="help-13"><h4>☁️ ۱۳. پشتیبان ابری</h4><p>اتصال به WebDAV.</p></div>
-  <div class="help-section" id="help-14"><h4>⚙️ ۱۴. تنظیمات</h4><p>اطلاعات مدرسه، تم، امضا، پشتیبان و صادرات CSV.</p></div>
-  <div class="help-section" id="help-15"><h4>🆕 ۱۵. تغییرات نسخه</h4><p>هنگام ورود به سامانه، اگر نسخه‌ی جدیدی نصب شده باشد، یک پنجره کوچک با لیست تغییرات همان نسخه نمایش داده می‌شود. با زدن دکمه «متوجه شدم» بسته می‌شود و تا نسخه‌ی بعدی دوباره ظاهر نمی‌شود.</p><p>نسخه فعلی: <b>۳.۲.۱</b></p></div>
-  <div class="note-box" style="text-align:center;font-size:.75rem">خروجی از سامانه مراقبان سلامت — سازنده مهدی حسینی — نسخه ۳.۲.۱</div>
+  <div class="help-section" id="help-11"><h4>🩺 ۱۱. ثبت موردی غربالگری</h4><p>در بخش «ثبت / ویرایش غربالگری» می‌توانید هر آیتم را جدا ثبت کنید. اگر بعداً خواستید آیتم‌های خالی را پر کنید، روی دکمه ✏️ در ردیف تاریخچه کلیک کنید؛ آن رکورد در فرم بارگذاری می‌شود و می‌توانید فقط موارد خالی را پر کرده و به‌روزرسانی کنید.</p><p>گزینه «—» به معنای «ثبت نشده» است و به‌عنوان مقدار معتبر در نظر گرفته می‌شود.</p></div>
+  <div class="help-section" id="help-12"><h4>🖨️ ۱۲. چاپ سریع</h4><p>با <span class="key">Ctrl</span>+<span class="key">P</span> فقط نمای فعال چاپ می‌شود. اگر در <b>پروفایل دانش‌آموز</b> باشید، فقط بخش‌های انتخاب‌شده چاپ می‌شوند.</p></div>
+  <div class="help-section" id="help-13"><h4>📥 ۱۳. CSV و تاریخ تولد</h4><p>هنگام ورود CSV می‌توانید ستون تاریخ تولد، کد ملی و جنسیت را مشخص کنید. اگر تاریخ تولد نبود، از کد ملی استخراج می‌شود.</p></div>
+  <div class="help-section" id="help-14"><h4>🔒 ۱۴. قفل خودکار</h4><p>اگر تا ۱۰ دقیقه هیچ فعالیتی انجام ندهید (کلیک، تایپ، لمس)، برنامه به‌طور خودکار قفل می‌شود و برای ورود مجدد باید رمز ۵ رقمی را وارد کنید.</p></div>
+  <div class="help-section" id="help-15"><h4>⚙️ ۱۵. تنظیمات</h4><p>اطلاعات مدرسه، تم، امضا، پشتیبان، صادرات CSV و پشتیبان ابری.</p></div>
+  <div class="help-section" id="help-16"><h4>🆕 ۱۶. تغییرات نسخه</h4><p>هنگام ورود به سامانه، اگر نسخه‌ی جدیدی نصب شده باشد، یک پنجره کوچک با لیست تغییرات همان نسخه نمایش داده می‌شود.</p><p>نسخه فعلی: <b>۱.۲.۳</b></p></div>
+  <div class="help-section" id="help-17"><h4>📱 ۱۷. نصب روی گوشی (PWA)</h4><p>این سامانه به‌صورت <b>PWA</b> طراحی شده است و می‌توان آن را روی صفحه اصلی گوشی نصب کرد.</p><p><b>اندروید (Chrome):</b> آدرس را باز کنید → منوی ⋮ → «Install app» یا «Add to Home screen»</p><p><b>آیفون (Safari):</b> آدرس را باز کنید → دکمه اشتراک‌گذاری → «Add to Home Screen»</p><p>پس از نصب، آیکون اختصاصی روی صفحه اصلی قرار می‌گیرد و برنامه <b>بدون نیاز به اینترنت</b> نیز کار می‌کند.</p></div>
+  <div class="note-box" style="text-align:center;font-size:.75rem">خروجی از سامانه مراقبان سلامت — سازنده مهدی حسینی — نسخه ۱.۲.۳</div>
 </div></div>
 
 <div class="modal" id="aboutModal"><div class="modal-card" style="max-width:520px;padding:0;overflow:hidden">
@@ -848,7 +916,7 @@ tr.member-row:hover{background:var(--hover)}
     </div>
     <div class="about-info-card">
       <div class="info-row"><span>📱 نام سامانه</span><b>سامانه مراقب سلامت مدارس</b></div>
-      <div class="info-row"><span>🏷️ نسخه</span><b>۳.۲.۱</b></div>
+      <div class="info-row"><span>🏷️ نسخه</span><b>۱.۲.۳</b></div>
       <div class="info-row"><span>👥 مخاطب</span><b>مراقبان سلامت مدارس ابتدایی</b></div>
       <div class="info-row"><span>🛠️ نوع کاربرد</span><b>رسمی — بهداشتی آموزشی</b></div>
       <div class="info-row"><span>💾 ذخیره‌سازی</span><b>محلی (بدون اینترنت)</b></div>
@@ -903,18 +971,23 @@ function persianToEnglishDigits(str){
 }
 
 /* ==================== نسخه و تغییرات ==================== */
-var APP_VERSION = '3.2.1';
+var APP_VERSION = '1.2.3';
 var SEEN_VERSION_KEY = 'moragheb_seen_version';
 var CHANGELOG = {
-  '3.2.1': [
-    '🔐 افزودن ورود امن با رمز ۵ رقمی به سامانه (صفحه‌کلید استاندارد عددی)',
-    '🧹 حذف کامل گزینه‌های مربوط به «کلاس» از فرم‌ها، فیلترها، جداول و CSV',
-    '📖 به‌روزرسانی راهنمای استفاده (بخش ورود و تغییرات نسخه)',
-    '🐛 رفع باگ محاسبه سال کبیسه در تبدیل تاریخ شمسی',
-    '🐛 رفع باگ ترتیب جایگزینی متغیرها در پیام والدین (bmi و bmi_label)',
-    '🔒 بهبود پایداری صفحه ورود PIN با جلوگیری از ورودی همزمان',
-    '🏷️ اصلاح برچسب «پایه هدف» در فرم آموزش و گزارش PDF',
-    '✨ افزودن پنجره «تغییرات نسخه» که در اولین مشاهده هر نسخه نمایش داده می‌شود'
+  '1.2.3': [
+    '🖨️ چاپ ۶ رضایت‌نامه در یک برگه A4 (۲ ستون × ۳ ردیف)',
+    '📋 چاپ گزارش حوادث به‌صورت کارتی فشرده (چند حادثه در یک برگه A4)',
+    '📚 مرتب‌سازی گزارش آموزش‌ها بر اساس تاریخ (قدیمی به جدید)',
+    '🏷️ تغییر نام تب «آموزش‌ها» به «آموزش‌ها و فعالیت‌های بهداشتی»',
+    '🩺 امکان ثبت موردی غربالگری و ویرایش آیتم‌های خالی بعدی',
+    '🔒 قفل خودکار برنامه پس از ۱۰ دقیقه عدم فعالیت',
+    '🎴 کارت زیبای سفیران سلامت — ۶ کارت در یک برگه A4',
+    '🖨️ چاپ تکی و گروهی کارت سفیران (به همراه PDF)',
+    '🐛 رفع باگ چاپ سریع (Ctrl+P) در نمای پروفایل دانش‌آموز',
+    '🐛 پویاسازی پیشنهاد سال تولد بر اساس پایه و سال جاری',
+    '🐛 افزودن دکمه انصراف به فرم ویرایش اطلاعات مدرسه',
+    '🐛 رفع اشکال باقی‌ماندن راهنمای تاریخ تولد',
+    '🐛 بهبود پایداری گزارش‌ها در برابر داده خالی'
   ]
 };
 function checkVersionSeen(){
@@ -1084,9 +1157,13 @@ function normalizeGender(raw){
   return '';
 }
 
+/* ✅ باگ ۲: suggestBirthYear پویا */
 function suggestBirthYear(grade){
-  var map = {'اول':1398,'دوم':1397,'سوم':1396,'چهارم':1395,'پنجم':1394,'ششم':1393};
-  return map[grade] || 0;
+  var order = {'اول':1,'دوم':2,'سوم':3,'چهارم':4,'پنجم':5,'ششم':6};
+  var g = order[grade];
+  if(!g) return 0;
+  var currentYear = getJalaliNow().year;
+  return currentYear - 6 - (g - 1);
 }
 
 function validateBirthYear(jy){
@@ -1162,9 +1239,10 @@ function buildHistoryCache(){
   map['__notes__'] = normalizePersian(notesText);
   return map;
 }
+/* ✅ باگ ۸: کلید cache شامل طول notes و طول DB و زمان آخرین تغییر */
 function historyMatch(s, query){
   if(!query) return false;
-  var cacheKey = db.students.length + '|' + notes.length;
+  var cacheKey = db.students.length + '|' + notes.length + '|' + notes.map(function(n){ return n.id+(n.title||'').length; }).join('');
   if(_historyCache.key !== cacheKey){
     _historyCache.map = buildHistoryCache();
     _historyCache.key = cacheKey;
@@ -1297,6 +1375,11 @@ var csvParsedData=null, currentReportCat=null;
 var lastReferralHTMLByStudent={}, exportSelections={};
 var autoSaveTimer=null;
 var swWarningShown=false;
+var editingProfileMode = false;
+
+/* ✅ قفل خودکار */
+var _inactivityTimer = null;
+var INACTIVITY_MS = 10 * 60 * 1000;
 
 function migrateOldKeys(){
   try{
@@ -1523,6 +1606,8 @@ function enterApp(){
   var sp=$('#splash'); if(sp) sp.style.display='none';
   var ps=$('#pinScreen'); if(ps) ps.classList.remove('visible');
   var ap=$('#app'); if(ap) ap.classList.add('visible');
+  editingProfileMode = false;
+  var cb=$('#splashCancelBtn'); if(cb) cb.style.display='none';
   updateSchoolInfo();
   try{ checkAutoBackup(); }catch(e){ console.warn(e); }
   renderDashboard(); renderDashboardReminders(); renderPatternAlerts();
@@ -1539,6 +1624,8 @@ function enterApp(){
   if(reminderTimer) clearInterval(reminderTimer);
   reminderTimer=setInterval(checkDueReminders,30000);
   try { checkVersionSeen(); } catch(e){ console.warn(e); }
+  /* ✅ شروع قفل خودکار */
+  resetInactivityTimer();
 }
 function updateSchoolInfo(){
   var el=$('#schoolInfo'); if(!el) return;
@@ -1557,21 +1644,33 @@ function renderSettingsInfo(){
     '<div class="info-row"><span>مدیر مدرسه</span><b>'+(esc(profile.manager)||'—')+'</b></div>'+
     '<div class="info-row"><span>سال تحصیلی</span><b>'+(esc(profile.year)||'—')+'</b></div>';
 }
+/* ✅ باگ ۳: دکمه انصراف در ویرایش */
 function editProfile(){
+  editingProfileMode = true;
   var sp=$('#splash'); if(sp) sp.style.display='flex';
   var ap=$('#app'); if(ap) ap.classList.remove('visible');
+  var cb=$('#splashCancelBtn'); if(cb) cb.style.display='inline-flex';
+  if(_inactivityTimer){ clearTimeout(_inactivityTimer); _inactivityTimer=null; }
   initSplash();
+}
+function cancelEditProfile(){
+  editingProfileMode = false;
+  var sp=$('#splash'); if(sp) sp.style.display='none';
+  var ap=$('#app'); if(ap) ap.classList.add('visible');
+  var cb=$('#splashCancelBtn'); if(cb) cb.style.display='none';
+  resetInactivityTimer();
 }
 function resetProfile(){
   if(!confirm('اطلاعات پاک شود؟')) return;
   profile={school:'',assistant:'',year:'',signature:'',signatureImg:'',manager:''};
   saveProfile();
   var f=$('#splashForm'); if(f) f.reset();
+  /* ✅ باگ ۴: پاک‌سازی hint */
+  var hint=$('#birthHint'); if(hint) hint.style.display='none';
   updateSchoolInfo(); renderSettingsInfo(); renderSignatureSettings(); toast('پاک شد');
 }
 
-/* ==================== PIN (رفع باگ Race Condition) ==================== */
-/* رمز از طریق کدگذاری مخفی شده است */
+/* ==================== PIN ==================== */
 var _accessKey = String.fromCharCode(57,56,55,54,53);
 var _enteredPin = '';
 var _pinLocked = false;
@@ -1588,6 +1687,13 @@ function backToSplash(){
   var ps = $('#pinScreen'); if(ps) ps.classList.remove('visible');
   _enteredPin = '';
   _pinLocked = false;
+  if(editingProfileMode){
+    editingProfileMode = false;
+    var cb=$('#splashCancelBtn'); if(cb) cb.style.display='none';
+    var ap=$('#app'); if(ap) ap.classList.add('visible');
+    resetInactivityTimer();
+    return;
+  }
   var sp = $('#splash'); if(sp) sp.style.display = 'flex';
   initSplash();
 }
@@ -1632,6 +1738,39 @@ function attachPinHandlers(){
     if(/^[0-9]$/.test(e.key)){ handlePinKey(e.key); e.preventDefault(); }
     else if(e.key === 'Backspace'){ handlePinKey('back'); e.preventDefault(); }
     else if(e.key === 'Escape'){ handlePinKey('clear'); }
+  });
+}
+
+/* ✅ قفل خودکار پس از ۱۰ دقیقه عدم فعالیت */
+function resetInactivityTimer(){
+  if(_inactivityTimer){ clearTimeout(_inactivityTimer); _inactivityTimer = null; }
+  var ap = $('#app');
+  if(!ap || !ap.classList.contains('visible')) return;
+  _inactivityTimer = setTimeout(lockApp, INACTIVITY_MS);
+}
+function lockApp(){
+  var ap = $('#app');
+  if(!ap || !ap.classList.contains('visible')) return;
+  _enteredPin = '';
+  _pinLocked = false;
+  updatePinDisplay();
+  var err = $('#pinError'); if(err) err.textContent = '';
+  ap.classList.remove('visible');
+  var sp = $('#splash'); if(sp) sp.style.display = 'none';
+  var ps = $('#pinScreen'); if(ps) ps.classList.add('visible');
+  toast('🔒 به دلیل عدم فعالیت، قفل شد');
+}
+function bindInactivityListeners(){
+  var events = ['click','keydown','touchstart','scroll','mousemove'];
+  var lastReset = 0;
+  events.forEach(function(ev){
+    document.addEventListener(ev, function(){
+      var now = Date.now();
+      /* throttle برای mousemove */
+      if(ev === 'mousemove' && now - lastReset < 5000) return;
+      lastReset = now;
+      resetInactivityTimer();
+    }, true);
   });
 }
 
@@ -2005,13 +2144,14 @@ function renderStudents(){
 }
 
 /* ==================== آموزش‌ها ==================== */
+/* ✅ تغییر ۳: مرتب‌سازی صعودی (قدیمی در بالا) */
 function renderTrainings(){
   var el=$('#trainingsList'); var cnt=$('#trainingsCount'); if(!el) return;
   if(cnt) cnt.textContent=fa(trainings.length);
   var filterMonth = $('#trainingFilterMonth')?$('#trainingFilterMonth').value:'';
   var list=trainings.slice();
   if(filterMonth) list=list.filter(function(t){ return t.jMonth===+filterMonth; });
-  list.sort(function(a,b){ return b.ts-a.ts; });
+  list.sort(function(a,b){ return a.ts-b.ts; });
   if(!list.length){ el.innerHTML='<div class="empty"><span class="big">📚</span>هنوز آموزشی ثبت نشده است.</div>'; return; }
   var html='';
   list.forEach(function(t){
@@ -2089,15 +2229,16 @@ function deleteTraining(id){ if(!confirm('این آموزش حذف شود؟')) r
 
 /* ==================== Footer ==================== */
 function creatorFooterFa(){
-  return '<div style="margin-top:18px;padding-top:8px;border-top:1px solid #ddd;font-size:9.5px;color:#888;text-align:left;direction:rtl">خروجی از سامانه مراقبان سلامت — سازنده مهدی حسینی</div>';
+  return '<div style="margin-top:18px;padding-top:8px;border-top:1px solid #ddd;font-size:9.5px;color:#888;text-align:left;direction:rtl">خروجی از سامانه مراقبان سلامت — سازنده مهدی حسینی — نسخه ۱.۲.۳</div>';
 }
 
+/* ✅ تغییر ۳: چاپ آموزش‌ها با ترتیب صعودی */
 function printTrainingsPDF(){
   if(!trainings.length){ toast('آموزشی برای چاپ وجود ندارد'); return; }
   var filterMonth = $('#trainingFilterMonth')?$('#trainingFilterMonth').value:'';
   var list=trainings.slice();
   if(filterMonth) list=list.filter(function(t){ return t.jMonth===+filterMonth; });
-  list.sort(function(a,b){ return b.ts-a.ts; });
+  list.sort(function(a,b){ return a.ts-b.ts; });
   if(!list.length){ toast('آموزشی در این ماه نیست'); return; }
   var schoolLine = profile.school ? esc(profile.school) : 'مدرسه';
   var yearLine = profile.year ? 'سال تحصیلی: '+esc(profile.year) : '';
@@ -2290,13 +2431,14 @@ function renderAmbassadors(){
     }
     return '<span style="color:var(--muted);font-size:.72rem">—</span>';
   }
+  /* ✅ دکمه چاپ کارت تکی */
   function rowFor(s, rowCls, prefix){
     var cells='<td>'+(prefix||'')+esc(s.name)+'</td>';
     cells+='<td>'+esc(s.grade)+'</td>';
     cells+='<td>'+renderRoleSelect(s)+'</td>';
     cells+='<td><span class="badge b-gold" style="cursor:pointer" onclick="editResponsibility(\''+s.id+'\')">'+(esc(s.responsibility)||'+ افزودن')+'</span></td>';
     cells+='<td>'+renderParentSelect(s)+'</td>';
-    cells+='<td><button class="btn icon danger" onclick="toggleAmbassador(\''+s.id+'\')">×</button></td>';
+    cells+='<td><button class="btn icon" title="چاپ کارت" onclick="printAmbassadorCard(\''+s.id+'\')">🎴</button><button class="btn icon danger" onclick="toggleAmbassador(\''+s.id+'\')">×</button></td>';
     return '<tr class="'+rowCls+'">'+cells+'</tr>';
   }
   var html='';
@@ -2343,6 +2485,7 @@ function renderAmbassadors(){
   }
   tbody.innerHTML=html;
 }
+
 function managerStampFooter(){
   return '<div style="margin-top:30px;padding-top:12px;border-top:1px dashed #999;display:flex;justify-content:space-between;flex-wrap:wrap;gap:20px">'+
     '<div style="text-align:center;min-width:180px"><div style="border-top:1px solid #666;padding-top:4px;margin-top:60px">'+
@@ -2353,6 +2496,8 @@ function managerStampFooter(){
     '<div style="text-align:center;min-width:180px;font-size:11px;color:#666">تاریخ: '+faDate(Date.now())+'</div>'+
     '</div>';
 }
+
+/* ✅ چیدمان PDF فهرست (همان قبلی) */
 function printAmbassadorsPDF(){
   var data = getAmbassadorData();
   if(!data.all.length){ toast('سفیری وجود ندارد'); return; }
@@ -2420,6 +2565,84 @@ function printAmbassadorsPDF(){
   setTimeout(function(){ w.print(); },400);
 }
 
+/* ✅ چیدمان کارت سفیر (۳ ردیف × ۲ ستون در A4) */
+function buildAmbassadorCardHTML(s){
+  var role = s.ambassadorRole||'member';
+  var roleName = ROLE_MAP[role];
+  var roleIcon = role==='head'?'🎯':role==='vice'?'🥈':'👤';
+  var apptText = 'بدین‌وسیله <b>'+esc(s.name)+'</b> از پایه <b>'+esc(s.grade)+'</b> به‌عنوان <b>'+roleName+' سلامت</b> مدرسه منصوب می‌گردد. امید است با همکاری ایشان، گام‌های مؤثری در ارتقای سلامت دانش‌آموزان برداشته شود.';
+  return '<div class="amb-card">'+
+    '<div class="amb-card-head">'+
+      '<div class="amb-card-school">'+esc(profile.school||'مدرسه')+'</div>'+
+      '<div class="amb-card-title">کارت سفیر سلامت</div>'+
+      '<div class="amb-card-subtitle">HEALTH AMBASSADOR</div>'+
+    '</div>'+
+    '<div class="amb-card-body">'+
+      '<div class="amb-card-avatar">'+roleIcon+'</div>'+
+      '<div class="amb-card-info">'+
+        '<div><b>نام:</b> '+esc(s.name)+'</div>'+
+        '<div><b>پایه:</b> '+esc(s.grade)+'</div>'+
+        '<div><b>نقش:</b> '+roleName+'</div>'+
+        (s.responsibility?'<div><b>مسئولیت:</b> '+esc(s.responsibility)+'</div>':'')+
+      '</div>'+
+    '</div>'+
+    '<div class="amb-card-text">'+apptText+'</div>'+
+    '<div class="amb-card-sign">'+
+      '<div class="amb-sig"><div class="amb-sig-line"></div><div class="amb-sig-label">'+esc(profile.signature||profile.assistant||'مراقب سلامت')+'</div></div>'+
+      '<div class="amb-sig"><div class="amb-sig-box">مهر مدرسه</div><div class="amb-sig-label">'+esc(profile.manager||'مدیر مدرسه')+'</div></div>'+
+    '</div>'+
+  '</div>';
+}
+function ambassadorCardPrintCSS(){
+  return '@page{size:A4;margin:8mm}'+
+    'body{font-family:Tahoma,sans-serif;direction:rtl;margin:0;background:#fff;color:#222}'+
+    '.page-wrap{padding:0}'+
+    '.amb-cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:3mm;padding:0;max-width:100%;margin:0 auto}'+
+    '.amb-card{border:1.5pt solid #8a6a2c;border-radius:3mm;padding:2.5mm;height:87mm;box-sizing:border-box;display:flex;flex-direction:column;background:linear-gradient(180deg,#fffdf7 0%,#fdfbf4 100%);break-inside:avoid;page-break-inside:avoid;overflow:hidden;position:relative}'+
+    '.amb-card::before{content:"";position:absolute;top:0;right:0;width:100%;height:1.5mm;background:linear-gradient(90deg,#8a6a2c,#d4a017,#8a6a2c)}'+
+    '.amb-card-head{text-align:center;border-bottom:1pt solid #d4a017;padding:1mm 0 1.5mm;margin-bottom:2mm;padding-top:1mm}'+
+    '.amb-card-school{font-size:8pt;color:#6a4f1f;font-weight:700}'+
+    '.amb-card-title{font-size:11pt;font-weight:800;color:#8a6a2c;letter-spacing:.5px}'+
+    '.amb-card-subtitle{font-size:6.8pt;color:#999;letter-spacing:2px}'+
+    '.amb-card-body{display:flex;gap:2.5mm;align-items:center;margin-bottom:1.5mm;padding:1.5mm;background:rgba(212,160,23,.08);border-radius:2mm}'+
+    '.amb-card-avatar{width:13mm;height:13mm;border-radius:50%;background:linear-gradient(135deg,#8a6a2c,#d4a017);color:#fff;display:flex;align-items:center;justify-content:center;font-size:7mm;flex-shrink:0;box-shadow:0 1mm 2mm rgba(138,106,44,.3);border:0.5mm solid #fff}'+
+    '.amb-card-info{flex:1;font-size:8pt;line-height:1.6;min-width:0}'+
+    '.amb-card-info b{color:#6a4f1f}'+
+    '.amb-card-info div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'+
+    '.amb-card-text{flex:1;font-size:7.3pt;line-height:1.65;text-align:justify;padding:1.5mm 0;color:#333;overflow:hidden}'+
+    '.amb-card-text b{color:#6a4f1f}'+
+    '.amb-card-sign{display:flex;gap:2.5mm;font-size:6.8pt;margin-top:1mm;padding-top:1mm;border-top:0.3pt dashed #ccc}'+
+    '.amb-card-sign .amb-sig{flex:1;text-align:center}'+
+    '.amb-card-sign .amb-sig-line{border-bottom:0.5pt solid #666;height:5mm;margin-bottom:0.8mm}'+
+    '.amb-card-sign .amb-sig-box{border:0.5pt dashed #999;height:8mm;border-radius:1mm;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:6pt;margin-bottom:0.8mm}'+
+    '.amb-card-sign .amb-sig-label{color:#555;font-weight:700}'+
+    '@media print{.amb-card{break-inside:avoid;page-break-inside:avoid}}';
+}
+function printAmbassadorCards(){
+  var list = getAmbassadorData().all;
+  if(!list.length){ toast('سفیری وجود ندارد'); return; }
+  var cardsHtml = '';
+  list.forEach(function(s){ cardsHtml += buildAmbassadorCardHTML(s); });
+  var html = '<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="UTF-8"><title>کارت‌های سفیران سلامت</title><style>'+
+    ambassadorCardPrintCSS()+
+    '</style></head><body><div class="page-wrap"><div class="amb-cards-grid">'+cardsHtml+'</div></div></body></html>';
+  var w=window.open('','_blank'); if(!w){ toast('امکان باز کردن پنجره نیست'); return; }
+  w.document.write(html); w.document.close();
+  setTimeout(function(){ w.print(); },500);
+}
+function printAmbassadorCard(id){
+  var s=getStudent(id); if(!s){ toast('یافت نشد'); return; }
+  ensureStudentFields(s);
+  if(!s.isAmbassador){ toast('این دانش‌آموز سفیر نیست'); return; }
+  var html = '<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="UTF-8"><title>کارت سفیر</title><style>'+
+    ambassadorCardPrintCSS()+
+    '@media print{.amb-cards-grid{grid-template-columns:1fr 1fr}}'+
+    '</style></head><body><div class="page-wrap"><div class="amb-cards-grid">'+buildAmbassadorCardHTML(s)+'</div></div></body></html>';
+  var w=window.open('','_blank'); if(!w){ toast('امکان باز کردن پنجره نیست'); return; }
+  w.document.write(html); w.document.close();
+  setTimeout(function(){ w.print(); },500);
+}
+
 /* ==================== ثبت دانش‌آموز ==================== */
 function attachStudentForm(){
   var f=$('#studentForm'); if(!f) return;
@@ -2441,6 +2664,11 @@ function attachStudentForm(){
       }
     });
   }
+
+  /* ✅ باگ ۴: پاک کردن hint در reset */
+  f.addEventListener('reset', function(){
+    var hint = $('#birthHint'); if(hint) hint.style.display='none';
+  });
 
   var nidInput = f.nationalId;
   if(nidInput){
@@ -2613,7 +2841,7 @@ function renderProfile(id){
   var meds=s.medications||[], docReports=s.doctorReports||[];
   var incidents=s.incidents||[], referrals=s.referrals||[];
   var rl=getStudentRiskLevel(s);
-  function badge(v){ return (v==='ارجاع'||v==='مشکوک')?'<span class="badge b-bad">'+esc(v)+'</span>':'<span class="badge b-ok">'+esc(v||'—')+'</span>'; }
+  function badge(v){ return (v==='ارجاع'||v==='مشکوک')?'<span class="badge b-bad">'+esc(v)+'</span>':(v?'<span class="badge b-ok">'+esc(v)+'</span>':'<span class="badge b-info">—</span>'); }
   var tchip='';
   if(s.transferStatus==='out') tchip='<span class="chip" style="background:#c53b3b;color:#fff">↗️ منتقل رفته</span>';
   else if(s.transferStatus==='in') tchip='<span class="chip" style="background:#2f7ab8;color:#fff">↘️ منتقل آمده</span>';
@@ -2638,6 +2866,7 @@ function renderProfile(id){
   html+=buildWeightAlertHTML(s);
   html+='<div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">';
   html+='<button class="btn '+(s.isAmbassador?'danger':'gold')+' sm" onclick="toggleAmbassador(\''+s.id+'\');renderProfile(\''+s.id+'\')">'+(s.isAmbassador?'حذف از سفیران':'★ انتخاب سفیر')+'</button>';
+  if(s.isAmbassador) html+='<button class="btn ghost sm" onclick="printAmbassadorCard(\''+s.id+'\')">🎴 چاپ کارت سفیر</button>';
   html+='<button class="btn ghost sm" onclick="printHealthCard(\''+s.id+'\')">چاپ کارت سلامت</button>';
   html+='</div>';
   html+='<div class="card"><h2>⚙️ مدیریت</h2>';
@@ -2680,32 +2909,38 @@ function renderProfile(id){
     html+='<div class="field"><label>قد</label><div>'+(last.height?fa(last.height)+' cm':'—')+'</div></div>';
     html+='<div class="field"><label>وزن</label><div>'+(last.weight?fa(last.weight)+' kg':'—')+'</div></div>';
     html+='<div class="field"><label>تاریخ</label><div>'+faDateShort(last.ts)+'</div></div></div>';
-    html+='<div class="grid3">';
+    html+='<div class="grid4">';
     html+='<div class="field"><label>بینایی</label>'+badge(last.vision)+'</div>';
     html+='<div class="field"><label>شنوایی</label>'+badge(last.hearing)+'</div>';
-    html+='<div class="field"><label>دندان</label>'+badge(last.dental)+'</div></div>';
+    html+='<div class="field"><label>دندان</label>'+badge(last.dental)+'</div>';
+    html+='<div class="field"><label>پوست</label>'+badge(last.skin)+'</div></div>';
   } else html+='<div class="empty">ثبت نشده.</div>';
   html+='</div>';
   html+='<div class="card"><h2>📈 نمودار رشد (WHO)</h2>'+buildGrowthChartHTML(s.id)+'</div>';
   html+='<div class="card"><h2>📉 نمودار نسبت وزن به قد</h2>'+buildWeightHeightRatioHTML(s.id)+'</div>';
-  html+='<div class="card"><h2>➕ ثبت غربالگری جدید</h2><form id="recordForm">';
-  html+='<div class="grid2"><div class="field"><label>قد</label><input class="input" name="height" type="number" step="0.1"></div>';
-  html+='<div class="field"><label>وزن</label><input class="input" name="weight" type="number" step="0.1"></div></div>';
-  html+='<div class="grid3"><div class="field"><label>بینایی</label><select name="vision"><option>طبیعی</option><option>ارجاع</option></select></div>';
-  html+='<div class="field"><label>شنوایی</label><select name="hearing"><option>طبیعی</option><option>ارجاع</option></select></div>';
-  html+='<div class="field"><label>دندان</label><select name="dental"><option>سالم</option><option>ارجاع</option></select></div></div>';
-  html+='<div class="field"><label>پوست</label><select name="skin"><option>سالم</option><option>مشکوک</option></select></div>';
+  /* ✅ فرم غربالگری با قابلیت ویرایش */
+  html+='<div class="card"><h2>➕ ثبت / ویرایش غربالگری</h2><form id="recordForm">';
+  html+='<input type="hidden" name="recordId" value="">';
+  html+='<div class="grid2"><div class="field"><label>قد (cm)</label><input class="input" name="height" type="number" step="0.1"></div>';
+  html+='<div class="field"><label>وزن (kg)</label><input class="input" name="weight" type="number" step="0.1"></div></div>';
+  html+='<div class="grid4"><div class="field"><label>بینایی</label><select name="vision"><option value="">—</option><option>طبیعی</option><option>ارجاع</option></select></div>';
+  html+='<div class="field"><label>شنوایی</label><select name="hearing"><option value="">—</option><option>طبیعی</option><option>ارجاع</option></select></div>';
+  html+='<div class="field"><label>دندان</label><select name="dental"><option value="">—</option><option>سالم</option><option>ارجاع</option></select></div>';
+  html+='<div class="field"><label>پوست</label><select name="skin"><option value="">—</option><option>سالم</option><option>مشکوک</option></select></div></div>';
   html+='<div class="field"><label>یادداشت</label><textarea name="notes"></textarea></div>';
-  html+='<button type="submit" class="btn primary">ثبت</button></form></div>';
+  html+='<div style="display:flex;gap:8px;flex-wrap:wrap"><button type="submit" class="btn primary">ثبت</button>';
+  html+='<button type="button" class="btn ghost" id="recordCancelBtn" onclick="resetRecordForm()" style="display:none">انصراف</button></div>';
+  html+='<p class="hint" style="margin-top:6px">💡 می‌توانید هر آیتم را جداگانه ثبت کنید و بعداً با ✏️ روی ردیف تاریخچه، موارد خالی را تکمیل کنید.</p>';
+  html+='</form></div>';
   html+='<div class="card"><h2>📋 تاریخچه غربالگری</h2>';
   if(records.length){
-    html+='<div class="table-wrap"><table><thead><tr><th>تاریخ</th><th>قد</th><th>وزن</th><th>BMI</th><th>سن غربال</th><th>ب</th><th>ش</th><th>د</th><th></th></tr></thead><tbody>';
+    html+='<div class="table-wrap"><table><thead><tr><th>تاریخ</th><th>قد</th><th>وزن</th><th>BMI</th><th>سن غربال</th><th>ب</th><th>ش</th><th>د</th><th>پ</th><th style="width:80px"></th></tr></thead><tbody>';
     records.forEach(function(r){
       html+='<tr class="no-hover"><td>'+faDateShort(r.ts)+'</td><td>'+(r.height?fa(r.height):'—')+'</td><td>'+(r.weight?fa(r.weight):'—')+'</td>';
       html+='<td>'+(r.bmi!=null?'<span class="badge '+bmiInfo(r.bmi).cls+'">'+fa(r.bmi)+'</span>':'—')+'</td>';
       html+='<td style="font-size:.76rem;color:var(--muted)">'+(r.ageAtScreening!=null?fa(r.ageAtScreening.toFixed(1))+' سال':'—')+'</td>';
-      html+='<td>'+badge(r.vision)+'</td><td>'+badge(r.hearing)+'</td><td>'+badge(r.dental)+'</td>';
-      html+='<td><button class="btn icon danger" onclick="deleteRecord(\''+s.id+'\',\''+r.id+'\')">×</button></td></tr>';
+      html+='<td>'+badge(r.vision)+'</td><td>'+badge(r.hearing)+'</td><td>'+badge(r.dental)+'</td><td>'+badge(r.skin)+'</td>';
+      html+='<td><button class="btn icon" title="ویرایش" onclick="editRecord(\''+s.id+'\',\''+r.id+'\')">✏️</button><button class="btn icon danger" title="حذف" onclick="deleteRecord(\''+s.id+'\',\''+r.id+'\')">×</button></td></tr>';
     });
     html+='</tbody></table></div>';
   } else html+='<div class="empty">—</div>';
@@ -2824,24 +3059,62 @@ function saveDoctorReport(sid, drId){
 }
 function removeMedication(sid, i){ var s=getStudent(sid); if(!s) return; s.medications.splice(i,1); saveDB(); renderProfile(sid); toast('حذف شد'); }
 function removeDoctorReport(sid, drId){ if(!confirm('حذف شود؟')) return; var s=getStudent(sid); if(!s) return; s.doctorReports=s.doctorReports.filter(function(r){ return r.id!==drId; }); saveDB(); renderProfile(sid); toast('حذف شد'); }
+
+/* ✅ ثبت/ویرایش رکورد غربالگری */
 function addRecord(e, sid){
   e.preventDefault();
   var s=getStudent(sid); if(!s) return;
   var f=e.target;
+  var rid = f.recordId ? f.recordId.value : '';
   var h=parseFloat(persianToEnglishDigits(f.height.value))||null;
   var w=parseFloat(persianToEnglishDigits(f.weight.value))||null;
+  var v=f.vision.value, he=f.hearing.value, d=f.dental.value, sk=f.skin.value, no=f.notes.value.trim();
   var ageAtScreening = null;
   if(s.birthJDN){
     var a = calcAge(s.birthJDN);
     if(a) ageAtScreening = +(a.years + a.months/12).toFixed(2);
   }
-  s.records.push({
-    id:uid(),ts:Date.now(),height:h,weight:w,bmi:calcBMI(h,w),
-    vision:f.vision.value,hearing:f.hearing.value,dental:f.dental.value,
-    skin:f.skin.value,notes:f.notes.value.trim(),
-    ageAtScreening: ageAtScreening
-  });
-  saveDB(); renderProfile(sid); renderDashboard(); renderStudents(); renderInfographic(); toast('ثبت شد');
+  if(rid){
+    var found=false;
+    for(var i=0;i<s.records.length;i++) if(s.records[i].id===rid){
+      var r=s.records[i];
+      r.height = h; r.weight = w; r.bmi = calcBMI(h,w);
+      r.vision = v; r.hearing = he; r.dental = d; r.skin = sk; r.notes = no;
+      found=true;
+      break;
+    }
+    if(!found) return;
+  } else {
+    s.records.push({id:uid(),ts:Date.now(),height:h,weight:w,bmi:calcBMI(h,w),vision:v,hearing:he,dental:d,skin:sk,notes:no,ageAtScreening:ageAtScreening});
+  }
+  saveDB(); renderProfile(sid); renderDashboard(); renderStudents(); renderInfographic();
+  toast(rid?'به‌روزرسانی شد':'ثبت شد');
+}
+function editRecord(sid, rid){
+  var s=getStudent(sid); if(!s) return;
+  var r=null;
+  for(var i=0;i<s.records.length;i++) if(s.records[i].id===rid) r=s.records[i];
+  if(!r) return;
+  var f=$('#recordForm'); if(!f) return;
+  f.height.value = r.height!=null ? r.height : '';
+  f.weight.value = r.weight!=null ? r.weight : '';
+  f.vision.value = r.vision||'';
+  f.hearing.value = r.hearing||'';
+  f.dental.value = r.dental||'';
+  f.skin.value = r.skin||'';
+  f.notes.value = r.notes||'';
+  if(f.recordId) f.recordId.value = r.id;
+  var btn = f.querySelector('button[type="submit"]'); if(btn) btn.textContent = 'به‌روزرسانی';
+  var cancel = $('#recordCancelBtn'); if(cancel) cancel.style.display='inline-flex';
+  f.scrollIntoView({behavior:'smooth', block:'start'});
+  toast('برای ویرایش، مقادیر خالی را پر کنید');
+}
+function resetRecordForm(){
+  var f=$('#recordForm'); if(!f) return;
+  f.reset();
+  if(f.recordId) f.recordId.value='';
+  var btn = f.querySelector('button[type="submit"]'); if(btn) btn.textContent='ثبت';
+  var cancel = $('#recordCancelBtn'); if(cancel) cancel.style.display='none';
 }
 function deleteRecord(sid, rid){
   if(!confirm('حذف شود؟')) return;
@@ -3046,7 +3319,7 @@ function printProfileSelective(sid){
   }
   if(selected.indexOf('screening')>=0 && last){
     body+='<h2>غربالگری</h2><table><tr><th>تاریخ</th><th>قد</th><th>وزن</th><th>BMI</th><th>بینایی</th><th>شنوایی</th><th>دندان</th></tr>';
-    records.forEach(function(r){ body+='<tr><td>'+faDateShort(r.ts)+'</td><td>'+(r.height?fa(r.height):'—')+'</td><td>'+(r.weight?fa(r.weight):'—')+'</td><td>'+(r.bmi!=null?fa(r.bmi):'—')+'</td><td>'+esc(r.vision)+'</td><td>'+esc(r.hearing)+'</td><td>'+esc(r.dental)+'</td></tr>'; });
+    records.forEach(function(r){ body+='<tr><td>'+faDateShort(r.ts)+'</td><td>'+(r.height?fa(r.height):'—')+'</td><td>'+(r.weight?fa(r.weight):'—')+'</td><td>'+(r.bmi!=null?fa(r.bmi):'—')+'</td><td>'+(esc(r.vision)||'—')+'</td><td>'+(esc(r.hearing)||'—')+'</td><td>'+(esc(r.dental)||'—')+'</td></tr>'; });
     body+='</table>';
   }
   if(selected.indexOf('growth')>=0 && records.length>=2) body+='<h2>نمودار رشد</h2>'+buildGrowthChartHTML(s.id);
@@ -3116,7 +3389,7 @@ function printHealthCard(sid){
     html+='<div class="row"><b>وزن:</b><span>'+(last.weight?fa(last.weight)+' kg':'—')+'</span></div>';
     html+='<div class="row"><b>تاریخ:</b><span>'+faDate(last.ts)+'</span></div>';
     html+='<h2>غربالگری</h2><table><tr><th>بینایی</th><th>شنوایی</th><th>دندان</th><th>پوست</th></tr>';
-    html+='<tr><td>'+esc(last.vision)+'</td><td>'+esc(last.hearing)+'</td><td>'+esc(last.dental)+'</td><td>'+esc(last.skin)+'</td></tr></table>';
+    html+='<tr><td>'+(esc(last.vision)||'—')+'</td><td>'+(esc(last.hearing)||'—')+'</td><td>'+(esc(last.dental)||'—')+'</td><td>'+(esc(last.skin)||'—')+'</td></tr></table>';
   }
   html+=managerStampFooter();
   html+=creatorFooterFa();
@@ -3126,7 +3399,13 @@ function printHealthCard(sid){
 }
 
 /* ==================== چاپ سریع ==================== */
+/* ✅ باگ ۱: چاپ سریع در پروفایل */
 function quickPrint(){
+  var studentView = document.getElementById('view-student');
+  if(studentView && studentView.classList.contains('active') && currentStudentId){
+    printProfileSelective(currentStudentId);
+    return;
+  }
   var current=null;
   $$('#tabsNav button').forEach(function(b){ if(b.classList.contains('active')) current=b.dataset.view; });
   if(!current){ toast('تبی انتخاب نشده'); return; }
@@ -3156,10 +3435,10 @@ var REPORT_CATS = [
   { key:'risk', icon:'🚦', title:'دانش‌آموزان پرخطر', desc:'طبقه‌بندی بر اساس ریسک' },
   { key:'monthly', icon:'📅', title:'گزارش ماهانه', desc:'انتخاب ماه و سال' },
   { key:'disease', icon:'💊', title:'بیماری واگیر', desc:'ثبت و پیگیری' },
-  { key:'incidentsGeneral', icon:'📋', title:'گزارش کلی حوادث', desc:'همه حوادث' },
+  { key:'incidentsGeneral', icon:'📋', title:'گزارش کلی حوادث', desc:'همه حوادث (چند در یک برگه)' },
   { key:'pattern', icon:'⚠️', title:'تشخیص الگو', desc:'هشدار حوادث مشابه' },
   { key:'ministry', icon:'🏛️', title:'فرم وزارت', desc:'فرم آماری رسمی' },
-  { key:'consent', icon:'📝', title:'رضایت‌نامه گروهی', desc:'برای چند دانش‌آموز' },
+  { key:'consent', icon:'📝', title:'رضایت‌نامه گروهی', desc:'۶ در یک برگه A4' },
   { key:'cold', icon:'🤧', title:'سرماخوردگی', desc:'حوادث سرماخوردگی' },
   { key:'flu', icon:'🤒', title:'آنفلوانزا', desc:'حوادث آنفلوانزا' },
   { key:'vision', icon:'👁️', title:'مشکلات بینایی', desc:'ارجاع بینایی' },
@@ -3308,6 +3587,7 @@ function attachDiseaseReportForm(){
   });
   populateStudentSelects();
 }
+/* ✅ چیدمان کارتی برای گزارش حوادث */
 function buildIncidentsGeneralReportHTML(){
   var rows=[];
   db.students.forEach(function(s){
@@ -3319,14 +3599,20 @@ function buildIncidentsGeneralReportHTML(){
   });
   if(!rows.length) return '<div class="empty">موردی ثبت نشده.</div>';
   rows.sort(function(a,b){ return b.ts-a.ts; });
-  var html='<div style="margin-bottom:10px"><b>تعداد کل:</b> '+fa(rows.length)+' مورد</div>';
-  html+='<div class="table-wrap"><table><thead><tr><th>تاریخ</th><th>دانش‌آموز</th><th>پایه</th><th>نوع</th><th>شرح</th><th>وضعیت</th></tr></thead><tbody>';
+  var html='<div style="margin-bottom:10px"><b>تعداد کل:</b> '+fa(rows.length)+' مورد — چیدمان فشرده (چند مورد در یک برگه A4)</div>';
+  html+='<div class="inc-cards-grid">';
   rows.forEach(function(r){
-    html+='<tr class="no-hover"><td>'+faDateShort(r.ts)+'</td><td>'+esc(r.student.name)+'</td><td>'+esc(r.student.grade)+'</td>';
-    html+='<td>'+esc(r.incident.type)+'</td><td>'+(esc(r.incident.description)||'—')+'</td>';
-    html+='<td>'+(r.incident.status==='resolved'?'بهبودیافته':'فعال')+'</td></tr>';
+    var stCls = r.incident.status==='resolved'?'resolved':'ongoing';
+    var stTxt = r.incident.status==='resolved'?'بهبودیافته':'فعال';
+    html+='<div class="inc-card">'+
+      '<div class="ic-head"><span class="ic-num">'+esc(r.incident.type)+'</span><span class="ic-date">'+faDateShort(r.ts)+'</span></div>'+
+      '<div class="ic-row"><b>دانش‌آموز:</b> '+esc(r.student.name)+' — <b>پایه:</b> '+esc(r.student.grade)+'</div>'+
+      (r.incident.description?'<div class="ic-row"><b>شرح:</b> '+esc(r.incident.description)+'</div>':'')+
+      (r.incident.action?'<div class="ic-row"><b>اقدام:</b> '+esc(r.incident.action)+'</div>':'')+
+      '<div class="ic-row"><span class="ic-status '+stCls+'">'+stTxt+'</span></div>'+
+    '</div>';
   });
-  html+='</tbody></table></div>';
+  html+='</div>';
   return html;
 }
 function buildPatternReportHTML(){
@@ -3405,7 +3691,9 @@ function buildConsentFormHTML(){
   html+='<div class="field"><label>ساعت (اختیاری)</label><input class="input" id="consentTime"></div></div>';
   html+='<div class="field"><label>دانش‌آموزان</label><select id="consentScope"><option value="all">همه</option><option value="grade">یک پایه</option><option value="select">انتخاب دستی</option></select></div>';
   html+='<div id="consentScopeExtra" style="margin-bottom:10px"></div>';
-  html+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px"><button class="btn primary sm" onclick="previewConsent()">پیش‌نمایش</button>';
+  html+='<div class="alert-info">📄 چیدمان: ۶ رضایت‌نامه در هر برگه A4 (۲ ستون × ۳ ردیف)</div>';
+  html+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0">';
+  html+='<button class="btn primary sm" onclick="previewConsent()">پیش‌نمایش</button>';
   html+='<button class="btn gold sm" onclick="printConsent()">🖨️ چاپ / PDF</button></div>';
   html+='<div id="consentPreview"></div>';
   return html;
@@ -3433,32 +3721,30 @@ function getConsentStudents(scope){
   if(scope==='select'){ var ids=$$('.consent-stu-check:checked').map(function(c){ return c.value; }); return db.students.filter(function(s){ return ids.indexOf(s.id)>=0; }); }
   return [];
 }
+/* ✅ رضایت‌نامه فشرده: ۶ در A4 */
+function buildConsentCardHTML(s, subj, body, dt, tm){
+  return '<div class="consent-card">'+
+    '<div class="cc-head">'+
+      '<div class="cc-bism">بسمه تعالی</div>'+
+      '<div class="cc-title">رضایت‌نامه</div>'+
+      (profile.school?'<div class="cc-school">'+esc(profile.school)+'</div>':'')+
+    '</div>'+
+    '<div class="cc-body">'+
+      '<div class="cc-row"><b>موضوع:</b> '+esc(subj)+'</div>'+
+      '<div class="cc-row"><b>دانش‌آموز:</b> '+esc(s.name)+' — <b>پایه:</b> '+esc(s.grade)+'</div>'+
+      (dt?'<div class="cc-row"><b>تاریخ:</b> '+esc(dt)+(tm?' — <b>ساعت:</b> '+esc(tm):'')+'</div>':(tm?'<div class="cc-row"><b>ساعت:</b> '+esc(tm)+'</div>':''))+
+      '<div class="cc-text">'+esc(body)+'</div>'+
+    '</div>'+
+    '<div class="cc-sign">'+
+      '<div class="cc-sig-item">امضای ولی:<div class="cc-sig-line"></div></div>'+
+      '<div class="cc-sig-item">مهر و امضای مدرسه:<div class="cc-sig-box">مهر</div></div>'+
+    '</div>'+
+  '</div>';
+}
 function buildConsentHTML(subj, body, dt, tm, students){
-  var html='';
-  students.forEach(function(s, idx){
-    if(idx>0) html+='<div style="page-break-before:always;margin-top:20px;border-top:2px dashed #ccc;padding-top:20px"></div>';
-    html+='<div class="consent-preview">';
-    html+='<div style="text-align:center;border-bottom:2px solid #8a6a2c;padding-bottom:10px;margin-bottom:14px">';
-    html+='<b style="color:#6a4f1f;font-size:1.05rem">بسمه تعالی</b><br>';
-    html+='<b style="color:#6a4f1f">رضایت‌نامه</b><br>';
-    if(profile.school) html+='<span style="font-size:.85rem;color:#666">'+esc(profile.school)+'</span>';
-    html+='</div>';
-    html+='<div style="margin-bottom:10px"><b>موضوع:</b> '+esc(subj)+'</div>';
-    html+='<div style="margin-bottom:10px"><b>نام دانش‌آموز:</b> '+esc(s.name)+'</div>';
-    html+='<div style="margin-bottom:10px"><b>پایه:</b> '+esc(s.grade)+'</div>';
-    if(dt) html+='<div style="margin-bottom:10px"><b>تاریخ:</b> '+esc(dt)+(tm?' — <b>ساعت:</b> '+esc(tm):'')+'</div>';
-    else if(tm) html+='<div style="margin-bottom:10px"><b>ساعت:</b> '+esc(tm)+'</div>';
-    html+='<div style="white-space:pre-wrap;line-height:2;margin:14px 0">'+esc(body)+'</div>';
-    html+='<div style="margin-top:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:20px">';
-    html+='<div style="min-width:150px"><b>امضای ولی:</b><div style="border-bottom:1px solid #999;height:40px;margin-top:6px"></div></div>';
-    html+='<div style="min-width:180px"><div style="border:1px dashed #999;min-height:80px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.8rem;color:#888">محل مهر و امضای مدرسه</div>';
-    html+='<div style="margin-top:6px;text-align:center">'+esc(profile.manager||'مدیر مدرسه')+'</div></div>';
-    html+='</div>';
-    html+='<div style="margin-top:20px;font-size:.8rem;color:#666;text-align:center">تاریخ چاپ: '+faDate(Date.now())+'</div>';
-    html+='<div style="margin-top:8px;font-size:9.5px;color:#888;text-align:left">خروجی از سامانه مراقبان سلامت — سازنده مهدی حسینی</div>';
-    html+='</div>';
-  });
-  return html;
+  var cells='';
+  students.forEach(function(s){ cells += buildConsentCardHTML(s, subj, body, dt, tm); });
+  return '<div class="consent-cards-grid">'+cells+'</div>';
 }
 var consentPreviewReady=false;
 function previewConsent(){
@@ -3474,8 +3760,27 @@ function previewConsent(){
   consentPreviewReady=true;
   toast(fa(students.length)+' رضایت‌نامه آماده شد');
 }
+function consentCardPrintCSS(){
+  return '@page{size:A4;margin:8mm}'+
+    'body{font-family:Tahoma,sans-serif;direction:rtl;margin:0;background:#fff;color:#222}'+
+    '.consent-cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:3mm;padding:0;max-width:100%;margin:0 auto}'+
+    '.consent-card{border:0.6pt solid #999;border-radius:2mm;padding:2.5mm 3mm;break-inside:avoid;page-break-inside:avoid;height:86mm;box-sizing:border-box;display:flex;flex-direction:column;font-size:7.8pt;line-height:1.45;background:#fff;color:#222;overflow:hidden}'+
+    '.consent-card .cc-head{text-align:center;border-bottom:0.6pt solid #8a6a2c;padding-bottom:1mm;margin-bottom:1.5mm;flex-shrink:0}'+
+    '.consent-card .cc-bism{font-size:7pt;color:#6a4f1f;font-weight:700}'+
+    '.consent-card .cc-title{font-weight:800;font-size:9.5pt;color:#6a4f1f;line-height:1.2}'+
+    '.consent-card .cc-school{font-size:7pt;color:#666;margin-top:0.5mm}'+
+    '.consent-card .cc-body{flex:1;overflow:hidden}'+
+    '.consent-card .cc-row{margin-bottom:0.6mm}'+
+    '.consent-card .cc-row b{color:#6a4f1f}'+
+    '.consent-card .cc-text{margin-top:1mm;padding-top:1mm;border-top:0.3pt dashed #ccc;font-size:7pt;line-height:1.55;text-align:justify;color:#333;max-height:36mm;overflow:hidden}'+
+    '.consent-card .cc-sign{display:flex;gap:2.5mm;margin-top:1mm;padding-top:1mm;border-top:0.3pt dashed #ccc;font-size:6.8pt;flex-shrink:0}'+
+    '.consent-card .cc-sig-item{flex:1;text-align:center}'+
+    '.consent-card .cc-sig-line{border-bottom:0.5pt solid #666;height:6mm;margin-top:1mm}'+
+    '.consent-card .cc-sig-box{border:0.5pt dashed #999;height:8mm;margin-top:1mm;border-radius:1mm;display:flex;align-items:center;justify-content:center;color:#999;font-size:6pt}'+
+    '@media print{.consent-card{break-inside:avoid;page-break-inside:avoid}}';
+}
 function printConsent(){
-  if(!consentPreviewReady){ toast('ابتدا پیش‌نمایش بگیرید'); previewConsent(); if(!consentPreviewReady) return; }
+  if(!consentPreviewReady){ previewConsent(); if(!consentPreviewReady) return; }
   var subj=$('#consentSubject').value.trim();
   var body=$('#consentBody').value.trim();
   var dt=$('#consentDate').value.trim();
@@ -3484,9 +3789,10 @@ function printConsent(){
   var students=getConsentStudents(scope);
   if(!students.length){ toast('دانش‌آموزی نیست'); return; }
   var w=window.open('','_blank'); if(!w) return;
-  w.document.write('<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="UTF-8"><title>رضایت‌نامه</title><style>@page{size:A4;margin:14mm}body{font-family:Tahoma,sans-serif;direction:rtl;font-size:13px;line-height:1.9}.consent-preview{border:1px solid #ccc;border-radius:8px;padding:20px;background:#fff;max-width:700px;margin:0 auto}@media print{.consent-preview{break-inside:avoid;page-break-inside:avoid;border:none;max-width:none;padding:0}}</style></head><body>');
-  w.document.write(buildConsentHTML(subj,body,dt,tm,students));
-  w.document.write('</body></html>');
+  var html='<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="UTF-8"><title>رضایت‌نامه</title><style>'+
+    consentCardPrintCSS()+
+    '</style></head><body>'+buildConsentHTML(subj,body,dt,tm,students)+'</body></html>';
+  w.document.write(html);
   w.document.close();
   setTimeout(function(){ w.print(); },500);
 }
@@ -3509,14 +3815,35 @@ function buildReportData(key){
   });
   return res;
 }
+/* ✅ باگ ۹: null check */
 function printReportResult(){
   if(!currentReportCat){ toast('دسته انتخاب نشده'); return; }
   var cat=null; REPORT_CATS.forEach(function(c){ if(c.key===currentReportCat) cat=c; });
   if(!cat) return;
   var w=window.open('','_blank'); if(!w) return;
-  w.document.write('<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="UTF-8"><title>'+cat.title+'</title><style>@page{size:A4;margin:14mm}body{font-family:Tahoma,sans-serif;direction:rtl;font-size:12.5px}table{width:100%;border-collapse:collapse}th{background:#f4ecd9;text-align:right;padding:7px;border:1px solid #ccc}td{padding:6px;border:1px solid #ccc}h1{color:#8a6a2c;text-align:center}h2{background:#f4ecd9;padding:7px 10px;margin:14px 0 8px;border-right:4px solid #8a6a2c}h3{font-size:.95rem;color:#6a4f1f;margin:10px 0 8px;break-after:avoid;page-break-after:avoid}.info-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed #ccc}tr{break-inside:avoid;page-break-inside:avoid}</style></head><body>');
+  w.document.write('<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="UTF-8"><title>'+cat.title+'</title><style>@page{size:A4;margin:10mm}body{font-family:Tahoma,sans-serif;direction:rtl;font-size:11.5px;line-height:1.6}table{width:100%;border-collapse:collapse}th{background:#f4ecd9;text-align:right;padding:6px;border:1px solid #ccc}td{padding:5px 6px;border:1px solid #ccc}h1{color:#8a6a2c;text-align:center;font-size:16px}h2{background:#f4ecd9;padding:7px 10px;margin:14px 0 8px;border-right:4px solid #8a6a2c;break-after:avoid;page-break-after:avoid}h3{font-size:.95rem;color:#6a4f1f;margin:10px 0 8px;break-after:avoid;page-break-after:avoid}.info-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed #ccc}tr{break-inside:avoid;page-break-inside:avoid}'+
+    '.inc-cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:2.5mm}'+
+    '.inc-card{border:0.5pt solid #ccc;border-right:2pt solid #c98a1f;border-radius:1.5mm;padding:2mm 2.5mm;break-inside:avoid;page-break-inside:avoid;font-size:7.5pt;line-height:1.45;background:#fffdf7;color:#222}'+
+    '.inc-card .ic-head{display:flex;justify-content:space-between;align-items:center;border-bottom:0.3pt dashed #ccc;padding-bottom:0.8mm;margin-bottom:1mm;gap:2mm}'+
+    '.inc-card .ic-num{font-weight:800;color:#8a6a2c;font-size:8.5pt}'+
+    '.inc-card .ic-date{font-size:6.8pt;color:#888;white-space:nowrap}'+
+    '.inc-card .ic-row{margin-bottom:0.4mm}.inc-card .ic-row b{color:#6a4f1f}'+
+    '.inc-card .ic-status{display:inline-block;padding:0 1.5mm;border-radius:1mm;font-size:6.5pt;font-weight:700}'+
+    '.inc-card .ic-status.resolved{background:#e5f6ee;color:#1f5a38}.inc-card .ic-status.ongoing{background:#fdf3e2;color:#8a5a08}'+
+    '.consent-cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:3mm}'+
+    '.consent-card{border:0.6pt solid #999;border-radius:2mm;padding:2.5mm 3mm;height:86mm;box-sizing:border-box;display:flex;flex-direction:column;font-size:7.8pt;line-height:1.45;background:#fff;break-inside:avoid;page-break-inside:avoid;overflow:hidden}'+
+    '.consent-card .cc-head{text-align:center;border-bottom:0.6pt solid #8a6a2c;padding-bottom:1mm;margin-bottom:1.5mm}'+
+    '.consent-card .cc-title{font-weight:800;font-size:9.5pt;color:#6a4f1f}'+
+    '.consent-card .cc-school{font-size:7pt;color:#666}'+
+    '.consent-card .cc-bism{font-size:7pt;color:#6a4f1f;font-weight:700}'+
+    '.consent-card .cc-body{flex:1}.consent-card .cc-row b{color:#6a4f1f}.consent-card .cc-row{margin-bottom:0.6mm}'+
+    '.consent-card .cc-text{margin-top:1mm;padding-top:1mm;border-top:0.3pt dashed #ccc;font-size:7pt}'+
+    '.consent-card .cc-sign{display:flex;gap:2.5mm;margin-top:1mm;padding-top:1mm;border-top:0.3pt dashed #ccc;font-size:6.8pt}'+
+    '.consent-card .cc-sig-item{flex:1;text-align:center}.consent-card .cc-sig-line{border-bottom:0.5pt solid #666;height:6mm;margin-top:1mm}'+
+    '.consent-card .cc-sig-box{border:0.5pt dashed #999;height:8mm;margin-top:1mm;border-radius:1mm;display:flex;align-items:center;justify-content:center;color:#999;font-size:6pt}'+
+    '</style></head><body>');
   w.document.write('<h1>'+cat.icon+' '+cat.title+'</h1>');
-  w.document.write('<div style="text-align:center;color:#666;font-size:12px;margin-bottom:14px">'+(profile.school||'')+(profile.year?' — '+profile.year:'')+'</div>');
+  w.document.write('<div style="text-align:center;color:#666;font-size:11px;margin-bottom:14px">'+(profile.school||'')+(profile.year?' — '+profile.year:'')+'</div>');
   var content=$('#reportResultContent');
   if(content){
     var clone=content.cloneNode(true);
@@ -4005,48 +4332,78 @@ function loadDemo(){
 }
 
 /* ==================== PWA ==================== */
-var deferredPrompt=null;
+var deferredPrompt = null;
+var _swRegistration = null;
+
 function initPWA(){
-  var manifest={
-    name:'سامانه مراقب سلامت مدارس',
-    short_name:'مراقب سلامت',
-    start_url:'.',
-    display:'standalone',
-    background_color:'#8a6a2c',
-    theme_color:'#8a6a2c',
-    dir:'rtl', lang:'fa-IR',
-    icons:[{src:'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="32" fill="%238a6a2c"/><text x="96" y="130" font-size="120" text-anchor="middle">🩺</text></svg>',sizes:'192x192',type:'image/svg+xml',purpose:'any maskable'}]
-  };
-  try{
-    var blob=new Blob([JSON.stringify(manifest)],{type:'application/manifest+json'});
-    var url=URL.createObjectURL(blob);
-    var link=document.querySelector('link[rel="manifest"]');
-    if(!link){ link=document.createElement('link'); link.rel='manifest'; document.head.appendChild(link); }
-    link.href=url;
-  }catch(e){}
-  window.addEventListener('beforeinstallprompt', function(e){
-    e.preventDefault(); deferredPrompt=e;
-    var b=$('#installBtn'); if(b) b.style.display='flex';
-  });
-  window.addEventListener('appinstalled', function(){ toast('برنامه نصب شد'); });
-  if(window.matchMedia && window.matchMedia('(display-mode: standalone)').matches){
-    var b=$('#installBtn'); if(b) b.style.display='none';
-  }
   if('serviceWorker' in navigator){
-    if(location.protocol === 'https:'){
-      navigator.serviceWorker.register('sw.js').then(function(){ console.log('SW registered'); }).catch(function(err){ console.log('SW error:', err.message); });
+    if(location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1'){
+      window.addEventListener('load', function(){
+        navigator.serviceWorker.register('./sw.js', { scope: './' })
+          .then(function(reg){
+            _swRegistration = reg;
+            console.log('[PWA] SW registered. Scope:', reg.scope);
+            reg.addEventListener('updatefound', function(){
+              var newWorker = reg.installing;
+              if(!newWorker) return;
+              newWorker.addEventListener('statechange', function(){
+                if(newWorker.state === 'installed' && navigator.serviceWorker.controller){
+                  if(confirm('🔄 نسخه جدیدی از برنامه موجود است. هم‌اکنون بارگذاری شود؟')){
+                    newWorker.postMessage({ type: 'SKIP_WAITING' });
+                  }
+                }
+              });
+            });
+          })
+          .catch(function(err){ console.warn('[PWA] SW error:', err.message); });
+
+        navigator.serviceWorker.addEventListener('controllerchange', function(){
+          window.location.reload();
+        });
+      });
     } else if(location.protocol === 'file:' && !swWarningShown){
       swWarningShown = true;
       setTimeout(function(){
-        toast('💡 برای حالت آفلاین کامل، برنامه را روی HTTPS اجرا کنید');
+        toast('💡 برای نصب روی گوشی، برنامه را روی HTTPS اجرا کنید');
       }, 2500);
     }
   }
+
+  window.addEventListener('beforeinstallprompt', function(e){
+    e.preventDefault();
+    deferredPrompt = e;
+    var b = $('#installBtn');
+    if(b) b.style.display = 'flex';
+    console.log('[PWA] Install prompt available');
+  });
+
+  window.addEventListener('appinstalled', function(){
+    deferredPrompt = null;
+    var b = $('#installBtn');
+    if(b) b.style.display = 'none';
+    toast('🎉 برنامه با موفقیت نصب شد');
+  });
+
+  if(window.matchMedia && window.matchMedia('(display-mode: standalone)').matches){
+    var b = $('#installBtn');
+    if(b) b.style.display = 'none';
+  }
 }
+
 function installPWA(){
-  if(!deferredPrompt){ toast('از منوی مرورگر «افزودن به صفحه اصلی» را بزنید'); return; }
+  if(!deferredPrompt){
+    toast('از منوی مرورگر → «افزودن به صفحه اصلی» را بزنید');
+    return;
+  }
   deferredPrompt.prompt();
-  deferredPrompt.userChoice.then(function(c){ deferredPrompt=null; });
+  deferredPrompt.userChoice.then(function(choice){
+    if(choice.outcome === 'accepted'){
+      toast('✅ در حال نصب...');
+    } else {
+      toast('نصب لغو شد');
+    }
+    deferredPrompt = null;
+  });
 }
 
 /* ==================== Bulk و Schedule ==================== */
@@ -4086,7 +4443,7 @@ function saveBulkRecords(){
       var a = calcAge(s.birthJDN);
       if(a) ageAtScreening = +(a.years + a.months/12).toFixed(2);
     }
-    s.records.push({id:uid(),ts:Date.now(),height:h||null,weight:w||null,bmi:calcBMI(h,w),vision:'طبیعی',hearing:'طبیعی',dental:'سالم',skin:'سالم',notes:'ثبت گروهی',ageAtScreening:ageAtScreening});
+    s.records.push({id:uid(),ts:Date.now(),height:h||null,weight:w||null,bmi:calcBMI(h,w),vision:'',hearing:'',dental:'',skin:'',notes:'ثبت گروهی',ageAtScreening:ageAtScreening});
     saved++;
   });
   if(!saved){ toast('ورودی نیست'); return; }
@@ -4179,6 +4536,7 @@ function attachAllHandlers(){
   attachSignatureHandlers();
   attachCsvHandlers();
   attachPinHandlers();
+  bindInactivityListeners();
 }
 
 /* ==================== Init ==================== */
@@ -4212,4 +4570,4 @@ function attachAllHandlers(){
 })();
 </script>
 </body>
-</html>
+  </html>
