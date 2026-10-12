@@ -56,8 +56,6 @@ textarea{resize:vertical;min-height:60px}
 .version-badge .dot{width:6px;height:6px;border-radius:50%;background:#2e7a4f}
 .splash-links{margin-top:8px}
 .splash-links button{background:none;border:0;color:#8a6a2c;font-size:.76rem;cursor:pointer;text-decoration:underline;padding:4px}
-
-/* ===== PIN Screen ===== */
 #pinScreen{position:fixed;inset:0;z-index:220;overflow-y:auto;background:linear-gradient(160deg,#8a6a2c,#6a4f1f 60%,#4a3413);display:none;align-items:center;justify-content:center;padding:16px}
 #pinScreen.visible{display:flex}
 .pin-card{background:#fffdf7;border-radius:18px;width:100%;max-width:370px;padding:26px 22px;box-shadow:0 24px 64px rgba(0,0,0,.35);text-align:center}
@@ -75,7 +73,6 @@ textarea{resize:vertical;min-height:60px}
 .pin-pad .pin-clear{font-size:.78rem;color:#857862}
 .pin-pad .pin-back{font-size:1.1rem}
 .pin-actions{margin-top:6px}
-
 #app{display:none;flex-direction:column;flex:1;min-height:0}
 #app.visible{display:flex}
 .topbar{background:linear-gradient(135deg,#8a6a2c,#6a4f1f);color:#fff;padding:9px 14px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;flex-shrink:0;padding-top:calc(9px + env(safe-area-inset-top,0px))}
@@ -133,8 +130,16 @@ tr.vice-row td{background:linear-gradient(90deg,rgba(212,160,23,.14),rgba(212,16
 tr.vice-row:hover{background:linear-gradient(90deg,rgba(212,160,23,.14),rgba(212,160,23,.03))!important}
 tr.member-row td{background:var(--card)}
 tr.member-row:hover{background:var(--hover)}
+/* ✅ NEW: آمار زیرگروه */
+tr.subgroup-summary td{background:linear-gradient(90deg,rgba(46,122,79,.10),rgba(46,122,79,.02))!important;color:#1f5a38;font-weight:700;font-size:.78rem;padding:6px 14px;border-right:3px solid #2e7a4f;cursor:default!important;border-bottom:1px solid var(--border)}
+tr.subgroup-summary:hover td{background:linear-gradient(90deg,rgba(46,122,79,.10),rgba(46,122,79,.02))!important}
+/* ✅ NEW: آمار کلی */
+tr.overall-summary td{background:linear-gradient(135deg,var(--primary),var(--primary-d))!important;color:#fff;font-weight:800;font-size:.84rem;padding:12px 16px;cursor:default!important;border-radius:6px}
+tr.overall-summary:hover td{background:linear-gradient(135deg,var(--primary),var(--primary-d))!important}
+tr.overall-summary .stat-chip{display:inline-block;background:rgba(255,255,255,.2);padding:2px 10px;border-radius:10px;font-size:.74rem;margin:2px 4px;font-weight:700}
 [data-theme="dark"] tr.head-row td{color:#f09090;background:linear-gradient(90deg,rgba(197,59,59,.2),rgba(197,59,59,.05))!important}
 [data-theme="dark"] tr.vice-row td{color:#e0b04a;background:linear-gradient(90deg,rgba(212,160,23,.2),rgba(212,160,23,.05))!important}
+[data-theme="dark"] tr.subgroup-summary td{background:linear-gradient(90deg,rgba(92,209,160,.12),rgba(92,209,160,.03))!important;color:#5cd1a0}
 tr.draggable-row{cursor:grab}
 tr.draggable-row:active{cursor:grabbing}
 tr.drag-over td{background:linear-gradient(90deg,rgba(46,122,79,.2),rgba(46,122,79,.05))!important;box-shadow:inset 0 0 0 2px var(--ok)}
@@ -450,7 +455,7 @@ tr.dragging{opacity:.4}
       </div>
     </form>
     <div class="splash-links"><button type="button" onclick="resetProfile()">پاک کردن اطلاعات</button></div>
-    <div class="version-badge"><span class="dot"></span> نسخه ۴.۰.۱</div>
+    <div class="version-badge"><span class="dot"></span> نسخه ۱.۰.۵</div>
   </div>
 </div>
 
@@ -634,13 +639,13 @@ tr.dragging{opacity:.4}
     <section id="view-ambassadors" class="view">
       <div class="card">
         <h2>سفیران سلامت <span class="badge-count" id="ambassadorsCount">۰</span></h2>
-        <p class="hint" style="margin-bottom:8px">ساختار درختی: زیرگروه‌ها به سرگروه، و اعضا به زیرگروه متصل می‌شوند. <b>با کشیدن و رها کردن (Drag & Drop)</b> می‌توانید عضو را روی زیرگروه یا زیرگروه را روی سرگروه رها کنید.</p>
+        <p class="hint" style="margin-bottom:8px">ساختار درختی: زیرگروه‌ها به سرگروه، و اعضا به زیرگروه متصل می‌شوند. <b>Drag & Drop</b> برای اتصال، و دکمه‌های <b>↑ ↓</b> برای جابه‌جایی جایگاه اعضا در زیرگروه.</p>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
           <button class="btn primary sm" onclick="printAmbassadorCards()">🎴 چاپ کارت همه سفیران</button>
           <button class="btn gold sm" onclick="printAmbassadorsPDF()">🖨️ خروجی PDF فهرست</button>
         </div>
         <div class="table-wrap">
-          <table><thead><tr><th>نام</th><th>پایه</th><th>نقش</th><th>مسئولیت</th><th>والد</th><th style="width:70px"></th></tr></thead>
+          <table><thead><tr><th>نام</th><th>پایه</th><th>نقش</th><th>مسئولیت</th><th>والد</th><th style="width:110px">عملیات</th></tr></thead>
           <tbody id="ambassadorRows"></tbody></table>
         </div>
       </div>
@@ -825,7 +830,7 @@ tr.dragging{opacity:.4}
       </div></div>
       <div class="settings-panel" id="set-about"><div class="card"><h2>درباره</h2>
         <div class="info-row"><span>نام</span><b>سامانه مراقب سلامت مدارس</b></div>
-        <div class="info-row"><span>نسخه</span><b>۴.۰.۱</b></div>
+        <div class="info-row"><span>نسخه</span><b>۱.۰.۵</b></div>
         <div class="info-row"><span>سازنده</span><b>مهدی حسینی</b></div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">
           <button class="btn ghost sm" onclick="openModal('helpModal')">راهنما</button>
@@ -908,7 +913,7 @@ tr.dragging{opacity:.4}
       <a onclick="scrollToHelp(4)">۴. جستجو و صوتی</a>
       <a onclick="scrollToHelp(5)">۵. سطح ریسک</a>
       <a onclick="scrollToHelp(6)">۶. آموزش‌ها و فعالیت‌های بهداشتی</a>
-      <a onclick="scrollToHelp(7)">۷. سفیران و Drag & Drop</a>
+      <a onclick="scrollToHelp(7)">۷. سفیران، جابه‌جایی و آمار</a>
       <a onclick="scrollToHelp(8)">۸. یادداشت و Undo</a>
       <a onclick="scrollToHelp(9)">۹. گزارش‌ها و رضایت‌نامه</a>
       <a onclick="scrollToHelp(10)">۱۰. پروفایل و WHO</a>
@@ -927,18 +932,18 @@ tr.dragging{opacity:.4}
   <div class="help-section" id="help-4"><h4>🎤 ۴. جستجو و صوتی</h4><p>دکمه 🎤 برای جستجوی صوتی. جستجوی هوشمند غلط تایپی را تحمل می‌کند.</p></div>
   <div class="help-section" id="help-5"><h4>🚦 ۵. سطح ریسک</h4><p>پرخطر / تحت نظر / عادی بر اساس ترکیب یافته‌های غربالگری و هشدار تغییر وزن.</p></div>
   <div class="help-section" id="help-6"><h4>📚 ۶. آموزش‌ها و فعالیت‌های بهداشتی</h4><p>ثبت آموزش‌ها با عنوان، موضوع، تاریخ شمسی و خروجی PDF. گزارش PDF به‌صورت صعودی (قدیمی‌ترین در بالا) مرتب می‌شود.</p></div>
-  <div class="help-section" id="help-7"><h4>★ ۷. سفیران و Drag & Drop</h4><p>ساختار سه‌سطحی: سرگروه ← زیرگروه ← اعضا. <b>با کشیدن و رها کردن:</b> عضو را روی زیرگروه، یا زیرگروه را روی سرگروه رها کنید تا رابطه تنظیم شود. ردیف سبز به معنای آماده پذیرش است.</p><p>برای چاپ کارت زیبای سفیران: ۶ کارت در یک برگه A4 (۲ ستون × ۳ ردیف) — چاپ تکی هر سفیر هم از جدول امکان‌پذیر است.</p></div>
+  <div class="help-section" id="help-7"><h4>★ ۷. سفیران، جابه‌جایی و آمار</h4><p>ساختار سه‌سطحی: سرگروه ← زیرگروه ← اعضا.</p><p><b>Drag & Drop:</b> عضو را روی زیرگروه، یا زیرگروه را روی سرگروه رها کنید تا رابطه تنظیم شود.</p><p><b>جابه‌جایی جایگاه اعضا در زیرگروه:</b> با دکمه‌های <b>↑</b> و <b>↓</b> در ستون عملیات هر عضو، می‌توانید ترتیب اعضا را در زیرگروه خودشان جابه‌جا کنید.</p><p><b>آمار هر زیرگروه:</b> در انتهای هر زیرگروه، ردیف خلاصه‌ای نمایش داده می‌شود که تعداد اعضای آن زیرگروه را نشان می‌دهد.</p><p><b>آمار کلی سفیران:</b> در انتهای جدول، کارت خلاصه‌ای شامل تعداد کل / سرگروه / زیرگروه / اعضا / بدون زیرگروه نمایش داده می‌شود.</p><p>تمام این آمارها در <b>خروجی PDF</b> نیز اعمال می‌شوند.</p></div>
   <div class="help-section" id="help-8"><h4>📝 ۸. یادداشت و Undo</h4><p>یادداشت با یادآور تاریخ/ساعت شمسی. پس از حذف دانش‌آموز، یک پیام با دکمه <b>«بازگردانی»</b> ظاهر می‌شود (۱۰ ثانیه) که می‌توانید فوراً عمل حذف را برگردانید.</p></div>
   <div class="help-section" id="help-9"><h4>📈 ۹. گزارش‌ها و رضایت‌نامه</h4><p>آمار کلی، پرخطرها، ماهانه، بیماری واگیر، حوادث (چیدمان کارتی فشرده)، الگو، فرم وزارت و رضایت‌نامه.</p><p><b>رضایت‌نامه:</b> ۸ فرم در یک برگه A4 (۲ ستون × ۴ ردیف). دارای فیلدهای «موضوع» و «توضیح». چاپ در سه حالت: <b>همه</b>، <b>بر اساس پایه</b> یا <b>انتخاب مجزای هر فرد</b>.</p></div>
   <div class="help-section" id="help-10"><h4>👤 ۱۰. پروفایل و WHO</h4><p>نمودار WHO با استفاده از تاریخ تولد و جنسیت. اگر تاریخ تولد ثبت نشده باشد، بخش WHO نمایش داده نمی‌شود.</p></div>
   <div class="help-section" id="help-11"><h4>🩺 ۱۱. ثبت موردی غربالگری</h4><p>در بخش «ثبت / ویرایش غربالگری» می‌توانید هر آیتم را جدا ثبت کنید. اگر بعداً خواستید آیتم‌های خالی را پر کنید، روی دکمه ✏️ در ردیف تاریخچه کلیک کنید.</p></div>
-  <div class="help-section" id="help-12"><h4>🗑️ ۱۲. سطل زباله</h4><p>دانش‌آموزان حذف‌شده به مدت <b>۳۰ روز</b> در سطل زباله می‌مانند. در تنظیمات ← سطل زباله می‌توانید آن‌ها را <b>بازیابی</b> یا <b>برای همیشه حذف</b> کنید. پاک‌سازی خودکار بعد از ۳۰ روز انجام می‌شود.</p></div>
-  <div class="help-section" id="help-13"><h4>📅 ۱۳. تقویم قابل ویرایش</h4><p>در بخش «آموزش و تقویم» می‌توانید رویدادهای هر ماه را به دلخواه <b>اضافه</b>، <b>ویرایش</b> یا <b>حذف</b> کنید. تغییرات به‌صورت محلی ذخیره می‌شوند.</p></div>
+  <div class="help-section" id="help-12"><h4>🗑️ ۱۲. سطل زباله</h4><p>دانش‌آموزان حذف‌شده به مدت <b>۳۰ روز</b> در سطل زباله می‌مانند. در تنظیمات ← سطل زباله می‌توانید آن‌ها را <b>بازیابی</b> یا <b>برای همیشه حذف</b> کنید.</p></div>
+  <div class="help-section" id="help-13"><h4>📅 ۱۳. تقویم قابل ویرایش</h4><p>در بخش «آموزش و تقویم» می‌توانید رویدادهای هر ماه را به دلخواه <b>اضافه</b>، <b>ویرایش</b> یا <b>حذف</b> کنید.</p></div>
   <div class="help-section" id="help-14"><h4>🔒 ۱۴. قفل خودکار</h4><p>اگر تا ۱۰ دقیقه هیچ فعالیتی انجام ندهید، برنامه قفل می‌شود و برای ورود باید رمز ۵ رقمی را وارد کنید.</p></div>
-  <div class="help-section" id="help-15"><h4>✍️ ۱۵. نشانگر امضا</h4><p>در همه بخش‌هایی که محل امضای مراقب سلامت وجود دارد، نشانگر <b>«✓ امضا ثبت شده»</b> یا <b>«⚠️ امضا ثبت نشده»</b> نمایش داده می‌شود. برای ثبت امضا به تنظیمات ← امضا بروید.</p></div>
+  <div class="help-section" id="help-15"><h4>✍️ ۱۵. نشانگر امضا</h4><p>در همه بخش‌هایی که محل امضای مراقب سلامت وجود دارد، نشانگر <b>«✓ امضا ثبت شده»</b> یا <b>«⚠️ امضا ثبت نشده»</b> نمایش داده می‌شود.</p></div>
   <div class="help-section" id="help-16"><h4>⚙️ ۱۶. تنظیمات</h4><p>اطلاعات مدرسه، تم، امضا، پشتیبان، سطل زباله، صادرات CSV و پشتیبان ابری.</p></div>
   <div class="help-section" id="help-17"><h4>📱 ۱۷. نصب روی گوشی (PWA)</h4><p><b>اندروید:</b> منوی ⋮ → «Install app». <b>آیفون:</b> دکمه اشتراک‌گذاری → «Add to Home Screen». پس از نصب، بدون نیاز به اینترنت کار می‌کند.</p></div>
-  <div class="note-box" style="text-align:center;font-size:.75rem">خروجی از سامانه مراقبان سلامت — سازنده مهدی حسینی — نسخه ۴.۰.۱</div>
+  <div class="note-box" style="text-align:center;font-size:.75rem">خروجی از سامانه مراقبان سلامت — سازنده مهدی حسینی — نسخه ۱.۰.۵</div>
 </div></div>
 
 <div class="modal" id="aboutModal"><div class="modal-card" style="max-width:520px;padding:0;overflow:hidden">
@@ -953,7 +958,7 @@ tr.dragging{opacity:.4}
     </div>
     <div class="about-info-card">
       <div class="info-row"><span>📱 نام سامانه</span><b>سامانه مراقب سلامت مدارس</b></div>
-      <div class="info-row"><span>🏷️ نسخه</span><b>۴.۰.۱</b></div>
+      <div class="info-row"><span>🏷️ نسخه</span><b>۱.۰.۵</b></div>
       <div class="info-row"><span>👥 مخاطب</span><b>مراقبان سلامت مدارس ابتدایی</b></div>
       <div class="info-row"><span>🛠️ نوع کاربرد</span><b>رسمی — بهداشتی آموزشی</b></div>
       <div class="info-row"><span>💾 ذخیره‌سازی</span><b>محلی (بدون اینترنت)</b></div>
@@ -1019,31 +1024,14 @@ function persianToEnglishDigits(str){
 }
 
 /* ==================== نسخه و تغییرات ==================== */
-var APP_VERSION = '4.0.1';
+var APP_VERSION = '1.0.5';
 var SEEN_VERSION_KEY = 'moragheb_seen_version';
 var CHANGELOG = {
-  '4.0.1': [
-    '🐛 رفع باگ: چک‌باکس «انتخاب همه» بلافاصله غیرفعال می‌شد',
-    '🐛 رفع باگ: Undo اشتباه بعد از دو حذف پشت‌سرهم (مشکل کلوژر)',
-    '🐛 رفع باگ: نمایش NaN در تاریخ سطل زباله برای رکوردهای قدیمی',
-    '🐛 رفع باگ: خطای خاموش در چاپ گروهی (Popup Blocker)',
-    '🧹 حذف پارامتر استفاده‌نشده در نمودار دایره‌ای',
-    '🧹 رفع امضای تکراری در نامه ارجاع به پزشک',
-    '🎯 بهبود Drag & Drop سفیران (جلوگیری از تداخل با انتخاب متن)'
-  ],
-  '4.0.0': [
-    '☑️ افزودن انتخاب گروهی دانش‌آموزان با چک‌باکس',
-    '🖨️ چاپ گروهی کارت‌های سلامت',
-    '↩️ افزودن Undo/Redo (بازگردانی) پس از حذف',
-    '🎯 Drag & Drop سفیران',
-    '📊 افزودن نمودارهای تعاملی در داشبورد',
-    '🗑️ افزودن سطل زباله با بازیابی و پاک‌سازی خودکار ۳۰ روزه',
-    '📅 تقویم بهداشتی قابل ویرایش',
-    '📝 رضایت‌نامه: ۸ فرم در یک برگه A4',
-    '📋 افزودن فیلد «توضیح» به رضایت‌نامه',
-    '🎯 حالت‌های چاپ رضایت‌نامه: همه / بر اساس پایه / انتخاب مجزا',
-    '✍️ افزودن نشانگر امضا در همه بخش‌های امضا',
-    '🐛 رفع باگ اسکرول در موبایل',
+  '1.0.5': [
+    '↕️ افزودن جابه‌جایی جایگاه اعضا در زیرگروه سفیران (با دکمه‌های ↑↓)',
+    '📊 افزودن آمار تعداد اعضا در انتهای هر زیرگروه',
+    '📈 افزودن آمار کلی سفیران در انتهای جدول',
+    '🖨️ اعمال آمارهای فوق در چاپ و PDF سفیران',
     '📖 به‌روزرسانی راهنمای برنامه'
   ]
 };
@@ -1501,6 +1489,7 @@ function ensureStudentFields(s){
   if(!s.gender) s.gender='';
   if(typeof s.nationalId!=='string') s.nationalId='';
   if(!s.birthSource) s.birthSource = s.birthJDN ? 'manual' : 'none';
+  if(typeof s.subgroupOrder!=='number') s.subgroupOrder = 0;
   return s;
 }
 
@@ -1545,7 +1534,6 @@ function emptyTrash(){
   if(!confirm('همه '+trash.length+' مورد پاک شود؟')) return;
   trash = []; saveTrash(); renderTrashList(); toast('سطل خالی شد');
 }
-/* ✅ اصلاح باگ ۳: مدیریت deletedAt ناموجود */
 function renderTrashList(){
   var el=$('#trashList'); if(!el) return;
   if(!trash.length){ el.innerHTML='<div class="empty"><span class="big">🗑️</span>سطل زباله خالی است.</div>'; return; }
@@ -2157,7 +2145,6 @@ function renderInteractiveCharts(){
     { key:'skin', label:'پوست', value:scr.skin, color:'#8b5cf6', filter:null }
   ];
   var html='';
-  /* ✅ اصلاح: حذف پارامتر استفاده‌نشده */
   html+='<div class="chart-card"><h3>🥧 توزیع BMI</h3>'+buildPieChartSVG(bmiData)+'</div>';
   html+='<div class="chart-card"><h3>📊 نتایج غربالگری (ارجاع)</h3>'+buildBarChartSVG(scrData)+'</div>';
   el.innerHTML=html;
@@ -2399,7 +2386,6 @@ function clearStudentSelection(){
   var cb=$('#selectAllCheckbox'); if(cb) cb.checked=false;
   renderStudents();
 }
-/* ✅ اصلاح باگ ۱: حفظ وضعیت چک‌باکس انتخاب همه */
 function updateBulkToolbar(){
   var tb=$('#bulkToolbar'); var cnt=$('#bulkCount');
   if(!tb || !cnt) return;
@@ -2415,7 +2401,6 @@ function updateBulkToolbar(){
     allCb.checked = allSelected;
   }
 }
-/* ✅ اصلاح باگ ۴: پیام مناسب هنگام بلاک پاپ‌آپ */
 function bulkPrintHealthCards(){
   if(selectedStudentIds.size === 0){ toast('دانش‌آموزی انتخاب نشده'); return; }
   var ids = Array.from(selectedStudentIds);
@@ -2462,7 +2447,6 @@ function bulkPrintHealthCards(){
   w.document.write(html); w.document.close();
   setTimeout(function(){ w.print(); }, 500);
 }
-/* ✅ اصلاح باگ ۲: کلوژر Undo */
 function bulkMoveToTrash(){
   if(selectedStudentIds.size === 0){ toast('دانش‌آموزی انتخاب نشده'); return; }
   var n = selectedStudentIds.size;
@@ -2581,7 +2565,7 @@ function deleteTraining(id){ if(!confirm('این آموزش حذف شود؟')) r
 
 /* ==================== Footer ==================== */
 function creatorFooterFa(){
-  return '<div style="margin-top:18px;padding-top:8px;border-top:1px solid #ddd;font-size:9.5px;color:#888;text-align:left;direction:rtl">خروجی از سامانه مراقبان سلامت — سازنده مهدی حسینی — نسخه ۴.۰.۱</div>';
+  return '<div style="margin-top:18px;padding-top:8px;border-top:1px solid #ddd;font-size:9.5px;color:#888;text-align:left;direction:rtl">خروجی از سامانه مراقبان سلامت — سازنده مهدی حسینی — نسخه ۱.۰.۵</div>';
 }
 
 function printTrainingsPDF(){
@@ -2685,6 +2669,7 @@ function toggleAmbassador(id){
     s.ambassadorOrder=null;
     s.viceParentId='';
     s.headParentId='';
+    s.subgroupOrder=0;
     cleanupAmbassadorReferences(id);
   }
   saveDB(); renderStudents(); renderAmbassadors(); renderDashboard(); renderInfographic();
@@ -2703,6 +2688,7 @@ function setAmbassadorRole(id, role){
   s.ambassadorRole=role;
   if(role!=='member') s.viceParentId='';
   if(role!=='vice') s.headParentId='';
+  if(role!=='member') s.subgroupOrder=0;
   if(!s.ambassadorOrder){
     var mx=0; db.students.forEach(function(x){ if(x.isAmbassador&&x.id!==id&&(x.ambassadorOrder||0)>mx) mx=x.ambassadorOrder; });
     s.ambassadorOrder=mx+1;
@@ -2722,7 +2708,14 @@ function setViceParent(memberId, viceId){
     var v=getStudent(viceId);
     if(!v || v.ambassadorRole!=='vice'){ toast('والد انتخاب‌شده زیرگروه نیست'); return; }
   }
+  var prevVice = s.viceParentId;
   s.viceParentId = viceId || '';
+  /* ✅ NEW: تنظیم ترتیب در زیرگروه جدید */
+  if(viceId && prevVice !== viceId){
+    s.subgroupOrder = getNextSubgroupOrder(viceId);
+  } else if(!viceId){
+    s.subgroupOrder = 0;
+  }
   saveDB(); renderAmbassadors(); toast(viceId?'زیرگروه مسئول تنظیم شد':'پاک شد');
 }
 function setHeadParent(viceId, headId){
@@ -2741,6 +2734,64 @@ function editResponsibility(id){
   if(v===null) return;
   s.responsibility=v.trim(); saveDB(); renderAmbassadors(); toast('ثبت شد');
 }
+/* ✅ NEW: توابع جابه‌جایی و ترتیب زیرگروه */
+function getNextSubgroupOrder(viceId){
+  var mx = 0;
+  db.students.forEach(function(x){
+    if(x.isAmbassador && x.viceParentId===viceId && (x.ambassadorRole||'member')==='member'){
+      if((x.subgroupOrder||0) > mx) mx = x.subgroupOrder||0;
+    }
+  });
+  return mx + 1;
+}
+function getSubgroupSiblings(s){
+  if(!s.viceParentId) return [];
+  return db.students.filter(function(x){
+    return x.isAmbassador && x.viceParentId===s.viceParentId && (x.ambassadorRole||'member')==='member';
+  }).sort(function(a,b){
+    var oa = a.subgroupOrder||0, ob = b.subgroupOrder||0;
+    if(oa !== ob) return oa - ob;
+    return normalizePersian(a.name).localeCompare(normalizePersian(b.name),'fa');
+  });
+}
+function moveMemberUp(memberId){
+  var s=getStudent(memberId); if(!s) return;
+  if(s.ambassadorRole!=='member' || !s.viceParentId){ return; }
+  var sib = getSubgroupSiblings(s);
+  var idx = sib.indexOf(s);
+  if(idx <= 0){ toast('بالاترین جایگاه است'); return; }
+  var prev = sib[idx-1];
+  var tmp = s.subgroupOrder||0;
+  s.subgroupOrder = prev.subgroupOrder||0;
+  prev.subgroupOrder = tmp;
+  /* اگر هر دو صفر بودند، ترتیب واقعی بده */
+  if(s.subgroupOrder === prev.subgroupOrder){
+    for(var i=0;i<sib.length;i++){ sib[i].subgroupOrder = i+1; }
+    var tmp2 = s.subgroupOrder;
+    s.subgroupOrder = prev.subgroupOrder;
+    prev.subgroupOrder = tmp2;
+  }
+  saveDB(); renderAmbassadors(); toast('جابه‌جا شد');
+}
+function moveMemberDown(memberId){
+  var s=getStudent(memberId); if(!s) return;
+  if(s.ambassadorRole!=='member' || !s.viceParentId){ return; }
+  var sib = getSubgroupSiblings(s);
+  var idx = sib.indexOf(s);
+  if(idx < 0 || idx >= sib.length-1){ toast('پایین‌ترین جایگاه است'); return; }
+  var next = sib[idx+1];
+  var tmp = s.subgroupOrder||0;
+  s.subgroupOrder = next.subgroupOrder||0;
+  next.subgroupOrder = tmp;
+  if(s.subgroupOrder === next.subgroupOrder){
+    for(var i=0;i<sib.length;i++){ sib[i].subgroupOrder = i+1; }
+    var tmp2 = s.subgroupOrder;
+    s.subgroupOrder = next.subgroupOrder;
+    next.subgroupOrder = tmp2;
+  }
+  saveDB(); renderAmbassadors(); toast('جابه‌جا شد');
+}
+
 function getAmbassadorData(){
   var all=db.students.filter(function(s){ return s.isAmbassador; });
   all.forEach(function(s){ ensureStudentFields(s); });
@@ -2750,7 +2801,7 @@ function getAmbassadorData(){
   return { all:all, heads:heads, vices:vices, members:members };
 }
 
-/* ✅ اصلاح باگ ۷: جلوگیری از تداخل Drag با انتخاب متن/سلول‌های تعاملی */
+/* Drag & Drop سفیران */
 var _dragAmbassadorId = null;
 function attachAmbassadorDragDrop(){
   var rows = $$('#ambassadorRows tr[draggable="true"]');
@@ -2800,6 +2851,28 @@ function attachAmbassadorDragDrop(){
   });
 }
 
+/* ✅ NEW: محاسبه آمار کلی سفیران */
+function getAmbassadorStats(){
+  var all = db.students.filter(function(s){ return s.isAmbassador; });
+  var heads = all.filter(function(s){ return (s.ambassadorRole||'member')==='head'; });
+  var vices = all.filter(function(s){ return (s.ambassadorRole||'member')==='vice'; });
+  var members = all.filter(function(s){ return (s.ambassadorRole||'member')==='member'; });
+  var membersWithVice = members.filter(function(s){ return !!s.viceParentId; });
+  var membersWithoutVice = members.filter(function(s){ return !s.viceParentId; });
+  var vicesWithHead = vices.filter(function(s){ return !!s.headParentId; });
+  var vicesWithoutHead = vices.filter(function(s){ return !s.headParentId; });
+  return {
+    total: all.length,
+    heads: heads.length,
+    vices: vices.length,
+    members: members.length,
+    membersWithVice: membersWithVice.length,
+    membersWithoutVice: membersWithoutVice.length,
+    vicesWithHead: vicesWithHead.length,
+    vicesWithoutHead: vicesWithoutHead.length
+  };
+}
+
 function renderAmbassadors(){
   var data = getAmbassadorData();
   var tbody=$('#ambassadorRows'); var cnt=$('#ambassadorsCount');
@@ -2833,15 +2906,27 @@ function renderAmbassadors(){
     }
     return '<span style="color:var(--muted);font-size:.72rem">—</span>';
   }
-  function rowFor(s, rowCls, prefix){
+  function rowFor(s, rowCls, prefix, opts){
     var role = s.ambassadorRole||'member';
+    var showReorder = !!(opts && opts.showReorder);
     var cells='<td>'+(prefix||'')+esc(s.name)+'</td>';
     cells+='<td>'+esc(s.grade)+'</td>';
     cells+='<td>'+renderRoleSelect(s)+'</td>';
     cells+='<td><span class="badge b-gold" style="cursor:pointer" onclick="editResponsibility(\''+s.id+'\')">'+(esc(s.responsibility)||'+ افزودن')+'</span></td>';
     cells+='<td>'+renderParentSelect(s)+'</td>';
-    cells+='<td><button class="btn icon" title="چاپ کارت" onclick="printAmbassadorCard(\''+s.id+'\')">🎴</button><button class="btn icon danger" onclick="toggleAmbassador(\''+s.id+'\')">×</button></td>';
+    var reorderBtns = '';
+    if(showReorder){
+      reorderBtns = '<button class="btn icon" title="بالا" onclick="moveMemberUp(\''+s.id+'\')" style="font-size:.85rem;padding:4px 6px">↑</button>'+
+                    '<button class="btn icon" title="پایین" onclick="moveMemberDown(\''+s.id+'\')" style="font-size:.85rem;padding:4px 6px">↓</button>';
+    }
+    cells+='<td style="white-space:nowrap">'+reorderBtns+
+      '<button class="btn icon" title="چاپ کارت" onclick="printAmbassadorCard(\''+s.id+'\')">🎴</button>'+
+      '<button class="btn icon danger" onclick="toggleAmbassador(\''+s.id+'\')">×</button></td>';
     return '<tr class="'+rowCls+' draggable-row" draggable="true" data-aid="'+s.id+'" data-role="'+role+'">'+cells+'</tr>';
+  }
+  /* ✅ NEW: ردیف خلاصه زیرگروه */
+  function subgroupSummaryRow(viceName, count){
+    return '<tr class="subgroup-summary no-hover"><td colspan="6">📊 آمار زیرگروه «'+esc(viceName)+'» — تعداد اعضا: <b>'+fa(count)+'</b> نفر</td></tr>';
   }
   var html='';
   data.heads.forEach(function(h){
@@ -2852,13 +2937,22 @@ function renderAmbassadors(){
       myVices.forEach(function(v){
         html += '<tr class="vice-row no-hover"><td colspan="6">🥈 زیرگروه: <b>'+esc(v.name)+'</b>'+(v.responsibility?' — '+esc(v.responsibility):'')+'</td></tr>';
         html += rowFor(v, 'no-hover', '&nbsp;&nbsp;&nbsp;&nbsp;');
-        var myMembers = data.members.filter(function(m){ return m.viceParentId===v.id; });
+        /* ✅ NEW: اعضا با ترتیب subgroupOrder */
+        var myMembers = data.members.filter(function(m){ return m.viceParentId===v.id; })
+          .sort(function(a,b){
+            var oa = a.subgroupOrder||0, ob = b.subgroupOrder||0;
+            if(oa !== ob) return oa - ob;
+            return normalizePersian(a.name).localeCompare(normalizePersian(b.name),'fa');
+          });
         if(myMembers.length){
           myMembers.forEach(function(m){
-            html += rowFor(m, 'member-row no-hover', '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↳ ');
+            html += rowFor(m, 'member-row no-hover', '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↳ ', { showReorder: true });
           });
+          /* ✅ NEW: ردیف آمار زیرگروه */
+          html += subgroupSummaryRow(v.name, myMembers.length);
         } else {
           html += '<tr class="no-hover member-row"><td colspan="6" style="color:var(--muted);font-size:.74rem">— عضوی برای این زیرگروه —</td></tr>';
+          html += subgroupSummaryRow(v.name, 0);
         }
       });
     } else {
@@ -2870,11 +2964,19 @@ function renderAmbassadors(){
     html += '<tr class="group-header no-hover"><td colspan="6">🥈 زیرگروه‌های بدون سرگروه <span class="cnt">'+fa(orphanVices.length)+'</span></td></tr>';
     orphanVices.forEach(function(v){
       html += rowFor(v, 'vice-row no-hover', '');
-      var myMembers = data.members.filter(function(m){ return m.viceParentId===v.id; });
+      var myMembers = data.members.filter(function(m){ return m.viceParentId===v.id; })
+        .sort(function(a,b){
+          var oa = a.subgroupOrder||0, ob = b.subgroupOrder||0;
+          if(oa !== ob) return oa - ob;
+          return normalizePersian(a.name).localeCompare(normalizePersian(b.name),'fa');
+        });
       if(myMembers.length){
         myMembers.forEach(function(m){
-          html += rowFor(m, 'member-row no-hover', '&nbsp;&nbsp;&nbsp;&nbsp;↳ ');
+          html += rowFor(m, 'member-row no-hover', '&nbsp;&nbsp;&nbsp;&nbsp;↳ ', { showReorder: true });
         });
+        html += subgroupSummaryRow(v.name, myMembers.length);
+      } else {
+        html += subgroupSummaryRow(v.name, 0);
       }
     });
   }
@@ -2882,9 +2984,19 @@ function renderAmbassadors(){
   if(orphanMembers.length){
     html += '<tr class="group-header no-hover"><td colspan="6">👤 اعضای بدون زیرگروه <span class="cnt">'+fa(orphanMembers.length)+'</span></td></tr>';
     orphanMembers.forEach(function(m){
-      html += rowFor(m, 'member-row no-hover', '&nbsp;&nbsp;• ');
+      html += rowFor(m, 'member-row no-hover', '&nbsp;&nbsp;• ', { showReorder: false });
     });
   }
+  /* ✅ NEW: ردیف آمار کلی سفیران */
+  var stats = getAmbassadorStats();
+  html += '<tr class="overall-summary no-hover"><td colspan="6">📊 <b>آمار کلی سفیران سلامت:</b> '+
+    '<span class="stat-chip">کل: '+fa(stats.total)+'</span>'+
+    '<span class="stat-chip">🎯 سرگروه: '+fa(stats.heads)+'</span>'+
+    '<span class="stat-chip">🥈 زیرگروه: '+fa(stats.vices)+'</span>'+
+    '<span class="stat-chip">👤 اعضا: '+fa(stats.members)+'</span>'+
+    '<span class="stat-chip">↳ عضو با زیرگروه: '+fa(stats.membersWithVice)+'</span>'+
+    '<span class="stat-chip">⚠️ عضو بدون زیرگروه: '+fa(stats.membersWithoutVice)+'</span>'+
+    '</td></tr>';
   tbody.innerHTML=html;
   attachAmbassadorDragDrop();
 }
@@ -2898,7 +3010,6 @@ function managerStampFooter(){
     '<div style="text-align:center;min-width:180px;font-size:11px;color:#666">تاریخ: '+faDate(Date.now())+'</div>'+
     '</div>';
 }
-/* ✅ اصلاح باگ ۶: فقط مهر مدیر، بدون تکرار امضای مراقب (برای نامه ارجاع) */
 function managerStampOnlyFooter(){
   return '<div style="margin-top:30px;padding-top:12px;border-top:1px dashed #999;display:flex;justify-content:space-between;flex-wrap:wrap;gap:20px">'+
     '<div style="text-align:center;min-width:180px"><div style="border:1px dashed #999;min-height:80px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#888">محل مهر و امضای مدیر</div>'+
@@ -2907,14 +3018,30 @@ function managerStampOnlyFooter(){
     '</div>';
 }
 
+/* ✅ NEW: چاپ PDF فهرست سفیران با آمار */
 function printAmbassadorsPDF(){
   var data = getAmbassadorData();
   if(!data.all.length){ toast('سفیری وجود ندارد'); return; }
+  var stats = getAmbassadorStats();
   var headerSub=[]; if(profile.school) headerSub.push(esc(profile.school)); if(profile.year) headerSub.push('سال '+esc(profile.year));
+
+  /* چاپ آمار کلی در ابتدا */
+  var statsBoxHtml = '<div class="stats-box">'+
+    '<b>📊 آمار کلی سفیران:</b> '+
+    '<span class="stat-chip">کل: '+fa(stats.total)+'</span>'+
+    '<span class="stat-chip">🎯 سرگروه: '+fa(stats.heads)+'</span>'+
+    '<span class="stat-chip">🥈 زیرگروه: '+fa(stats.vices)+'</span>'+
+    '<span class="stat-chip">👤 اعضا: '+fa(stats.members)+'</span>'+
+    '<span class="stat-chip">↳ عضو با زیرگروه: '+fa(stats.membersWithVice)+'</span>'+
+    '<span class="stat-chip">⚠️ بدون زیرگروه: '+fa(stats.membersWithoutVice)+'</span>'+
+  '</div>';
+
   var html='<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="UTF-8"><title>سفیران</title><style>@page{size:A4;margin:14mm}'+
     'body{font-family:Tahoma,sans-serif;direction:rtl;font-size:12.5px;line-height:1.7}'+
     '.head{text-align:center;border-bottom:3px double #8a6a2c;padding-bottom:12px;margin-bottom:16px}'+
     '.head h1{color:#8a6a2c;font-size:18px;margin-bottom:4px}'+
+    '.stats-box{background:linear-gradient(135deg,#f4ecd9,#fdfbf4);border:1px solid #d5c9a0;border-radius:6px;padding:8px 12px;margin-bottom:14px;font-size:11.5px;text-align:center}'+
+    '.stats-box .stat-chip{display:inline-block;background:#8a6a2c;color:#fff;padding:2px 10px;border-radius:10px;font-size:10.5px;margin:2px 3px;font-weight:700}'+
     'h2{font-size:14px;padding:8px 12px;margin:14px 0 8px;border-radius:6px;border-right:5px solid #8a6a2c;background:#f4ecd9;color:#6a4f1f;break-after:avoid;page-break-after:avoid}'+
     'h2.heads{background:#fce8e8;color:#a01818;border-right-color:#c53b3b}'+
     'h2.vices{background:#fff4d6;color:#8a6a2c;border-right-color:#d4a017}'+
@@ -2925,9 +3052,15 @@ function printAmbassadorsPDF(){
     'tr.head-line td{background:#fce8e8!important;color:#a01818;font-weight:800;padding:8px 12px;border-right:5px solid #c53b3b}'+
     'tr.vice-line td{background:#fff4d6!important;color:#8a6a2c;font-weight:700;padding:8px 12px;border-right:4px solid #d4a017}'+
     'tr.member-line td{background:#fdfbf4!important;padding-right:32px}'+
+    'tr.subgroup-summary-line td{background:#e5f6ee!important;color:#1f5a38;font-weight:700;font-size:11.5px;padding:6px 14px;border-right:3px solid #2e7a4f}'+
+    'tr.overall-summary-line td{background:#8a6a2c!important;color:#fff;font-weight:800;font-size:11.5px;padding:8px 14px;text-align:center}'+
+    'tr.overall-summary-line .stat-chip{display:inline-block;background:rgba(255,255,255,.2);padding:1px 8px;border-radius:8px;font-size:10.5px;margin:1px 3px}'+
     'tr{break-inside:avoid;page-break-inside:avoid}'+
+    '.footer-note{margin-top:12px;padding-top:10px;border-top:1px dashed #999}'+
     '</style></head><body>';
   html+='<div class="head"><h1>فهرست سفیران سلامت مدرسه</h1>'+(headerSub.length?'<div style="font-size:12px;color:#666">'+headerSub.join(' — ')+'</div>':'')+'</div>';
+  html+=statsBoxHtml;
+
   if(data.heads.length){
     html+='<h2 class="heads">🎯 سرگروه‌ها و زیرمجموعه</h2>';
     html+='<table><thead><tr><th>نام</th><th>پایه</th><th>نقش</th><th>مسئولیت</th></tr></thead><tbody>';
@@ -2936,10 +3069,17 @@ function printAmbassadorsPDF(){
       var myVices = data.vices.filter(function(v){ return v.headParentId===h.id; });
       myVices.forEach(function(v){
         html+='<tr class="vice-line"><td>↳ '+esc(v.name)+'</td><td>'+esc(v.grade)+'</td><td>زیرگروه</td><td>'+(esc(v.responsibility)||'—')+'</td></tr>';
-        var myMembers = data.members.filter(function(m){ return m.viceParentId===v.id; });
+        var myMembers = data.members.filter(function(m){ return m.viceParentId===v.id; })
+          .sort(function(a,b){
+            var oa = a.subgroupOrder||0, ob = b.subgroupOrder||0;
+            if(oa !== ob) return oa - ob;
+            return normalizePersian(a.name).localeCompare(normalizePersian(b.name),'fa');
+          });
         myMembers.forEach(function(m){
           html+='<tr class="member-line"><td>↳↳ '+esc(m.name)+'</td><td>'+esc(m.grade)+'</td><td>عضو</td><td>'+(esc(m.responsibility)||'—')+'</td></tr>';
         });
+        /* ✅ NEW: آمار زیرگروه در PDF */
+        html+='<tr class="subgroup-summary-line"><td colspan="4">📊 آمار زیرگروه «'+esc(v.name)+'» — تعداد اعضا: <b>'+fa(myMembers.length)+'</b> نفر</td></tr>';
       });
     });
     html+='</tbody></table>';
@@ -2951,10 +3091,16 @@ function printAmbassadorsPDF(){
     html+='<table><thead><tr><th>نام</th><th>پایه</th><th>مسئولیت</th></tr></thead><tbody>';
     orphanVices.forEach(function(v){
       html+='<tr class="vice-line"><td><b>'+esc(v.name)+'</b></td><td>'+esc(v.grade)+'</td><td>'+(esc(v.responsibility)||'—')+'</td></tr>';
-      var myMembers=data.members.filter(function(m){ return m.viceParentId===v.id; });
+      var myMembers=data.members.filter(function(m){ return m.viceParentId===v.id; })
+        .sort(function(a,b){
+          var oa = a.subgroupOrder||0, ob = b.subgroupOrder||0;
+          if(oa !== ob) return oa - ob;
+          return normalizePersian(a.name).localeCompare(normalizePersian(b.name),'fa');
+        });
       myMembers.forEach(function(m){
         html+='<tr class="member-line"><td>↳ '+esc(m.name)+'</td><td>'+esc(m.grade)+'</td><td>'+(esc(m.responsibility)||'—')+'</td></tr>';
       });
+      html+='<tr class="subgroup-summary-line"><td colspan="3">📊 آمار زیرگروه «'+esc(v.name)+'» — تعداد اعضا: <b>'+fa(myMembers.length)+'</b> نفر</td></tr>';
     });
     html+='</tbody></table>';
   }
@@ -2966,6 +3112,15 @@ function printAmbassadorsPDF(){
     });
     html+='</tbody></table>';
   }
+  /* ✅ NEW: آمار کلی در انتهای PDF */
+  html+='<table style="margin-top:14px"><tbody><tr class="overall-summary-line"><td>📊 <b>آمار کلی سفیران سلامت:</b> '+
+    '<span class="stat-chip">کل: '+fa(stats.total)+'</span> '+
+    '<span class="stat-chip">🎯 سرگروه: '+fa(stats.heads)+'</span> '+
+    '<span class="stat-chip">🥈 زیرگروه: '+fa(stats.vices)+'</span> '+
+    '<span class="stat-chip">👤 اعضا: '+fa(stats.members)+'</span> '+
+    '<span class="stat-chip">↳ عضو با زیرگروه: '+fa(stats.membersWithVice)+'</span> '+
+    '<span class="stat-chip">⚠️ بدون زیرگروه: '+fa(stats.membersWithoutVice)+'</span>'+
+    '</td></tr></tbody></table>';
   html+=managerStampFooter();
   html+=creatorFooterFa();
   html+='</body></html>';
@@ -3130,7 +3285,7 @@ function attachStudentForm(){
       birthSource: birthSource,
       specialNotes:'', medications:[], doctorReports:[],
       responsibility:'', ambassadorRole:'member', ambassadorOrder:null,
-      viceParentId:'', headParentId:'',
+      viceParentId:'', headParentId:'', subgroupOrder:0,
       isAmbassador:false, createdAt:Date.now(),
       records:[], incidents:[], referrals:[],
       transferStatus:null, transferDate:null
@@ -3524,7 +3679,6 @@ function deleteRecord(sid, rid){
   s.records=s.records.filter(function(r){ return r.id!==rid; });
   saveDB(); renderProfile(sid); renderDashboard(); renderStudents(); renderInfographic(); toast('حذف شد');
 }
-/* ✅ اصلاح باگ ۲: کلوژر Undo در deleteStudent */
 function deleteStudent(id){
   var s=getStudent(id); if(!s) return;
   if(!confirm('حذف «'+s.name+'»؟ (به سطل زباله می‌رود و تا ۳۰ روز قابل بازگردانی است)')) return;
@@ -3655,7 +3809,6 @@ function buildAndSaveReferral(sid){
   var rp=$('#refPreview'); if(rp) rp.innerHTML=html;
   toast('ثبت شد');
 }
-/* ✅ اصلاح باگ ۶: استفاده از managerStampOnlyFooter (بدون تکرار امضا) */
 function printReferralFromProfile(sid){
   var html=lastReferralHTMLByStudent[sid];
   if(!html){ toast('ابتدا تولید کنید'); return; }
@@ -4513,7 +4666,7 @@ function importCsvStudents(){
       birthJDN:parsed.jdn, nationalId:nidRaw, birthSource:parsed.source,
       specialNotes:'',medications:[],doctorReports:[],
       responsibility:'',ambassadorRole:'member',ambassadorOrder:null,
-      viceParentId:'',headParentId:'',isAmbassador:false,createdAt:now,
+      viceParentId:'',headParentId:'',subgroupOrder:0,isAmbassador:false,createdAt:now,
       records:[],incidents:[],referrals:[],transferStatus:null,transferDate:null
     });
     added++;
@@ -4802,7 +4955,7 @@ function loadDemo(){
       nationalId:'', birthSource: birthJDN?'manual':'none',
       specialNotes:'',medications:[],doctorReports:[],
       responsibility:'',ambassadorRole:'member',ambassadorOrder:null,
-      viceParentId:'',headParentId:'',isAmbassador:false,createdAt:ts,
+      viceParentId:'',headParentId:'',subgroupOrder:0,isAmbassador:false,createdAt:ts,
       records:[{id:uid(),ts:ts,height:h,weight:w,bmi:calcBMI(h,w),vision:'طبیعی',hearing:'طبیعی',dental:'سالم',skin:'سالم',notes:'',ageAtScreening:ageAtScreening}],
       incidents:[],referrals:[],transferStatus:null,transferDate:null
     };
