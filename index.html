@@ -419,6 +419,38 @@ tr.dragging{opacity:.4}
 .amb-card-sign .amb-sig-line{border-bottom:0.5pt solid #666;height:5mm;margin-bottom:0.8mm}
 .amb-card-sign .amb-sig-box{border:0.5pt dashed #999;height:8mm;border-radius:1mm;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:6pt;margin-bottom:0.8mm}
 .amb-card-sign .amb-sig-label{color:#555;font-weight:700}
+/* ✅ باگ ۱ — رفع: استایل نامه ارجاع گروهی به صفحه اصلی اضافه شد */
+.referral-preview-grid .ref-card,
+.ref-card{
+  border:1.2pt solid #8a6a2c;
+  border-radius:2.5mm;
+  padding:2.5mm;
+  min-height:138mm;
+  box-sizing:border-box;
+  display:flex;
+  flex-direction:column;
+  background:linear-gradient(180deg,#fffdf7 0%,#fdfbf4 100%);
+  break-inside:avoid;
+  page-break-inside:avoid;
+  overflow:hidden;
+  position:relative;
+  color:#222;
+}
+.ref-card::before{content:"";position:absolute;top:0;right:0;width:100%;height:1.2mm;background:linear-gradient(90deg,#8a6a2c,#d4a017,#8a6a2c)}
+.ref-card .rc-head{text-align:center;border-bottom:1pt solid #d4a017;padding:1mm 0 1.5mm;margin-bottom:1.5mm;padding-top:1mm;flex-shrink:0}
+.ref-card .rc-bism{font-size:8pt;color:#6a4f1f;font-weight:700}
+.ref-card .rc-school{font-size:9pt;color:#6a4f1f;font-weight:700}
+.ref-card .rc-title{font-size:11pt;font-weight:800;color:#8a6a2c;letter-spacing:.3px}
+.ref-card .rc-body{flex:1;overflow:hidden;display:flex;flex-direction:column;gap:0.8mm}
+.ref-card .rc-row{font-size:9pt;line-height:1.6}
+.ref-card .rc-row b{color:#6a4f1f}
+.ref-card .rc-text{flex:1;font-size:8.5pt;line-height:1.7;text-align:justify;padding:1.5mm 0;color:#333;overflow:hidden;margin-top:1mm;border-top:0.3pt dashed #ccc;padding-top:1.5mm}
+.ref-card .rc-text b{color:#6a4f1f}
+.ref-card .rc-sign{display:flex;gap:2.5mm;font-size:8pt;margin-top:1mm;padding-top:1mm;border-top:0.3pt dashed #ccc;flex-shrink:0}
+.ref-card .rc-sig-item{flex:1;text-align:center}
+.ref-card .rc-sig-line{border-bottom:0.5pt solid #666;height:6mm;margin-bottom:0.6mm}
+.ref-card .rc-sig-box{border:0.5pt dashed #999;height:8mm;border-radius:1mm;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:7pt;margin-bottom:0.6mm}
+.ref-card .rc-sig-label{color:#555;font-weight:700}
 @media print{
   body{overflow:visible;height:auto;display:block;background:#fff;color:#000}
   .topbar,.tabs,.btn,#toast,#splash,#pinScreen,.tools-nav,.filters,.modal-close,.settings-nav,.voice-btn,.search-wrap,.bulk-toolbar{display:none!important}
@@ -453,7 +485,7 @@ tr.dragging{opacity:.4}
       </div>
     </form>
     <div class="splash-links"><button type="button" onclick="resetProfile()">پاک کردن اطلاعات</button></div>
-    <div class="version-badge"><span class="dot"></span> نسخه ۱.۲.۰</div>
+    <div class="version-badge"><span class="dot"></span> نسخه ۱.۲.۴</div>
   </div>
 </div>
 
@@ -855,7 +887,7 @@ tr.dragging{opacity:.4}
       </div></div>
       <div class="settings-panel" id="set-about"><div class="card"><h2>درباره</h2>
         <div class="info-row"><span>نام</span><b>سامانه مراقب سلامت مدارس</b></div>
-        <div class="info-row"><span>نسخه</span><b>۱.۲.۰</b></div>
+        <div class="info-row"><span>نسخه</span><b>۱.۲.۴</b></div>
         <div class="info-row"><span>سازنده</span><b>مهدی حسینی</b></div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">
           <button class="btn ghost sm" onclick="openModal('helpModal')">راهنما</button>
@@ -880,6 +912,16 @@ tr.dragging{opacity:.4}
     <button class="btn primary" onclick="confirmWhoGender('m')">۱ = پسر 🧒</button>
     <button class="btn gold" onclick="confirmWhoGender('f')">۲ = دختر 👧</button>
     <button class="btn ghost" onclick="closeModal('whoGenderModal')">انصراف</button>
+  </div>
+</div></div>
+
+<div class="modal" id="manualAddReferralModal"><div class="modal-card" style="max-width:620px">
+  <button class="modal-close" onclick="closeModal('manualAddReferralModal')">✕</button>
+  <h3>➕ افزودن دستی دانش‌آموز به لیست ارجاع</h3>
+  <div class="field"><label>جستجو</label><input class="input" id="manualAddSearch" placeholder="نام دانش‌آموز..."></div>
+  <div id="manualAddList" style="max-height:360px;overflow:auto;background:var(--soft);border:1px solid var(--border);border-radius:8px;padding:8px"></div>
+  <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end">
+    <button class="btn primary" onclick="closeModal('manualAddReferralModal')">تأیید و بستن</button>
   </div>
 </div></div>
 
@@ -961,6 +1003,7 @@ tr.dragging{opacity:.4}
       <a onclick="scrollToHelp(16)">۱۶. تنظیمات</a>
       <a onclick="scrollToHelp(17)">۱۷. جدول WHO و Z-score</a>
       <a onclick="scrollToHelp(18)">۱۸. نصب روی گوشی (PWA)</a>
+      <a onclick="scrollToHelp(19)">۱۹. نامه ارجاع گروهی</a>
     </div>
   </div>
   <div class="help-section" id="help-1"><h4>🔑 ۱. ورود به سامانه</h4><p>ابتدا نام مدرسه، مراقب سلامت، مدیر و سال تحصیلی را در فرم شروع وارد کنید. سپس برای ورود امن، <b>رمز ۵ رقمی</b> را با صفحه‌کلید عددی وارد کنید.</p></div>
@@ -971,7 +1014,7 @@ tr.dragging{opacity:.4}
   <div class="help-section" id="help-6"><h4>📚 ۶. آموزش‌ها و فعالیت‌های بهداشتی</h4><p>ثبت آموزش‌ها با عنوان، موضوع، تاریخ شمسی و خروجی PDF. گزارش PDF به‌صورت صعودی (قدیمی‌ترین در بالا) مرتب می‌شود.</p></div>
   <div class="help-section" id="help-7"><h4>★ ۷. سفیران، جابه‌جایی و آمار</h4><p>ساختار سه‌سطحی: سرگروه ← زیرگروه ← اعضا.</p><p><b>Drag & Drop:</b> عضو را روی زیرگروه، یا زیرگروه را روی سرگروه رها کنید تا رابطه تنظیم شود.</p><p><b>جابه‌جایی جایگاه اعضا در زیرگروه:</b> با دکمه‌های <b>↑</b> و <b>↓</b> در ستون عملیات هر عضو، می‌توانید ترتیب اعضا را در زیرگروه خودشان جابه‌جا کنید.</p><p><b>آمار هر زیرگروه:</b> در انتهای هر زیرگروه، ردیف خلاصه‌ای نمایش داده می‌شود که تعداد اعضای آن زیرگروه را نشان می‌دهد.</p><p><b>آمار کلی سفیران:</b> در انتهای جدول، کارت خلاصه‌ای شامل تعداد کل / سرگروه / زیرگروه / اعضا / بدون زیرگروه نمایش داده می‌شود.</p><p>تمام این آمارها در <b>خروجی PDF</b> نیز اعمال می‌شوند.</p></div>
   <div class="help-section" id="help-8"><h4>📝 ۸. یادداشت و Undo</h4><p>یادداشت با یادآور تاریخ/ساعت شمسی. پس از حذف دانش‌آموز، یک پیام با دکمه <b>«بازگردانی»</b> ظاهر می‌شود (۱۰ ثانیه) که می‌توانید فوراً عمل حذف را برگردانید.</p></div>
-  <div class="help-section" id="help-9"><h4>📈 ۹. گزارش‌ها و رضایت‌نامه</h4><p>گزارش‌ها شامل ۲۴ دسته است: آمار کلی، پرخطرها، ماهانه، بیماری واگیر، حوادث، الگو، فرم وزارت، رضایت‌نامه و <b>گزارش‌های تفصیلی BMI بر اساس ۶ دسته WHO</b>.</p><p><b>گزارش‌های BMI جدید:</b> لاغری شدید / لاغری / اضافه وزن / چاقی — همگی بر اساس Z-score WHO، نه BMI خام بزرگسال.</p><p><b>رضایت‌نامه:</b> ۸ فرم در یک برگه A4 (۲ ستون × ۴ ردیف). دارای فیلدهای «موضوع» و «توضیح». چاپ در سه حالت: <b>همه</b>، <b>بر اساس پایه</b> یا <b>انتخاب مجزای هر فرد</b>.</p></div>
+  <div class="help-section" id="help-9"><h4>📈 ۹. گزارش‌ها و رضایت‌نامه</h4><p>گزارش‌ها شامل ۲۵ دسته است: آمار کلی، پرخطرها، ماهانه، بیماری واگیر، حوادث، الگو، فرم وزارت، رضایت‌نامه، <b>گزارش‌های تفصیلی BMI بر اساس ۶ دسته WHO</b>، و <b>نامه ارجاع گروهی</b> (بخش ۱۹).</p><p><b>گزارش‌های BMI:</b> لاغری شدید / لاغری / در معرض اضافه وزن / اضافه وزن / چاقی — همگی بر اساس Z-score WHO.</p><p><b>رضایت‌نامه:</b> ۸ فرم در یک برگه A4 (۲ ستون × ۴ ردیف). دارای فیلدهای «موضوع» و «توضیح». چاپ در سه حالت: <b>همه</b>، <b>بر اساس پایه</b> یا <b>انتخاب مجزای هر فرد</b>.</p></div>
   <div class="help-section" id="help-10"><h4>👤 ۱۰. پروفایل و WHO</h4><p>نمودار WHO با استفاده از تاریخ تولد و جنسیت. اگر تاریخ تولد ثبت نشده باشد، بخش WHO نمایش داده نمی‌شود.</p><p><b>پس از بارگذاری جدول WHO</b> در تنظیمات → WHO، Z-score و دسته‌بندی رشد به‌صورت خودکار محاسبه و نمایش داده می‌شود.</p></div>
   <div class="help-section" id="help-11"><h4>🩺 ۱۱. ثبت موردی غربالگری</h4><p>در بخش «ثبت / ویرایش غربالگری» می‌توانید هر آیتم را جدا ثبت کنید. اگر بعداً خواستید آیتم‌های خالی را پر کنید، روی دکمه ✏️ در ردیف تاریخچه کلیک کنید.</p></div>
   <div class="help-section" id="help-12"><h4>🗑️ ۱۲. سطل زباله</h4><p>دانش‌آموزان حذف‌شده به مدت <b>۳۰ روز</b> در سطل زباله می‌مانند. در تنظیمات ← سطل زباله می‌توانید آن‌ها را <b>بازیابی</b> یا <b>برای همیشه حذف</b> کنید.</p></div>
@@ -986,19 +1029,22 @@ tr.dragging{opacity:.4}
     <p><b>گام ۳ — بارگذاری:</b> تنظیمات → تب WHO → دکمه «انتخاب فایل CSV».</p>
     <p><b>گام ۴ — تشخیص جنسیت:</b> اگر ستون <span class="key">Sex</span> داشت خودکار، وگرنه پرامپت نمایش داده می‌شود (۱ = پسر، ۲ = دختر).</p>
     <p><b>گام ۵ — تکرار:</b> فایل جنسیت دوم را نیز بارگذاری کنید.</p>
-    <p><b>ستون‌های موردنیاز:</b> <span class="key">Month</span> یا <span class="key">Months</span>، <span class="key">L</span>، <span class="key">M</span>، <span class="key">S</span>، و اختیاری <span class="key">Sex</span>.</p>
-    <p><b>دسته‌بندی Z (۶ گروه WHO):</b></p>
-    <p>🚨 Z &lt; −۳ → <b>لاغری شدید</b><br>
-    ⚠️ −۳ ≤ Z &lt; −۲ → <b>لاغری</b><br>
-    ✓ −۲ ≤ Z ≤ +۱ → <b>طبیعی</b><br>
-    ⚠️ +۱ &lt; Z ≤ +۲ → <b>در معرض اضافه وزن</b><br>
-    ⚠️ +۲ &lt; Z ≤ +۳ → <b>اضافه وزن</b><br>
-    🚨 Z &gt; +۳ → <b>چاقی</b></p>
+    <p><b>دسته‌بندی Z (۶ گروه WHO):</b> 🚨 Z &lt; −۳ لاغری شدید | ⚠️ −۳ ≤ Z &lt; −۲ لاغری | ✓ −۲ ≤ Z ≤ +۱ طبیعی | ⚠️ +۱ &lt; Z ≤ +۲ در معرض اضافه وزن | ⚠️ +۲ &lt; Z ≤ +۳ اضافه وزن | 🚨 Z &gt; +۳ چاقی</p>
     <p><b>فرمول:</b> <span class="key">Z = [(BMI/M)^L − 1] ÷ (L × S)</span></p>
-    <p><b>🆕 در نسخه ۱.۲.۰:</b> دسته‌بندی در همه بخش‌ها (فهرست، گزارش‌ها، نمودارها، فیلترها، اینفوگرافیک، پیام والدین، کارت چاپی و CSV) به‌صورت یکپارچه بر اساس ۶ دسته WHO اعمال می‌شود. سن دقیق با تقسیم روزهای واقعی بر ۳۰.۴۳۷۵ ماه و درون‌یابی خطی بین ردیف‌های LMS انجام می‌گیرد.</p>
   </div>
   <div class="help-section" id="help-18"><h4>📱 ۱۸. نصب روی گوشی (PWA)</h4><p><b>اندروید:</b> منوی ⋮ → «Install app». <b>آیفون:</b> دکمه اشتراک‌گذاری → «Add to Home Screen». پس از نصب، بدون نیاز به اینترنت کار می‌کند.</p></div>
-  <div class="note-box" style="text-align:center;font-size:.75rem">خروجی از سامانه مراقبان سلامت — سازنده مهدی حسینی — نسخه ۱.۲.۰</div>
+  <div class="help-section" id="help-19"><h4>📄 ۱۹. نامه ارجاع گروهی</h4>
+    <p><b>هدف:</b> چاپ گروهی نامه ارجاع برای دانش‌آموزان نیازمند ارجاع، به‌صورت <b>۴ نامه در یک برگه A4</b> (چیدمان ۲×۲).</p>
+    <p><b>مسیر:</b> گزارش‌ها → 📄 نامه ارجاع گروهی.</p>
+    <p><b>۹ نوع ارجاع:</b> 🥗 تغذیه (لاغری شدید / لاغری / در معرض اضافه وزن / اضافه وزن / چاقی) + 👁️ بینایی‌سنجی + 👂 شنوایی‌سنجی + 🦷 دندانپزشکی + 💇 پوست و مو.</p>
+    <p><b>گام ۱ — انتخاب نوع ارجاع:</b> از دروب‌داون، یکی از ۹ گزینه را انتخاب کنید.</p>
+    <p><b>گام ۲ — تشخیص خودکار:</b> سامانه خودکار دانش‌آموزان واجد شرایط را در جدول نشان می‌دهد.</p>
+    <p><b>گام ۳ — مدیریت لیست:</b> چک‌باکس هر ردیف + دکمه‌های «✓ همه» / «✕ لغو همه» / «➕ افزودن دستی».</p>
+    <p><b>گام ۴ — پیش‌نمایش و چاپ:</b> دکمه «👁️ پیش‌نمایش» و «🖨️ چاپ / PDF (۴ در A4)».</p>
+    <p><b>متن اختصاصی:</b> برای هر یک از ۹ نوع ارجاع، متن تخصصی جداگانه نوشته شده و در تغذیه شامل BMI و Z-score دانش‌آموز است.</p>
+    <p><b>💡 نکته:</b> با تغییر نوع ارجاع، انتخاب‌های قبلی به‌صورت خودکار پاک می‌شوند.</p>
+  </div>
+  <div class="note-box" style="text-align:center;font-size:.75rem">خروجی از سامانه مراقبان سلامت — سازنده مهدی حسینی — نسخه ۱.۲.۴</div>
 </div></div>
 
 <div class="modal" id="aboutModal"><div class="modal-card" style="max-width:520px;padding:0;overflow:hidden">
@@ -1013,7 +1059,7 @@ tr.dragging{opacity:.4}
     </div>
     <div class="about-info-card">
       <div class="info-row"><span>📱 نام سامانه</span><b>سامانه مراقب سلامت مدارس</b></div>
-      <div class="info-row"><span>🏷️ نسخه</span><b>۱.۲.۰</b></div>
+      <div class="info-row"><span>🏷️ نسخه</span><b>۱.۲.۴</b></div>
       <div class="info-row"><span>👥 مخاطب</span><b>مراقبان سلامت مدارس ابتدایی</b></div>
       <div class="info-row"><span>🛠️ نوع کاربرد</span><b>رسمی — بهداشتی آموزشی</b></div>
       <div class="info-row"><span>💾 ذخیره‌سازی</span><b>محلی (بدون اینترنت)</b></div>
@@ -1079,17 +1125,17 @@ function persianToEnglishDigits(str){
 }
 
 /* ==================== نسخه و تغییرات ==================== */
-var APP_VERSION = '1.2.0';
+var APP_VERSION = '1.2.4';
 var SEEN_VERSION_KEY = 'moragheb_seen_version';
 var CHANGELOG = {
-  '1.2.0': [
-    '🎯 یکپارچه‌سازی دسته‌بندی BMI بر اساس ۶ گروه WHO در همه بخش‌ها',
-    '📊 بازنویسی نمودار دایره‌ای BMI با ۷ بخش (۶ دسته WHO + بدون ثبت)',
-    '📋 اصلاح گزارش‌های اضافه وزن / کمبود وزن با معیار Z-score',
-    '🆕 افزودن ۴ گزارش جدید: لاغری شدید، لاغری، در معرض اضافه وزن، چاقی (کودک)',
-    '🔍 گسترش فیلتر BMI از ۵ به ۷ گزینه هماهنگ با WHO',
-    '📈 اصلاح اینفوگرافیک «وزن طبیعی» با معیار Z-score',
-    '🔢 تغییر شماره نسخه به ۱.۲.۰'
+  '1.2.4': [
+    '🐛 رفع باگ ۱: افزودن CSS نامه ارجاع به صفحه اصلی (پیش‌نمایش درست)',
+    '🐛 رفع باگ ۲: بستن مودال اضافه دستی، لیست را به‌روز می‌کند',
+    '🐛 رفع باگ ۳: debounce برای جستجوی اضافه دستی',
+    '🐛 رفع باگ ۴: ریست خودکار انتخاب‌ها با تغییر نوع ارجاع',
+    '🐛 رفع باگ ۵: انتقال listener عمومی به attachAllHandlers',
+    '🐛 رفع باگ ۶: حذف CSS اضافی از printReportResult',
+    '🔢 تغییر شماره نسخه به ۱.۲.۴'
   ]
 };
 function checkVersionSeen(){
@@ -1739,6 +1785,12 @@ var editingProfileMode = false;
 var selectedStudentIds = new Set();
 var lastDeletedStudent = null;
 
+var groupReferralSelections = {
+  referralType: 'nutrition-severe-thin',
+  selectedIds: new Set(),
+  manualAddedIds: new Set()
+};
+
 var _inactivityTimer = null;
 var INACTIVITY_MS = 10 * 60 * 1000;
 
@@ -1934,11 +1986,15 @@ function toggleTheme(){
 function loadTheme(){ var mode='cream'; try{ mode=localStorage.getItem(THEME_KEY)||'cream'; }catch(e){} applyTheme(mode); $$('.theme-opt').forEach(function(b){ b.classList.toggle('active',b.dataset.theme===mode); }); }
 
 /* ==================== مودال ==================== */
+/* ✅ باگ ۲ — رفع: بستن مودال اضافه دستی، لیست را به‌روز می‌کند */
 function openModal(id){ var m=document.getElementById(id); if(!m) return; m.classList.add('open'); }
 function closeModal(id){
   var m=document.getElementById(id); if(!m) return;
   m.classList.remove('open');
   if(id==='csvImportModal') resetCsvImport();
+  if(id==='manualAddReferralModal'){
+    setTimeout(function(){ if(typeof renderGroupReferralPanel==='function') renderGroupReferralPanel(); }, 50);
+  }
 }
 function scrollToHelp(n){ var el=document.getElementById('help-'+n); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); }
 document.addEventListener('keydown', function(e){
@@ -1952,7 +2008,6 @@ document.addEventListener('click', function(e){
 
 /* ==================== BMI و WHO ==================== */
 function calcBMI(h,w){ if(!h||!w||h<=0||w<=0) return null; return +(w/Math.pow(h/100,2)).toFixed(1); }
-/* ✅ اصلاح ۱: نسخه خام برای محاسبات ساده */
 function bmiInfoRaw(b){
   if(b==null) return { label:'ثبت نشده', cls:'b-info', key:'none' };
   if(b<18.5) return { label:'کمبود وزن', cls:'b-warn', key:'under' };
@@ -1960,7 +2015,6 @@ function bmiInfoRaw(b){
   if(b<30) return { label:'اضافه وزن', cls:'b-warn', key:'over' };
   return { label:'چاقی', cls:'b-bad', key:'obese' };
 }
-/* ✅ اصلاح ۱: نسخه جدید که Student می‌گیرد و از Z استفاده می‌کند */
 function bmiInfo(s){
   if(!s) return bmiInfoRaw(null);
   var r = lastRecord(s);
@@ -2408,7 +2462,6 @@ function renderInfographic(){
     var rl=getStudentRiskLevel(s);
     if(rl.key==='high') highRisk++;
     else if(rl.key==='mid') midRisk++;
-    /* ✅ اصلاح ۴: استفاده از bmiInfo(s) به جای BMI خام */
     var info = bmiInfo(s);
     if(info.key === 'normal') normalWeight++;
     if(r){
@@ -2438,7 +2491,6 @@ function renderInfographic(){
 }
 
 /* ==================== نمودارهای تعاملی ==================== */
-/* ✅ اصلاح ۳: نمودار با ۷ دسته (۶ دسته WHO + بدون ثبت) */
 function renderInteractiveCharts(){
   var el=$('#interactiveCharts'); if(!el) return;
   var total = db.students.length;
@@ -2903,7 +2955,7 @@ function deleteTraining(id){ if(!confirm('این آموزش حذف شود؟')) r
 
 /* ==================== Footer ==================== */
 function creatorFooterFa(){
-  return '<div style="margin-top:18px;padding-top:8px;border-top:1px solid #ddd;font-size:9.5px;color:#888;text-align:left;direction:rtl">خروجی از سامانه مراقبان سلامت — سازنده مهدی حسینی — نسخه ۱.۲.۰</div>';
+  return '<div style="margin-top:18px;padding-top:8px;border-top:1px solid #ddd;font-size:9.5px;color:#888;text-align:left;direction:rtl">خروجی از سامانه مراقبان سلامت — سازنده مهدی حسینی — نسخه ۱.۲.۴</div>';
 }
 
 function printTrainingsPDF(){
@@ -3136,7 +3188,6 @@ function getAmbassadorData(){
   return { all:all, heads:heads, vices:vices, members:members };
 }
 
-/* Drag & Drop سفیران */
 var _dragAmbassadorId = null;
 function attachAmbassadorDragDrop(){
   var rows = $$('#ambassadorRows tr[draggable="true"]');
@@ -4337,7 +4388,6 @@ function populateStudentSelects(){
 }
 
 /* ==================== گزارش‌ها ==================== */
-/* ✅ اصلاح ۲: ۴ گزارش جدید + دسته‌بندی WHO */
 var REPORT_CATS = [
   { key:'overview', icon:'📊', title:'آمار کلی', desc:'نمای کلی مدرسه' },
   { key:'risk', icon:'🚦', title:'دانش‌آموزان پرخطر', desc:'طبقه‌بندی بر اساس ریسک' },
@@ -4347,6 +4397,7 @@ var REPORT_CATS = [
   { key:'pattern', icon:'⚠️', title:'تشخیص الگو', desc:'هشدار حوادث مشابه' },
   { key:'ministry', icon:'🏛️', title:'فرم وزارت', desc:'فرم آماری رسمی' },
   { key:'consent', icon:'📝', title:'رضایت‌نامه گروهی', desc:'۸ در یک برگه A4' },
+  { key:'groupReferral', icon:'📄', title:'نامه ارجاع گروهی', desc:'چاپ ۴ نامه در یک A4' },
   { key:'cold', icon:'🤧', title:'سرماخوردگی', desc:'حوادث سرماخوردگی' },
   { key:'flu', icon:'🤒', title:'آنفلوانزا', desc:'حوادث آنفلوانزا' },
   { key:'vision', icon:'👁️', title:'مشکلات بینایی', desc:'ارجاع بینایی' },
@@ -4389,7 +4440,7 @@ function selectReportCat(key){
   if(key==='pattern'){ content.innerHTML=buildPatternReportHTML(); return; }
   if(key==='ministry'){ content.innerHTML=buildMinistryFormHTML(); return; }
   if(key==='consent'){ content.innerHTML=buildConsentFormHTML(); attachConsentHandlers(); return; }
-  if(key==='nobirth'){ content.innerHTML=buildNoBirthReportHTML(); return; }
+  if(key==='groupReferral'){ content.innerHTML=buildGroupReferralPanelHTML(); attachGroupReferralHandlers(); return; }
   if(key==='nobirth'){ content.innerHTML=buildNoBirthReportHTML(); return; }
   var rows=buildReportData(key);
   if(!rows.length){ content.innerHTML='<div class="empty">موردی یافت نشد.</div>'; return; }
@@ -4442,7 +4493,6 @@ function buildRiskReportHTML(){
 function buildOverviewReportHTML(){
   var total=db.students.length;
   if(!total) return '<div class="empty">دانش‌آموزی ثبت نشده.</div>';
-  /* ✅ اصلاح ۵: ۶ دسته WHO + none */
   var bmiDist = {
     'severe-thin': 0, 'thin': 0, 'normal': 0,
     'overweight-risk': 0, 'overweight': 0, 'obese': 0, 'none': 0
@@ -4737,7 +4787,398 @@ function printConsent(){
   w.document.close();
   setTimeout(function(){ w.print(); },500);
 }
-/* ✅ اصلاح ۱: buildReportData با معیار WHO برای همه دسته‌ها */
+
+/* ==================== نامه ارجاع گروهی ==================== */
+var REFERRAL_TYPES = {
+  'nutrition-severe-thin': {
+    category: 'تغذیه',
+    label: 'تغذیه — لاغری شدید',
+    icon: '🥗',
+    matchKey: 'severe-thin',
+    actionText: 'ارجاع به کارشناس تغذیه',
+    textTemplate: function(s, info){
+      var bmiTxt = info && info.bmi != null ? fa(info.bmi) : '—';
+      var zTxt = info && info.z != null ? fa(info.z.toFixed(2)) : '—';
+      return 'بدین‌وسیله به اطلاع می‌رساند دانش‌آموز <b>'+esc(s.name)+'</b> از پایه <b>'+esc(s.grade)+'</b> با BMI = <b>'+bmiTxt+'</b> و Z-score = <b>'+zTxt+'</b>، بر اساس استاندارد سازمان جهانی بهداشت (WHO 2007) در گروه <b>«لاغری شدید»</b> قرار می‌گیرد. با توجه به اهمیت این موضوع، ارجاع ایشان به کارشناس تغذیه جهت بررسی‌های تخصصی و تنظیم برنامه غذایی مناسب ضروری می‌باشد.';
+    }
+  },
+  'nutrition-thin': {
+    category: 'تغذیه',
+    label: 'تغذیه — لاغری',
+    icon: '🥗',
+    matchKey: 'thin',
+    actionText: 'ارجاع به کارشناس تغذیه',
+    textTemplate: function(s, info){
+      var bmiTxt = info && info.bmi != null ? fa(info.bmi) : '—';
+      var zTxt = info && info.z != null ? fa(info.z.toFixed(2)) : '—';
+      return 'بدین‌وسیله به اطلاع می‌رساند دانش‌آموز <b>'+esc(s.name)+'</b> از پایه <b>'+esc(s.grade)+'</b> با BMI = <b>'+bmiTxt+'</b> و Z-score = <b>'+zTxt+'</b>، بر اساس استاندارد سازمان جهانی بهداشت (WHO 2007) در گروه <b>«لاغری»</b> قرار می‌گیرد. توصیه می‌شود ایشان به کارشناس تغذیه ارجاع داده شود تا روند رشد وی به‌دقت پیگیری گردد.';
+    }
+  },
+  'nutrition-overweight-risk': {
+    category: 'تغذیه',
+    label: 'تغذیه — در معرض اضافه وزن',
+    icon: '🥗',
+    matchKey: 'overweight-risk',
+    actionText: 'ارجاع به کارشناس تغذیه',
+    textTemplate: function(s, info){
+      var bmiTxt = info && info.bmi != null ? fa(info.bmi) : '—';
+      var zTxt = info && info.z != null ? fa(info.z.toFixed(2)) : '—';
+      return 'بدین‌وسیله به اطلاع می‌رساند دانش‌آموز <b>'+esc(s.name)+'</b> از پایه <b>'+esc(s.grade)+'</b> با BMI = <b>'+bmiTxt+'</b> و Z-score = <b>'+zTxt+'</b>، بر اساس استاندارد WHO 2007 در گروه <b>«در معرض اضافه وزن»</b> قرار می‌گیرد. توصیه می‌شود ایشان به کارشناس تغذیه ارجاع داده شود تا با اصلاح عادات غذایی و افزایش فعالیت بدنی، از پیشرفت به سمت اضافه وزن پیشگیری گردد.';
+    }
+  },
+  'nutrition-overweight': {
+    category: 'تغذیه',
+    label: 'تغذیه — اضافه وزن',
+    icon: '🥗',
+    matchKey: 'overweight',
+    actionText: 'ارجاع به کارشناس تغذیه',
+    textTemplate: function(s, info){
+      var bmiTxt = info && info.bmi != null ? fa(info.bmi) : '—';
+      var zTxt = info && info.z != null ? fa(info.z.toFixed(2)) : '—';
+      return 'بدین‌وسیله به اطلاع می‌رساند دانش‌آموز <b>'+esc(s.name)+'</b> از پایه <b>'+esc(s.grade)+'</b> با BMI = <b>'+bmiTxt+'</b> و Z-score = <b>'+zTxt+'</b>، بر اساس استاندارد WHO 2007 در گروه <b>«اضافه وزن»</b> قرار می‌گیرد. با توجه به پیامدهای اضافه وزن بر سلامت، ارجاع ایشان به کارشناس تغذیه جهت تنظیم برنامه غذایی و توصیه‌های لازم ضروری است.';
+    }
+  },
+  'nutrition-obese': {
+    category: 'تغذیه',
+    label: 'تغذیه — چاقی',
+    icon: '🥗',
+    matchKey: 'obese',
+    actionText: 'ارجاع به کارشناس تغذیه',
+    textTemplate: function(s, info){
+      var bmiTxt = info && info.bmi != null ? fa(info.bmi) : '—';
+      var zTxt = info && info.z != null ? fa(info.z.toFixed(2)) : '—';
+      return 'بدین‌وسیله به اطلاع می‌رساند دانش‌آموز <b>'+esc(s.name)+'</b> از پایه <b>'+esc(s.grade)+'</b> با BMI = <b>'+bmiTxt+'</b> و Z-score = <b>'+zTxt+'</b>، بر اساس استاندارد WHO 2007 در گروه <b>«چاقی»</b> قرار می‌گیرد. با توجه به خطرات جدی چاقی برای سلامت جسمی و روانی، ارجاع فوری ایشان به کارشناس تغذیه و پزشک متخصص ضروری می‌باشد.';
+    }
+  },
+  'vision': {
+    category: 'بینایی‌سنجی',
+    label: 'بینایی‌سنجی',
+    icon: '👁️',
+    matchKey: 'vision',
+    actionText: 'ارجاع به بینایی‌سنج',
+    textTemplate: function(s, info){
+      return 'بدین‌وسیله به اطلاع می‌رساند در غربالگری بینایی انجام‌شده، قدرت دید دانش‌آموز <b>'+esc(s.name)+'</b> از پایه <b>'+esc(s.grade)+'</b> نیازمند بررسی بیشتر تشخیص داده شد. خواهشمند است ایشان جهت معاینه دقیق بینایی و در صورت لزوم تجویز عینک، به <b>بینایی‌سنج یا پزشک متخصص چشم</b> ارجاع داده شود.';
+    }
+  },
+  'hearing': {
+    category: 'شنوایی‌سنجی',
+    label: 'شنوایی‌سنجی',
+    icon: '👂',
+    matchKey: 'hearing',
+    actionText: 'ارجاع به شنوایی‌سنج',
+    textTemplate: function(s, info){
+      return 'بدین‌وسیله به اطلاع می‌رساند در غربالگری شنوایی انجام‌شده، وضعیت شنوایی دانش‌آموز <b>'+esc(s.name)+'</b> از پایه <b>'+esc(s.grade)+'</b> نیازمند بررسی بیشتر تشخیص داده شد. خواهشمند است ایشان جهت معاینه دقیق شنوایی و در صورت لزوم اقدامات درمانی، به <b>شنوایی‌سنج یا پزشک متخصص گوش، حلق و بینی</b> ارجاع داده شود.';
+    }
+  },
+  'dental': {
+    category: 'دندانپزشکی',
+    label: 'دندانپزشکی',
+    icon: '🦷',
+    matchKey: 'dental',
+    actionText: 'ارجاع به دندانپزشک',
+    textTemplate: function(s, info){
+      return 'بدین‌وسیله به اطلاع می‌رساند در معاینه دهان و دندان انجام‌شده، وضعیت دندان‌های دانش‌آموز <b>'+esc(s.name)+'</b> از پایه <b>'+esc(s.grade)+'</b> نیازمند بررسی و درمان تشخیص داده شد. خواهشمند است ایشان جهت معاینه دقیق و درمان‌های لازم، به <b>دندانپزشک</b> ارجاع داده شود.';
+    }
+  },
+  'skin': {
+    category: 'پوست و مو',
+    label: 'پوست و مو',
+    icon: '💇',
+    matchKey: 'skin',
+    actionText: 'ارجاع به پزشک متخصص پوست',
+    textTemplate: function(s, info){
+      return 'بدین‌وسیله به اطلاع می‌رساند در معاینه پوست و موی انجام‌شده، علائم مشکوکی در دانش‌آموز <b>'+esc(s.name)+'</b> از پایه <b>'+esc(s.grade)+'</b> مشاهده شد. خواهشمند است ایشان جهت بررسی دقیق و درمان‌های لازم، به <b>پزشک متخصص پوست و مو</b> ارجاع داده شود.';
+    }
+  }
+};
+
+function getReferralTypeInfo(typeKey){
+  return REFERRAL_TYPES[typeKey] || null;
+}
+
+function getEligibleStudentsForReferral(typeKey){
+  var rt = REFERRAL_TYPES[typeKey];
+  if(!rt) return [];
+  var result = [];
+  db.students.forEach(function(s){
+    ensureStudentFields(s);
+    var last = lastRecord(s);
+    var eligible = false;
+    var detail = '';
+    var info = bmiInfo(s);
+    if(rt.category === 'تغذیه'){
+      if(info.key === rt.matchKey){
+        eligible = true;
+        var r = last;
+        detail = 'BMI: ' + (r && r.bmi != null ? fa(r.bmi) : '—') + (info.z != null ? ' | Z: ' + fa(info.z.toFixed(2)) : '') + ' | دسته: ' + info.label;
+      }
+    } else if(rt.matchKey === 'vision'){
+      if(last && last.vision === 'ارجاع'){ eligible = true; detail = 'غربال: ' + faDateShort(last.ts); }
+    } else if(rt.matchKey === 'hearing'){
+      if(last && last.hearing === 'ارجاع'){ eligible = true; detail = 'غربال: ' + faDateShort(last.ts); }
+    } else if(rt.matchKey === 'dental'){
+      if(last && last.dental === 'ارجاع'){ eligible = true; detail = 'غربال: ' + faDateShort(last.ts); }
+    } else if(rt.matchKey === 'skin'){
+      if(last && last.skin === 'مشکوک'){ eligible = true; detail = 'غربال: ' + faDateShort(last.ts); }
+    }
+    if(eligible) result.push({ s: s, detail: detail, info: info });
+  });
+  return result;
+}
+
+function buildGroupReferralPanelHTML(){
+  var rt = REFERRAL_TYPES[groupReferralSelections.referralType];
+  var optsHtml = '';
+  Object.keys(REFERRAL_TYPES).forEach(function(k){
+    var t = REFERRAL_TYPES[k];
+    optsHtml += '<option value="'+k+'"'+(groupReferralSelections.referralType===k?' selected':'')+'>'+t.icon+' '+esc(t.label)+'</option>';
+  });
+  var html = '';
+  html += '<div class="field"><label>نوع ارجاع را انتخاب کنید</label>';
+  html += '<select id="groupReferralType" onchange="onGroupReferralTypeChange()">'+optsHtml+'</select></div>';
+  html += '<div id="groupReferralBody"></div>';
+  return html;
+}
+
+function attachGroupReferralHandlers(){
+  onGroupReferralTypeChange();
+}
+
+/* ✅ باگ ۴ — رفع: با تغییر نوع ارجاع، انتخاب‌های قبلی ریست می‌شوند */
+function onGroupReferralTypeChange(){
+  var sel = $('#groupReferralType');
+  if(!sel) return;
+  var prev = groupReferralSelections.referralType;
+  var next = sel.value;
+  if(prev !== next){
+    groupReferralSelections.selectedIds.clear();
+    groupReferralSelections.manualAddedIds.clear();
+  }
+  groupReferralSelections.referralType = next;
+  renderGroupReferralPanel();
+}
+
+function renderGroupReferralPanel(){
+  var el = $('#groupReferralBody');
+  if(!el) return;
+  var typeKey = groupReferralSelections.referralType;
+  var rt = REFERRAL_TYPES[typeKey];
+  if(!rt){ el.innerHTML = '<div class="empty">نوع ارجاع یافت نشد.</div>'; return; }
+  var eligible = getEligibleStudentsForReferral(typeKey);
+  var html = '';
+  html += '<div class="alert-info" style="margin-top:10px"><b>'+rt.icon+' '+esc(rt.label)+'</b> — '+fa(eligible.length)+' دانش‌آموز واجد شرایط شناسایی شد.</div>';
+  html += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin:10px 0">';
+  html += '<button class="btn primary sm" onclick="groupReferralSelectAll(true)">✓ انتخاب همه</button>';
+  html += '<button class="btn ghost sm" onclick="groupReferralSelectAll(false)">✕ لغو همه</button>';
+  html += '<button class="btn gold sm" onclick="openManualAddReferralModal()">➕ افزودن دستی</button>';
+  html += '</div>';
+  html += '<div class="table-wrap"><table><thead><tr><th style="width:36px">✓</th><th>نام</th><th>پایه</th><th>جزئیات</th></tr></thead><tbody>';
+  if(!eligible.length){
+    html += '<tr class="no-hover"><td colspan="4"><div class="empty">هیچ دانش‌آموزی واجد شرایط این ارجاع نیست. می‌توانید با دکمه «افزودن دستی» اضافه کنید.</div></td></tr>';
+  } else {
+    eligible.forEach(function(item){
+      var s = item.s;
+      var checked = groupReferralSelections.selectedIds.has(s.id);
+      html += '<tr class="no-hover">';
+      html += '<td><input type="checkbox" class="student-checkbox" '+(checked?'checked':'')+' onchange="toggleGroupReferralSelect(\''+s.id+'\',this.checked)"></td>';
+      html += '<td>'+esc(s.name)+'</td>';
+      html += '<td>'+esc(s.grade)+'</td>';
+      html += '<td style="font-size:.78rem;color:var(--muted)">'+esc(item.detail)+'</td>';
+      html += '</tr>';
+    });
+  }
+  html += '</tbody></table></div>';
+  var manualIds = Array.from(groupReferralSelections.manualAddedIds);
+  if(manualIds.length){
+    html += '<div style="margin-top:10px"><b style="font-size:.84rem;color:var(--primary-d)">➕ دانش‌آموزان افزودن‌شده دستی:</b></div>';
+    html += '<div class="table-wrap" style="margin-top:6px"><table><thead><tr><th style="width:36px">✓</th><th>نام</th><th>پایه</th><th style="width:70px">عملیات</th></tr></thead><tbody>';
+    manualIds.forEach(function(id){
+      var s = getStudent(id);
+      if(!s) return;
+      var checked = groupReferralSelections.selectedIds.has(id);
+      html += '<tr class="no-hover">';
+      html += '<td><input type="checkbox" class="student-checkbox" '+(checked?'checked':'')+' onchange="toggleGroupReferralSelect(\''+id+'\',this.checked)"></td>';
+      html += '<td>'+esc(s.name)+'</td>';
+      html += '<td>'+esc(s.grade)+'</td>';
+      html += '<td><button class="btn icon danger" onclick="removeManualReferral(\''+id+'\')">×</button></td>';
+      html += '</tr>';
+    });
+    html += '</tbody></table></div>';
+  }
+  var selectedCount = groupReferralSelections.selectedIds.size;
+  html += '<div style="margin-top:12px;padding:10px 12px;background:var(--soft);border-radius:9px;border:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">';
+  html += '<b>تعداد انتخاب‌شده: <span style="color:var(--primary)">'+fa(selectedCount)+'</span> نفر</b>';
+  html += '<div style="display:flex;gap:6px;flex-wrap:wrap">';
+  html += '<button class="btn ghost sm" onclick="groupReferralPreview()">👁️ پیش‌نمایش</button>';
+  html += '<button class="btn primary sm" onclick="printGroupReferrals()">🖨️ چاپ / PDF (۴ در A4)</button>';
+  html += '</div></div>';
+  html += '<div id="groupReferralPreview" style="margin-top:12px"></div>';
+  el.innerHTML = html;
+}
+
+function toggleGroupReferralSelect(id, checked){
+  if(checked) groupReferralSelections.selectedIds.add(id);
+  else groupReferralSelections.selectedIds.delete(id);
+  renderGroupReferralPanel();
+}
+
+function groupReferralSelectAll(v){
+  if(v){
+    var typeKey = groupReferralSelections.referralType;
+    getEligibleStudentsForReferral(typeKey).forEach(function(x){ groupReferralSelections.selectedIds.add(x.s.id); });
+    groupReferralSelections.manualAddedIds.forEach(function(id){ groupReferralSelections.selectedIds.add(id); });
+  } else {
+    groupReferralSelections.selectedIds.clear();
+  }
+  renderGroupReferralPanel();
+}
+
+function removeManualReferral(id){
+  groupReferralSelections.manualAddedIds.delete(id);
+  groupReferralSelections.selectedIds.delete(id);
+  renderGroupReferralPanel();
+}
+
+function openManualAddReferralModal(){
+  var listEl = $('#manualAddList');
+  if(!listEl){ openModal('manualAddReferralModal'); listEl = $('#manualAddList'); }
+  var searchEl = $('#manualAddSearch');
+  if(searchEl) searchEl.value = '';
+  renderManualAddList();
+  openModal('manualAddReferralModal');
+}
+
+function renderManualAddList(){
+  var el = $('#manualAddList');
+  if(!el) return;
+  var q = ($('#manualAddSearch') && $('#manualAddSearch').value || '').trim();
+  var list = db.students.slice().sort(compareStudents);
+  if(q) list = list.filter(function(s){ return fuzzyMatch(s.name + ' ' + s.grade, q); });
+  var html = '';
+  if(!list.length){
+    html = '<div class="empty">دانش‌آموزی یافت نشد.</div>';
+  } else {
+    list.forEach(function(s){
+      var inManual = groupReferralSelections.manualAddedIds.has(s.id);
+      var selected = groupReferralSelections.selectedIds.has(s.id);
+      var info = bmiInfo(s);
+      html += '<label style="display:flex;align-items:center;gap:8px;padding:6px 8px;cursor:pointer;border-radius:6px">';
+      html += '<input type="checkbox" class="manual-referral-check" value="'+s.id+'" '+(selected?'checked':'')+' onchange="onManualReferralToggle(\''+s.id+'\',this.checked)">';
+      html += '<span>'+esc(s.name)+' — '+esc(s.grade)+' <span class="badge '+info.cls+'" style="font-size:.66rem">'+esc(info.label)+'</span></span>';
+      if(inManual) html += ' <span class="badge b-info" style="font-size:.62rem">افزودن دستی</span>';
+      html += '</label>';
+    });
+  }
+  el.innerHTML = html;
+}
+
+function onManualReferralToggle(id, checked){
+  if(checked){
+    if(!groupReferralSelections.manualAddedIds.has(id)){
+      groupReferralSelections.manualAddedIds.add(id);
+    }
+    groupReferralSelections.selectedIds.add(id);
+  } else {
+    groupReferralSelections.selectedIds.delete(id);
+  }
+}
+
+/* ✅ باگ ۳ — رفع: debounce برای جستجوی افزودن دستی */
+var _debouncedManualAddList = debounce(renderManualAddList, 200);
+
+function buildReferralCardHTML(s, typeKey){
+  var rt = REFERRAL_TYPES[typeKey];
+  if(!rt) return '';
+  var info = bmiInfo(s);
+  var lastRec = lastRecord(s);
+  var bmiVal = lastRec && lastRec.bmi != null ? lastRec.bmi : null;
+  var infoForText = { bmi: bmiVal, z: info.z, label: info.label };
+  var text = rt.textTemplate(s, infoForText);
+  return '<div class="ref-card">'+
+    '<div class="rc-head">'+
+      '<div class="rc-bism">بسمه تعالی</div>'+
+      '<div class="rc-school">'+esc(profile.school||'مدرسه')+'</div>'+
+      '<div class="rc-title">'+rt.icon+' نامه ارجاع — '+esc(rt.category)+'</div>'+
+    '</div>'+
+    '<div class="rc-body">'+
+      '<div class="rc-row"><b>تاریخ:</b> '+faDate(Date.now())+'</div>'+
+      '<div class="rc-row"><b>نام دانش‌آموز:</b> '+esc(s.name)+'</div>'+
+      '<div class="rc-row"><b>پایه:</b> '+esc(s.grade)+'</div>'+
+      (s.birthJDN?'<div class="rc-row"><b>تاریخ تولد:</b> '+formatBirthDate(s.birthJDN)+'</div>':'')+
+      '<div class="rc-row"><b>سن:</b> '+getAgeDisplay(s)+'</div>'+
+      '<div class="rc-row"><b>نوع ارجاع:</b> '+esc(rt.label)+'</div>'+
+      '<div class="rc-text">'+text+'</div>'+
+    '</div>'+
+    '<div class="rc-sign">'+
+      '<div class="rc-sig-item">'+
+        (profile.signatureImg?'<img src="'+profile.signatureImg+'" style="max-height:5mm;display:block;margin:0 auto 0.5mm">':'')+
+        '<div class="rc-sig-line"></div>'+
+        '<div class="rc-sig-label">'+esc(profile.signature||profile.assistant||'مراقب سلامت')+'</div>'+
+        signatureBadgeMini()+
+      '</div>'+
+      '<div class="rc-sig-item"><div class="rc-sig-box">مهر مدرسه</div><div class="rc-sig-label">'+esc(profile.manager||'مدیر مدرسه')+'</div></div>'+
+    '</div>'+
+  '</div>';
+}
+
+function groupReferralPreview(){
+  if(!groupReferralSelections.selectedIds.size){ toast('دانش‌آموزی انتخاب نشده'); return; }
+  var typeKey = groupReferralSelections.referralType;
+  var ids = Array.from(groupReferralSelections.selectedIds);
+  var students = ids.map(function(id){ return getStudent(id); }).filter(Boolean);
+  if(!students.length){ toast('دانش‌آموزی یافت نشد'); return; }
+  var cardsHtml = '';
+  students.forEach(function(s){ cardsHtml += buildReferralCardHTML(s, typeKey); });
+  var el = $('#groupReferralPreview');
+  if(el){
+    el.innerHTML = '<div class="alert-info">'+fa(students.length)+' نامه آماده شد — پیش‌نمایش در چیدمان ۲×۲ (۴ نامه در A4):</div>'+
+      '<div class="referral-preview-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:3mm;background:#fff;padding:8mm;border-radius:10px;border:1px solid var(--border);max-width:100%;overflow:auto">'+cardsHtml+'</div>';
+  }
+  toast(fa(students.length)+' نامه آماده شد');
+}
+
+function buildReferralCardPrintCSS(){
+  return '@page{size:A4;margin:8mm}'+
+    'body{font-family:Tahoma,sans-serif;direction:rtl;margin:0;background:#fff;color:#222}'+
+    '.referral-cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:3mm;padding:0;max-width:100%;margin:0 auto}'+
+    '.ref-card{border:1.5pt solid #8a6a2c;border-radius:2.5mm;padding:2.5mm;height:138mm;box-sizing:border-box;display:flex;flex-direction:column;background:linear-gradient(180deg,#fffdf7 0%,#fdfbf4 100%);break-inside:avoid;page-break-inside:avoid;overflow:hidden;position:relative}'+
+    '.ref-card::before{content:"";position:absolute;top:0;right:0;width:100%;height:1.2mm;background:linear-gradient(90deg,#8a6a2c,#d4a017,#8a6a2c)}'+
+    '.ref-card .rc-head{text-align:center;border-bottom:1pt solid #d4a017;padding:1mm 0 1.5mm;margin-bottom:1.5mm;padding-top:1mm;flex-shrink:0}'+
+    '.ref-card .rc-bism{font-size:7pt;color:#6a4f1f;font-weight:700}'+
+    '.ref-card .rc-school{font-size:8pt;color:#6a4f1f;font-weight:700}'+
+    '.ref-card .rc-title{font-size:10pt;font-weight:800;color:#8a6a2c;letter-spacing:.3px}'+
+    '.ref-card .rc-body{flex:1;overflow:hidden;display:flex;flex-direction:column;gap:0.6mm}'+
+    '.ref-card .rc-row{font-size:7.2pt;line-height:1.5}'+
+    '.ref-card .rc-row b{color:#6a4f1f}'+
+    '.ref-card .rc-text{flex:1;font-size:7pt;line-height:1.65;text-align:justify;padding:1.5mm 0;color:#333;overflow:hidden;margin-top:1mm;border-top:0.3pt dashed #ccc;padding-top:1.5mm}'+
+    '.ref-card .rc-text b{color:#6a4f1f}'+
+    '.ref-card .rc-sign{display:flex;gap:2.5mm;font-size:6.5pt;margin-top:1mm;padding-top:1mm;border-top:0.3pt dashed #ccc;flex-shrink:0}'+
+    '.ref-card .rc-sig-item{flex:1;text-align:center}'+
+    '.ref-card .rc-sig-line{border-bottom:0.5pt solid #666;height:5mm;margin-bottom:0.6mm}'+
+    '.ref-card .rc-sig-box{border:0.5pt dashed #999;height:7mm;border-radius:1mm;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:5.5pt;margin-bottom:0.6mm}'+
+    '.ref-card .rc-sig-label{color:#555;font-weight:700}'+
+    '@media print{.ref-card{break-inside:avoid;page-break-inside:avoid}}';
+}
+
+function printGroupReferrals(){
+  if(!groupReferralSelections.selectedIds.size){ toast('دانش‌آموزی انتخاب نشده'); return; }
+  var typeKey = groupReferralSelections.referralType;
+  var ids = Array.from(groupReferralSelections.selectedIds);
+  var students = ids.map(function(id){ return getStudent(id); }).filter(Boolean);
+  if(!students.length){ toast('دانش‌آموزی یافت نشد'); return; }
+  var cardsHtml = '';
+  students.forEach(function(s){ cardsHtml += buildReferralCardHTML(s, typeKey); });
+  var w = window.open('','_blank');
+  if(!w){ toast('لطفاً پاپ‌آپ را برای این سایت مجاز کنید'); return; }
+  var html = '<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="UTF-8"><title>نامه‌های ارجاع گروهی</title><style>'+
+    buildReferralCardPrintCSS()+
+    '</style></head><body><div class="referral-cards-grid">'+cardsHtml+'</div></body></html>';
+  w.document.write(html); w.document.close();
+  setTimeout(function(){ w.print(); }, 500);
+  toast('🖨️ '+fa(students.length)+' نامه آماده چاپ شد');
+}
+
+/* ==================== گزارش داده‌های عمومی ==================== */
 function buildReportData(key){
   var res=[];
   db.students.forEach(function(s){
@@ -4762,6 +5203,7 @@ function buildReportData(key){
   });
   return res;
 }
+/* ✅ باگ ۶ — رفع: CSS اضافی از printReportResult حذف شد */
 function printReportResult(){
   if(!currentReportCat){ toast('دسته انتخاب نشده'); return; }
   var cat=null; REPORT_CATS.forEach(function(c){ if(c.key===currentReportCat) cat=c; });
@@ -4794,7 +5236,7 @@ function printReportResult(){
   var content=$('#reportResultContent');
   if(content){
     var clone=content.cloneNode(true);
-    var forms=clone.querySelectorAll('form, button, .field, input, textarea, select');
+    var forms=clone.querySelectorAll('form, button, .field, input, textarea, select, .alert-info, #groupReferralPreview');
     forms.forEach(function(f){ if(f.parentNode) f.parentNode.removeChild(f); });
     var panels=clone.querySelectorAll('#diseaseFormPanel, #consentScopeExtra, .bulk-toolbar');
     panels.forEach(function(p){ if(p.parentNode) p.parentNode.removeChild(p); });
@@ -5529,6 +5971,12 @@ function attachAllHandlers(){
   if(dfg) dfg.addEventListener('change', renderDashboard);
   var ch1=$('#searchHistory'); if(ch1) ch1.addEventListener('change', renderStudents);
   var ch2=$('#dashSearchHistory'); if(ch2) ch2.addEventListener('change', renderDashboard);
+  /* ✅ باگ ۵ — رفع: listener عمومی به attachAllHandlers منتقل شد */
+  document.addEventListener('input', function(e){
+    if(e.target && e.target.id === 'manualAddSearch'){
+      _debouncedManualAddList();
+    }
+  });
   attachNoteHandlers();
   attachStudentForm();
   attachTrainingForm();
@@ -5574,4 +6022,4 @@ function attachAllHandlers(){
 })();
 </script>
 </body>
-  </html>
+                                                                   </html>
