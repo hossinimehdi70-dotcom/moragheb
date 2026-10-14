@@ -130,10 +130,8 @@ tr.vice-row td{background:linear-gradient(90deg,rgba(212,160,23,.14),rgba(212,16
 tr.vice-row:hover{background:linear-gradient(90deg,rgba(212,160,23,.14),rgba(212,160,23,.03))!important}
 tr.member-row td{background:var(--card)}
 tr.member-row:hover{background:var(--hover)}
-/* ✅ NEW: آمار زیرگروه */
 tr.subgroup-summary td{background:linear-gradient(90deg,rgba(46,122,79,.10),rgba(46,122,79,.02))!important;color:#1f5a38;font-weight:700;font-size:.78rem;padding:6px 14px;border-right:3px solid #2e7a4f;cursor:default!important;border-bottom:1px solid var(--border)}
 tr.subgroup-summary:hover td{background:linear-gradient(90deg,rgba(46,122,79,.10),rgba(46,122,79,.02))!important}
-/* ✅ NEW: آمار کلی */
 tr.overall-summary td{background:linear-gradient(135deg,var(--primary),var(--primary-d))!important;color:#fff;font-weight:800;font-size:.84rem;padding:12px 16px;cursor:default!important;border-radius:6px}
 tr.overall-summary:hover td{background:linear-gradient(135deg,var(--primary),var(--primary-d))!important}
 tr.overall-summary .stat-chip{display:inline-block;background:rgba(255,255,255,.2);padding:2px 10px;border-radius:10px;font-size:.74rem;margin:2px 4px;font-weight:700}
@@ -455,7 +453,7 @@ tr.dragging{opacity:.4}
       </div>
     </form>
     <div class="splash-links"><button type="button" onclick="resetProfile()">پاک کردن اطلاعات</button></div>
-    <div class="version-badge"><span class="dot"></span> نسخه ۱.۰.۵</div>
+    <div class="version-badge"><span class="dot"></span> نسخه ۱.۲.۰</div>
   </div>
 </div>
 
@@ -574,7 +572,16 @@ tr.dragging{opacity:.4}
           <div><label class="filter-label">حرف الفبا</label><select id="filterLetter"><option value="">همه</option></select></div>
         </div>
         <div class="grid4">
-          <div><label class="filter-label">BMI</label><select id="filterBMI"><option value="">همه</option><option value="under">کمبود وزن</option><option value="normal">طبیعی</option><option value="over">اضافه وزن</option><option value="obese">چاقی</option><option value="none">بدون ثبت</option></select></div>
+          <div><label class="filter-label">دسته‌بندی BMI (WHO)</label><select id="filterBMI">
+            <option value="">همه</option>
+            <option value="severe-thin">🚨 لاغری شدید</option>
+            <option value="thin">⚠️ لاغری</option>
+            <option value="normal">✓ طبیعی</option>
+            <option value="overweight-risk">⚠️ در معرض اضافه وزن</option>
+            <option value="overweight">⚠️ اضافه وزن</option>
+            <option value="obese">🚨 چاقی</option>
+            <option value="none">❔ بدون ثبت</option>
+          </select></div>
           <div><label class="filter-label">وضعیت</label><select id="filterStatus"><option value="">همه</option><option value="follow">نیازمند پیگیری</option><option value="ok">مطلوب</option><option value="ambassador">سفیر</option></select></div>
           <div><label class="filter-label">سطح ریسک</label><select id="filterRisk"><option value="">همه</option><option value="high">پرخطر</option><option value="mid">تحت نظر</option><option value="low">عادی</option></select></div>
           <div><label class="filter-label">تاریخ تولد</label><select id="filterBirthDate"><option value="">همه</option><option value="has">دارد</option><option value="none">ندارد</option><option value="estimated">تقریبی (کد ملی)</option></select></div>
@@ -751,6 +758,7 @@ tr.dragging{opacity:.4}
         <button data-set="info" class="active">اطلاعات</button>
         <button data-set="theme">ظاهر</button>
         <button data-set="signature">امضا</button>
+        <button data-set="who">WHO</button>
         <button data-set="cloud">پشتیبان ابری</button>
         <button data-set="backup">پشتیبان</button>
         <button data-set="trash">سطل زباله</button>
@@ -775,6 +783,23 @@ tr.dragging{opacity:.4}
         <div id="sigPreview" style="margin:10px 0"></div>
         <button class="btn primary sm" onclick="saveSignature()">ذخیره</button>
         <button class="btn ghost sm" onclick="clearSignature()">حذف</button>
+      </div></div>
+      <div class="settings-panel" id="set-who"><div class="card"><h2>📊 جدول مرجع رشد WHO</h2>
+        <div id="whoStatusBox"></div>
+        <div class="alert-info" style="margin-top:10px">
+          <b>📌 راهنمای سریع:</b><br>
+          ۱. از سایت WHO فایل‌های <code>bmi-boys-z-who-2007-exp.xlsx</code> و <code>bmi-girls-z-who-2007-exp.xlsx</code> را دانلود کنید.<br>
+          ۲. با Excel به CSV UTF-8 تبدیل کنید (ستون‌های Month, L, M, S و اختیاری Sex).<br>
+          ۳. فایل را در همین پنجره بارگذاری کنید.<br>
+          ۴. پس از بارگذاری، ارزیابی Z-score خودکار فعال می‌شود.
+        </div>
+        <div class="field"><label>انتخاب فایل CSV</label><input class="input" type="file" id="whoFileInput" accept=".csv,.txt"></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">
+          <button class="btn primary sm" onclick="document.getElementById('whoFileInput').click()">📁 انتخاب فایل CSV</button>
+          <button class="btn ghost sm" onclick="downloadWhoSampleCSV()">📄 دانلود نمونه</button>
+          <button class="btn danger sm" onclick="clearWhoTable()">🗑️ حذف جدول WHO</button>
+        </div>
+        <div id="whoInfoBox" style="margin-top:10px"></div>
       </div></div>
       <div class="settings-panel" id="set-cloud"><div class="card"><h2>☁️ پشتیبان ابری (WebDAV)</h2>
         <div class="field"><label>آدرس سرور</label><input class="input" id="cloudUrl"></div>
@@ -830,7 +855,7 @@ tr.dragging{opacity:.4}
       </div></div>
       <div class="settings-panel" id="set-about"><div class="card"><h2>درباره</h2>
         <div class="info-row"><span>نام</span><b>سامانه مراقب سلامت مدارس</b></div>
-        <div class="info-row"><span>نسخه</span><b>۱.۰.۵</b></div>
+        <div class="info-row"><span>نسخه</span><b>۱.۲.۰</b></div>
         <div class="info-row"><span>سازنده</span><b>مهدی حسینی</b></div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">
           <button class="btn ghost sm" onclick="openModal('helpModal')">راهنما</button>
@@ -846,6 +871,17 @@ tr.dragging{opacity:.4}
 <div class="modal" id="bulkModal"><div class="modal-card" style="max-width:800px"><button class="modal-close" onclick="closeModal('bulkModal')">✕</button><h3>📋 ثبت گروهی قد و وزن</h3><div id="bulkContent"></div></div></div>
 <div class="modal" id="scheduleModal"><div class="modal-card" style="max-width:700px"><button class="modal-close" onclick="closeModal('scheduleModal')">✕</button><h3>⏰ زمان‌بندی غربالگری</h3><div id="scheduleContent"></div></div></div>
 <div class="modal" id="calendarEventModal"><div class="modal-card" style="max-width:520px"><button class="modal-close" onclick="closeModal('calendarEventModal')">✕</button><h3>📅 رویداد تقویم</h3><div id="calendarEventModalContent"></div></div></div>
+
+<div class="modal" id="whoGenderModal"><div class="modal-card" style="max-width:420px">
+  <button class="modal-close" onclick="closeModal('whoGenderModal')">✕</button>
+  <h3>🧒 جنسیت فایل WHO</h3>
+  <p id="whoGenderPrompt">فایل انتخابی ستون Sex ندارد.<br>این فایل مربوط به کدام جنسیت است؟</p>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+    <button class="btn primary" onclick="confirmWhoGender('m')">۱ = پسر 🧒</button>
+    <button class="btn gold" onclick="confirmWhoGender('f')">۲ = دختر 👧</button>
+    <button class="btn ghost" onclick="closeModal('whoGenderModal')">انصراف</button>
+  </div>
+</div></div>
 
 <div class="modal" id="csvImportModal"><div class="modal-card" style="max-width:820px">
   <button class="modal-close" onclick="closeModal('csvImportModal')">✕</button>
@@ -923,27 +959,46 @@ tr.dragging{opacity:.4}
       <a onclick="scrollToHelp(14)">۱۴. قفل خودکار</a>
       <a onclick="scrollToHelp(15)">۱۵. نشانگر امضا</a>
       <a onclick="scrollToHelp(16)">۱۶. تنظیمات</a>
-      <a onclick="scrollToHelp(17)">۱۷. نصب روی گوشی (PWA)</a>
+      <a onclick="scrollToHelp(17)">۱۷. جدول WHO و Z-score</a>
+      <a onclick="scrollToHelp(18)">۱۸. نصب روی گوشی (PWA)</a>
     </div>
   </div>
   <div class="help-section" id="help-1"><h4>🔑 ۱. ورود به سامانه</h4><p>ابتدا نام مدرسه، مراقب سلامت، مدیر و سال تحصیلی را در فرم شروع وارد کنید. سپس برای ورود امن، <b>رمز ۵ رقمی</b> را با صفحه‌کلید عددی وارد کنید.</p></div>
-  <div class="help-section" id="help-2"><h4>📊 ۲. داشبورد و نمودارهای تعاملی</h4><p>داشبورد شامل دو نمودار تعاملی است: <b>نمودار دایره‌ای توزیع BMI</b> و <b>نمودار میله‌ای غربالگری</b>. با کلیک روی هر بخش، فیلتر مربوطه اعمال می‌شود.</p></div>
+  <div class="help-section" id="help-2"><h4>📊 ۲. داشبورد و نمودارهای تعاملی</h4><p>داشبورد شامل دو نمودار تعاملی است: <b>نمودار دایره‌ای توزیع BMI (۶ دسته WHO + بدون ثبت)</b> و <b>نمودار میله‌ای غربالگری</b>. با کلیک روی هر بخش، فیلتر مربوطه اعمال می‌شود.</p></div>
   <div class="help-section" id="help-3"><h4>☑️ ۳. انتخاب گروهی دانش‌آموزان</h4><p>در فهرست دانش‌آموزان، با چک‌باکس کنار هر ردیف می‌توانید چند نفر را انتخاب کنید. با انتخاب، نوار ابزار <b>عملیات گروهی</b> ظاهر می‌شود که امکان <b>چاپ کارت‌های سلامت</b> و <b>حذف گروهی</b> را می‌دهد.</p></div>
   <div class="help-section" id="help-4"><h4>🎤 ۴. جستجو و صوتی</h4><p>دکمه 🎤 برای جستجوی صوتی. جستجوی هوشمند غلط تایپی را تحمل می‌کند.</p></div>
   <div class="help-section" id="help-5"><h4>🚦 ۵. سطح ریسک</h4><p>پرخطر / تحت نظر / عادی بر اساس ترکیب یافته‌های غربالگری و هشدار تغییر وزن.</p></div>
   <div class="help-section" id="help-6"><h4>📚 ۶. آموزش‌ها و فعالیت‌های بهداشتی</h4><p>ثبت آموزش‌ها با عنوان، موضوع، تاریخ شمسی و خروجی PDF. گزارش PDF به‌صورت صعودی (قدیمی‌ترین در بالا) مرتب می‌شود.</p></div>
   <div class="help-section" id="help-7"><h4>★ ۷. سفیران، جابه‌جایی و آمار</h4><p>ساختار سه‌سطحی: سرگروه ← زیرگروه ← اعضا.</p><p><b>Drag & Drop:</b> عضو را روی زیرگروه، یا زیرگروه را روی سرگروه رها کنید تا رابطه تنظیم شود.</p><p><b>جابه‌جایی جایگاه اعضا در زیرگروه:</b> با دکمه‌های <b>↑</b> و <b>↓</b> در ستون عملیات هر عضو، می‌توانید ترتیب اعضا را در زیرگروه خودشان جابه‌جا کنید.</p><p><b>آمار هر زیرگروه:</b> در انتهای هر زیرگروه، ردیف خلاصه‌ای نمایش داده می‌شود که تعداد اعضای آن زیرگروه را نشان می‌دهد.</p><p><b>آمار کلی سفیران:</b> در انتهای جدول، کارت خلاصه‌ای شامل تعداد کل / سرگروه / زیرگروه / اعضا / بدون زیرگروه نمایش داده می‌شود.</p><p>تمام این آمارها در <b>خروجی PDF</b> نیز اعمال می‌شوند.</p></div>
   <div class="help-section" id="help-8"><h4>📝 ۸. یادداشت و Undo</h4><p>یادداشت با یادآور تاریخ/ساعت شمسی. پس از حذف دانش‌آموز، یک پیام با دکمه <b>«بازگردانی»</b> ظاهر می‌شود (۱۰ ثانیه) که می‌توانید فوراً عمل حذف را برگردانید.</p></div>
-  <div class="help-section" id="help-9"><h4>📈 ۹. گزارش‌ها و رضایت‌نامه</h4><p>آمار کلی، پرخطرها، ماهانه، بیماری واگیر، حوادث (چیدمان کارتی فشرده)، الگو، فرم وزارت و رضایت‌نامه.</p><p><b>رضایت‌نامه:</b> ۸ فرم در یک برگه A4 (۲ ستون × ۴ ردیف). دارای فیلدهای «موضوع» و «توضیح». چاپ در سه حالت: <b>همه</b>، <b>بر اساس پایه</b> یا <b>انتخاب مجزای هر فرد</b>.</p></div>
-  <div class="help-section" id="help-10"><h4>👤 ۱۰. پروفایل و WHO</h4><p>نمودار WHO با استفاده از تاریخ تولد و جنسیت. اگر تاریخ تولد ثبت نشده باشد، بخش WHO نمایش داده نمی‌شود.</p></div>
+  <div class="help-section" id="help-9"><h4>📈 ۹. گزارش‌ها و رضایت‌نامه</h4><p>گزارش‌ها شامل ۲۴ دسته است: آمار کلی، پرخطرها، ماهانه، بیماری واگیر، حوادث، الگو، فرم وزارت، رضایت‌نامه و <b>گزارش‌های تفصیلی BMI بر اساس ۶ دسته WHO</b>.</p><p><b>گزارش‌های BMI جدید:</b> لاغری شدید / لاغری / اضافه وزن / چاقی — همگی بر اساس Z-score WHO، نه BMI خام بزرگسال.</p><p><b>رضایت‌نامه:</b> ۸ فرم در یک برگه A4 (۲ ستون × ۴ ردیف). دارای فیلدهای «موضوع» و «توضیح». چاپ در سه حالت: <b>همه</b>، <b>بر اساس پایه</b> یا <b>انتخاب مجزای هر فرد</b>.</p></div>
+  <div class="help-section" id="help-10"><h4>👤 ۱۰. پروفایل و WHO</h4><p>نمودار WHO با استفاده از تاریخ تولد و جنسیت. اگر تاریخ تولد ثبت نشده باشد، بخش WHO نمایش داده نمی‌شود.</p><p><b>پس از بارگذاری جدول WHO</b> در تنظیمات → WHO، Z-score و دسته‌بندی رشد به‌صورت خودکار محاسبه و نمایش داده می‌شود.</p></div>
   <div class="help-section" id="help-11"><h4>🩺 ۱۱. ثبت موردی غربالگری</h4><p>در بخش «ثبت / ویرایش غربالگری» می‌توانید هر آیتم را جدا ثبت کنید. اگر بعداً خواستید آیتم‌های خالی را پر کنید، روی دکمه ✏️ در ردیف تاریخچه کلیک کنید.</p></div>
   <div class="help-section" id="help-12"><h4>🗑️ ۱۲. سطل زباله</h4><p>دانش‌آموزان حذف‌شده به مدت <b>۳۰ روز</b> در سطل زباله می‌مانند. در تنظیمات ← سطل زباله می‌توانید آن‌ها را <b>بازیابی</b> یا <b>برای همیشه حذف</b> کنید.</p></div>
   <div class="help-section" id="help-13"><h4>📅 ۱۳. تقویم قابل ویرایش</h4><p>در بخش «آموزش و تقویم» می‌توانید رویدادهای هر ماه را به دلخواه <b>اضافه</b>، <b>ویرایش</b> یا <b>حذف</b> کنید.</p></div>
   <div class="help-section" id="help-14"><h4>🔒 ۱۴. قفل خودکار</h4><p>اگر تا ۱۰ دقیقه هیچ فعالیتی انجام ندهید، برنامه قفل می‌شود و برای ورود باید رمز ۵ رقمی را وارد کنید.</p></div>
   <div class="help-section" id="help-15"><h4>✍️ ۱۵. نشانگر امضا</h4><p>در همه بخش‌هایی که محل امضای مراقب سلامت وجود دارد، نشانگر <b>«✓ امضا ثبت شده»</b> یا <b>«⚠️ امضا ثبت نشده»</b> نمایش داده می‌شود.</p></div>
   <div class="help-section" id="help-16"><h4>⚙️ ۱۶. تنظیمات</h4><p>اطلاعات مدرسه، تم، امضا، پشتیبان، سطل زباله، صادرات CSV و پشتیبان ابری.</p></div>
-  <div class="help-section" id="help-17"><h4>📱 ۱۷. نصب روی گوشی (PWA)</h4><p><b>اندروید:</b> منوی ⋮ → «Install app». <b>آیفون:</b> دکمه اشتراک‌گذاری → «Add to Home Screen». پس از نصب، بدون نیاز به اینترنت کار می‌کند.</p></div>
-  <div class="note-box" style="text-align:center;font-size:.75rem">خروجی از سامانه مراقبان سلامت — سازنده مهدی حسینی — نسخه ۱.۰.۵</div>
+  <div class="help-section" id="help-17"><h4>📊 ۱۷. جدول WHO و Z-score</h4>
+    <p><b>هدف:</b> ارزیابی دقیق رشد دانش‌آموزان بر اساس استاندارد WHO 2007 (BMI-for-age).</p>
+    <p><b>گام ۱ — دانلود:</b> به آدرس <span class="key">who.int/toolkits/growth-reference-data-for-5to19-years/indicators/bmi-for-age</span> بروید. دو فایل <span class="key">bmi-boys-z-who-2007-exp.xlsx</span> و <span class="key">bmi-girls-z-who-2007-exp.xlsx</span> را دانلود کنید.</p>
+    <p><b>گام ۲ — تبدیل:</b> در Excel: <span class="key">File → Save As → CSV UTF-8</span>. در Google Sheets: <span class="key">Download → CSV</span>. در LibreOffice: <span class="key">Save As → Text CSV (UTF-8)</span>.</p>
+    <p><b>گام ۳ — بارگذاری:</b> تنظیمات → تب WHO → دکمه «انتخاب فایل CSV».</p>
+    <p><b>گام ۴ — تشخیص جنسیت:</b> اگر ستون <span class="key">Sex</span> داشت خودکار، وگرنه پرامپت نمایش داده می‌شود (۱ = پسر، ۲ = دختر).</p>
+    <p><b>گام ۵ — تکرار:</b> فایل جنسیت دوم را نیز بارگذاری کنید.</p>
+    <p><b>ستون‌های موردنیاز:</b> <span class="key">Month</span> یا <span class="key">Months</span>، <span class="key">L</span>، <span class="key">M</span>، <span class="key">S</span>، و اختیاری <span class="key">Sex</span>.</p>
+    <p><b>دسته‌بندی Z (۶ گروه WHO):</b></p>
+    <p>🚨 Z &lt; −۳ → <b>لاغری شدید</b><br>
+    ⚠️ −۳ ≤ Z &lt; −۲ → <b>لاغری</b><br>
+    ✓ −۲ ≤ Z ≤ +۱ → <b>طبیعی</b><br>
+    ⚠️ +۱ &lt; Z ≤ +۲ → <b>در معرض اضافه وزن</b><br>
+    ⚠️ +۲ &lt; Z ≤ +۳ → <b>اضافه وزن</b><br>
+    🚨 Z &gt; +۳ → <b>چاقی</b></p>
+    <p><b>فرمول:</b> <span class="key">Z = [(BMI/M)^L − 1] ÷ (L × S)</span></p>
+    <p><b>🆕 در نسخه ۱.۲.۰:</b> دسته‌بندی در همه بخش‌ها (فهرست، گزارش‌ها، نمودارها، فیلترها، اینفوگرافیک، پیام والدین، کارت چاپی و CSV) به‌صورت یکپارچه بر اساس ۶ دسته WHO اعمال می‌شود. سن دقیق با تقسیم روزهای واقعی بر ۳۰.۴۳۷۵ ماه و درون‌یابی خطی بین ردیف‌های LMS انجام می‌گیرد.</p>
+  </div>
+  <div class="help-section" id="help-18"><h4>📱 ۱۸. نصب روی گوشی (PWA)</h4><p><b>اندروید:</b> منوی ⋮ → «Install app». <b>آیفون:</b> دکمه اشتراک‌گذاری → «Add to Home Screen». پس از نصب، بدون نیاز به اینترنت کار می‌کند.</p></div>
+  <div class="note-box" style="text-align:center;font-size:.75rem">خروجی از سامانه مراقبان سلامت — سازنده مهدی حسینی — نسخه ۱.۲.۰</div>
 </div></div>
 
 <div class="modal" id="aboutModal"><div class="modal-card" style="max-width:520px;padding:0;overflow:hidden">
@@ -958,7 +1013,7 @@ tr.dragging{opacity:.4}
     </div>
     <div class="about-info-card">
       <div class="info-row"><span>📱 نام سامانه</span><b>سامانه مراقب سلامت مدارس</b></div>
-      <div class="info-row"><span>🏷️ نسخه</span><b>۱.۰.۵</b></div>
+      <div class="info-row"><span>🏷️ نسخه</span><b>۱.۲.۰</b></div>
       <div class="info-row"><span>👥 مخاطب</span><b>مراقبان سلامت مدارس ابتدایی</b></div>
       <div class="info-row"><span>🛠️ نوع کاربرد</span><b>رسمی — بهداشتی آموزشی</b></div>
       <div class="info-row"><span>💾 ذخیره‌سازی</span><b>محلی (بدون اینترنت)</b></div>
@@ -1024,15 +1079,17 @@ function persianToEnglishDigits(str){
 }
 
 /* ==================== نسخه و تغییرات ==================== */
-var APP_VERSION = '1.0.5';
+var APP_VERSION = '1.2.0';
 var SEEN_VERSION_KEY = 'moragheb_seen_version';
 var CHANGELOG = {
-  '1.0.5': [
-    '↕️ افزودن جابه‌جایی جایگاه اعضا در زیرگروه سفیران (با دکمه‌های ↑↓)',
-    '📊 افزودن آمار تعداد اعضا در انتهای هر زیرگروه',
-    '📈 افزودن آمار کلی سفیران در انتهای جدول',
-    '🖨️ اعمال آمارهای فوق در چاپ و PDF سفیران',
-    '📖 به‌روزرسانی راهنمای برنامه'
+  '1.2.0': [
+    '🎯 یکپارچه‌سازی دسته‌بندی BMI بر اساس ۶ گروه WHO در همه بخش‌ها',
+    '📊 بازنویسی نمودار دایره‌ای BMI با ۷ بخش (۶ دسته WHO + بدون ثبت)',
+    '📋 اصلاح گزارش‌های اضافه وزن / کمبود وزن با معیار Z-score',
+    '🆕 افزودن ۴ گزارش جدید: لاغری شدید، لاغری، در معرض اضافه وزن، چاقی (کودک)',
+    '🔍 گسترش فیلتر BMI از ۵ به ۷ گزینه هماهنگ با WHO',
+    '📈 اصلاح اینفوگرافیک «وزن طبیعی» با معیار Z-score',
+    '🔢 تغییر شماره نسخه به ۱.۲.۰'
   ]
 };
 function checkVersionSeen(){
@@ -1052,6 +1109,252 @@ function showWhatsNew(){
   html += '</ul>';
   body.innerHTML = html;
   openModal('whatsNewModal');
+}
+
+/* ==================== WHO LMS ==================== */
+var WHO_BOYS_KEY = 'moragheb_who_lms_boys_v110';
+var WHO_GIRLS_KEY = 'moragheb_who_lms_girls_v110';
+var whoLMS = { boys: [], girls: [] };
+
+function loadWhoLMS(){
+  try{
+    var b = localStorage.getItem(WHO_BOYS_KEY);
+    var g = localStorage.getItem(WHO_GIRLS_KEY);
+    whoLMS.boys = b ? JSON.parse(b) : [];
+    whoLMS.girls = g ? JSON.parse(g) : [];
+    if(!Array.isArray(whoLMS.boys)) whoLMS.boys = [];
+    if(!Array.isArray(whoLMS.girls)) whoLMS.girls = [];
+    whoLMS.boys.sort(function(a,b){ return a.month - b.month; });
+    whoLMS.girls.sort(function(a,b){ return a.month - b.month; });
+  }catch(e){ whoLMS = { boys: [], girls: [] }; }
+}
+function saveWhoLMS(gender, data){
+  var key = gender === 'm' ? WHO_BOYS_KEY : WHO_GIRLS_KEY;
+  try{ localStorage.setItem(key, JSON.stringify(data)); }catch(e){ toast('خطا در ذخیره‌سازی جدول'); }
+}
+function clearWhoTable(){
+  if(!confirm('آیا از حذف جدول WHO مطمئن هستید؟ ارزیابی‌های جدید غیرفعال می‌شوند.')) return;
+  try{ localStorage.removeItem(WHO_BOYS_KEY); localStorage.removeItem(WHO_GIRLS_KEY); }catch(e){}
+  whoLMS = { boys: [], girls: [] };
+  renderWhoSettings();
+  toast('جدول WHO حذف شد');
+}
+function getWhoDataInterp(gender, ageMonths){
+  var data = gender === 'm' ? whoLMS.boys : whoLMS.girls;
+  if(!data.length) return null;
+  if(ageMonths < data[0].month) return data[0];
+  if(ageMonths > data[data.length-1].month) return data[data.length-1];
+  var lower = null, upper = null;
+  for(var i = 0; i < data.length; i++){
+    if(data[i].month === ageMonths) return data[i];
+    if(data[i].month < ageMonths){
+      lower = data[i];
+    } else {
+      upper = data[i];
+      break;
+    }
+  }
+  if(!lower) return upper;
+  if(!upper) return lower;
+  var t = (ageMonths - lower.month) / (upper.month - lower.month);
+  return {
+    month: ageMonths,
+    L: lower.L + t * (upper.L - lower.L),
+    M: lower.M + t * (upper.M - lower.M),
+    S: lower.S + t * (upper.S - lower.S)
+  };
+}
+function calcZScore(bmi, L, M, S){
+  if(bmi == null || !M || M === 0 || S === 0) return null;
+  if(L === 0) return Math.log(bmi / M) / S;
+  return (Math.pow(bmi / M, L) - 1) / (L * S);
+}
+function getZCategory(z){
+  if(z == null) return { key:'na', label:'قابل ارزیابی نیست', cls:'b-info' };
+  if(z < -3) return { key:'severe-thin', label:'لاغری شدید', cls:'b-risk-high' };
+  if(z < -2) return { key:'thin', label:'لاغری', cls:'b-warn' };
+  if(z <= 1) return { key:'normal', label:'طبیعی', cls:'b-risk-low' };
+  if(z <= 2) return { key:'overweight-risk', label:'در معرض اضافه وزن', cls:'b-warn' };
+  if(z <= 3) return { key:'overweight', label:'اضافه وزن', cls:'b-warn' };
+  return { key:'obese', label:'چاقی', cls:'b-risk-high' };
+}
+function calcAgeMonthsExact(birthJDN, atTimestamp){
+  if(!birthJDN) return null;
+  var atJDN;
+  if(atTimestamp){
+    var d = new Date(atTimestamp);
+    atJDN = g2jdn(d.getFullYear(), d.getMonth()+1, d.getDate());
+  } else {
+    var now = getJalaliNow();
+    atJDN = jalaliToJDN(now.year, now.month, now.day);
+  }
+  if(!atJDN) return null;
+  var totalDays = atJDN - birthJDN;
+  if(totalDays < 0) return null;
+  return totalDays / 30.4375;
+}
+function getWhoEvaluation(studentId, atTimestamp){
+  var s = getStudent(studentId);
+  if(!s) return null;
+  if(!s.birthJDN) return { error:'تاریخ تولد ثبت نشده است.' };
+  if(!s.gender) return { error:'جنسیت دانش‌آموز تعیین نشده است.' };
+  var gender = s.gender;
+  var data = gender === 'm' ? whoLMS.boys : whoLMS.girls;
+  if(!data.length) return { error:'جدول WHO برای این جنسیت بارگذاری نشده است.' };
+  var records = (s.records || []).filter(function(r){ return r.bmi != null; });
+  if(!records.length) return { error:'BMI ثبت نشده است.' };
+  var last = records[records.length - 1];
+  var effectiveTs = atTimestamp || last.ts;
+  var ageMonthsExact = calcAgeMonthsExact(s.birthJDN, effectiveTs);
+  if(ageMonthsExact == null) return { error:'سن قابل محاسبه نیست.' };
+  if(ageMonthsExact < 61 || ageMonthsExact > 228) return { error:'سن خارج از محدوده ۶۱ تا ۲۲۸ ماه (۵ تا ۱۹ سال).' };
+  var ref = getWhoDataInterp(gender, ageMonthsExact);
+  if(!ref) return { error:'داده مرجع برای این سن یافت نشد.' };
+  var z = calcZScore(last.bmi, ref.L, ref.M, ref.S);
+  var cat = getZCategory(z);
+  return { z: z, category: cat, ref: ref, ageMonths: ageMonthsExact, ageMonthsInt: Math.round(ageMonthsExact) };
+}
+function renderWhoSettings(){
+  var status = $('#whoStatusBox');
+  var info = $('#whoInfoBox');
+  if(!status || !info) return;
+  var b = whoLMS.boys.length;
+  var g = whoLMS.girls.length;
+  var html = '';
+  if(b && g){
+    html = '<div class="alert-success">✅ جدول WHO بارگذاری شده است.</div>';
+    html += '<div class="info-row"><span>پسران</span><b>' + fa(b) + ' ردیف</b></div>';
+    html += '<div class="info-row"><span>دختران</span><b>' + fa(g) + ' ردیف</b></div>';
+  } else if(b){
+    html = '<div class="alert-warn">⚠️ فقط جدول پسران بارگذاری شده. لطفاً فایل دختران را نیز بارگذاری کنید.</div>';
+    html += '<div class="info-row"><span>پسران</span><b>' + fa(b) + ' ردیف</b></div>';
+    html += '<div class="info-row"><span>دختران</span><b>—</b></div>';
+  } else if(g){
+    html = '<div class="alert-warn">⚠️ فقط جدول دختران بارگذاری شده. لطفاً فایل پسران را نیز بارگذاری کنید.</div>';
+    html += '<div class="info-row"><span>پسران</span><b>—</b></div>';
+    html += '<div class="info-row"><span>دختران</span><b>' + fa(g) + ' ردیف</b></div>';
+  } else {
+    html = '<div class="alert-info">📌 جدول WHO بارگذاری نشده است. برای فعال‌سازی Z-score، فایل CSV را بارگذاری کنید.</div>';
+  }
+  status.innerHTML = html;
+  if(b || g){
+    var firstB = whoLMS.boys[0];
+    var lastB = whoLMS.boys[whoLMS.boys.length - 1];
+    var firstG = whoLMS.girls[0];
+    var lastG = whoLMS.girls[whoLMS.girls.length - 1];
+    var det = '<div class="note-box"><b>محدوده داده‌ها:</b><br>';
+    if(b) det += 'پسران: ' + fa(firstB.month) + ' تا ' + fa(lastB.month) + ' ماه<br>';
+    if(g) det += 'دختران: ' + fa(firstG.month) + ' تا ' + fa(lastG.month) + ' ماه';
+    det += '</div>';
+    info.innerHTML = det;
+  } else {
+    info.innerHTML = '';
+  }
+}
+function attachWhoHandlers(){
+  var input = $('#whoFileInput');
+  if(!input) return;
+  input.addEventListener('change', function(e){
+    var file = e.target.files[0];
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      try{
+        var text = ev.target.result;
+        if(text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+        var delimiter = ',';
+        var firstLine = text.split(/\r?\n/)[0] || '';
+        var tabs = (firstLine.match(/\t/g) || []).length;
+        var semis = (firstLine.match(/;/g) || []).length;
+        var commas = (firstLine.match(/,/g) || []).length;
+        if(tabs > commas && tabs > semis) delimiter = '\t';
+        else if(semis > commas) delimiter = ';';
+        var lines = text.split(/\r?\n/).filter(function(l){ return l.trim(); });
+        if(lines.length < 2){ toast('فایل خالی است'); return; }
+        function parseLine(line){
+          var result = [], cur = '', inQ = false;
+          for(var i = 0; i < line.length; i++){
+            var c = line[i];
+            if(inQ){ if(c === '"'){ if(line[i+1] === '"'){ cur += '"'; i++; } else inQ = false; } else cur += c; }
+            else { if(c === '"') inQ = true; else if(c === delimiter){ result.push(cur); cur = ''; } else cur += c; }
+          }
+          result.push(cur);
+          return result;
+        }
+        var headers = parseLine(lines[0]).map(function(h){ return persianToEnglishDigits(h.trim().replace(/\s+/g,' ')); });
+        var monthIdx = headers.indexOf('Month');
+        if(monthIdx < 0) monthIdx = headers.indexOf('Months');
+        if(monthIdx < 0) monthIdx = headers.indexOf('month');
+        if(monthIdx < 0) monthIdx = headers.indexOf('Age');
+        var lIdx = headers.indexOf('L');
+        var mIdx = headers.indexOf('M');
+        var sIdx = headers.indexOf('S');
+        var sexIdx = headers.indexOf('Sex');
+        if(monthIdx < 0 || lIdx < 0 || mIdx < 0 || sIdx < 0){
+          toast('❌ ستون Month/L/M/S یافت نشد');
+          return;
+        }
+        var parsed = [];
+        for(var r = 1; r < lines.length; r++){
+          var cols = parseLine(lines[r]);
+          if(cols.length <= Math.max(monthIdx, lIdx, mIdx, sIdx)) continue;
+          var month = parseInt(persianToEnglishDigits(cols[monthIdx]));
+          var L = parseFloat(persianToEnglishDigits(cols[lIdx]));
+          var M = parseFloat(persianToEnglishDigits(cols[mIdx]));
+          var S = parseFloat(persianToEnglishDigits(cols[sIdx]));
+          if(isNaN(month) || isNaN(L) || isNaN(M) || isNaN(S)) continue;
+          parsed.push({ month: month, L: L, M: M, S: S });
+        }
+        if(!parsed.length){ toast('❌ هیچ ردیف معتبری یافت نشد'); return; }
+        if(parsed.length > 5000){ toast('⚠️ حجم جدول برای ذخیره‌سازی محلی زیاد است'); }
+        var gender = null;
+        if(sexIdx >= 0){
+          var firstSex = parseLine(lines[1])[sexIdx];
+          if(firstSex){
+            var sv = String(firstSex).trim().toLowerCase();
+            if(sv === '1' || sv === 'm' || sv === 'male' || sv === 'boys') gender = 'm';
+            else if(sv === '2' || sv === 'f' || sv === 'female' || sv === 'girls') gender = 'f';
+          }
+          if(!gender){
+            for(var k = 1; k < Math.min(5, lines.length); k++){
+              var sv2 = String(parseLine(lines[k])[sexIdx] || '').trim().toLowerCase();
+              if(sv2 === '1' || sv2 === 'm' || sv2 === 'male' || sv2 === 'boys'){ gender = 'm'; break; }
+              if(sv2 === '2' || sv2 === 'f' || sv2 === 'female' || sv2 === 'girls'){ gender = 'f'; break; }
+            }
+          }
+        }
+        if(gender){
+          saveWhoLMS(gender, parsed);
+          loadWhoLMS();
+          renderWhoSettings();
+          toast('✅ جدول WHO بارگذاری شد — ' + fa(parsed.length) + ' ردیف برای ' + (gender === 'm' ? 'پسران' : 'دختران'));
+        } else {
+          window._pendingWhoData = parsed;
+          openModal('whoGenderModal');
+        }
+        input.value = '';
+      }catch(err){ console.error(err); toast('خطا در خواندن فایل'); }
+    };
+    reader.readAsText(file);
+  });
+}
+function confirmWhoGender(gender){
+  var data = window._pendingWhoData;
+  if(!data || !data.length){ closeModal('whoGenderModal'); toast('داده‌ای برای ذخیره نیست'); return; }
+  saveWhoLMS(gender, data);
+  loadWhoLMS();
+  renderWhoSettings();
+  window._pendingWhoData = null;
+  closeModal('whoGenderModal');
+  toast('✅ جدول WHO بارگذاری شد — ' + fa(data.length) + ' ردیف برای ' + (gender === 'm' ? 'پسران' : 'دختران'));
+}
+function downloadWhoSampleCSV(){
+  var rows = [['Month','L','M','S','Sex']];
+  for(var m = 61; m <= 72; m++){
+    rows.push([m, '-1.0996', '15.3', '0.13963', '1']);
+  }
+  downloadCSV('who-lms-sample.csv', rows);
+  toast('نمونه دانلود شد (۱۲ ردیف برای پسران)');
 }
 
 /* ==================== تاریخ ==================== */
@@ -1383,10 +1686,9 @@ function getStudentRiskLevel(s){
   if(r.hearing==='ارجاع'){ urgent++; issues++; }
   if(r.dental==='ارجاع'){ urgent++; issues++; }
   if(r.skin==='مشکوک'){ issues++; }
-  if(r.bmi!=null){
-    if(r.bmi>=30) urgent++;
-    else if(r.bmi>=25 || r.bmi<18.5) issues++;
-  }
+  var info = bmiInfo(s);
+  if(info.key === 'obese' || info.key === 'severe-thin') urgent++;
+  else if(info.key === 'overweight' || info.key === 'thin' || info.key === 'overweight-risk') issues++;
   var weightAlert = detectSuddenWeightChange(s);
   if(weightAlert) urgent++;
   if(urgent>=2) return { level:'high', label:'نیازمند ارجاع فوری', cls:'b-risk-high', key:'high' };
@@ -1463,6 +1765,7 @@ function loadAll(){
   try{ var r6=localStorage.getItem(TRAININGS_KEY); if(r6) trainings=JSON.parse(r6); if(!Array.isArray(trainings)) trainings=[]; }catch(e){ trainings=[]; }
   try{ var r7=localStorage.getItem(TRASH_KEY); if(r7) trash=JSON.parse(r7); if(!Array.isArray(trash)) trash=[]; }catch(e){ trash=[]; }
   try{ var r8=localStorage.getItem(CALENDAR_KEY); if(r8) calendarEvents=JSON.parse(r8); if(typeof calendarEvents!=='object'||calendarEvents===null) calendarEvents={}; }catch(e){ calendarEvents={}; }
+  loadWhoLMS();
   purgeOldTrash();
 }
 function saveDB(){ try{ localStorage.setItem(DB_KEY,JSON.stringify(db)); invalidateHistoryCache(); scheduleAutoCloud(); }catch(e){ toast('خطای ذخیره'); } }
@@ -1649,12 +1952,34 @@ document.addEventListener('click', function(e){
 
 /* ==================== BMI و WHO ==================== */
 function calcBMI(h,w){ if(!h||!w||h<=0||w<=0) return null; return +(w/Math.pow(h/100,2)).toFixed(1); }
-function bmiInfo(b){
+/* ✅ اصلاح ۱: نسخه خام برای محاسبات ساده */
+function bmiInfoRaw(b){
   if(b==null) return { label:'ثبت نشده', cls:'b-info', key:'none' };
   if(b<18.5) return { label:'کمبود وزن', cls:'b-warn', key:'under' };
   if(b<25) return { label:'وزن طبیعی', cls:'b-ok', key:'normal' };
   if(b<30) return { label:'اضافه وزن', cls:'b-warn', key:'over' };
   return { label:'چاقی', cls:'b-bad', key:'obese' };
+}
+/* ✅ اصلاح ۱: نسخه جدید که Student می‌گیرد و از Z استفاده می‌کند */
+function bmiInfo(s){
+  if(!s) return bmiInfoRaw(null);
+  var r = lastRecord(s);
+  if(!r || r.bmi == null) return bmiInfoRaw(null);
+  var who = getWhoEvaluation(s.id);
+  if(who && who.z != null && who.category){
+    var cat = who.category;
+    var clsMap = {
+      'severe-thin': 'b-risk-high',
+      'thin': 'b-warn',
+      'normal': 'b-ok',
+      'overweight-risk': 'b-warn',
+      'overweight': 'b-warn',
+      'obese': 'b-risk-high',
+      'na': 'b-info'
+    };
+    return { label: cat.label, cls: clsMap[cat.key] || cat.cls, key: cat.key, z: who.z };
+  }
+  return bmiInfoRaw(r.bmi);
 }
 var WHO_BMI = {
   m:{5:{p3:12.1,p50:15.3,p97:18.9},6:{p3:12.4,p50:15.5,p97:19.4},7:{p3:12.6,p50:15.6,p97:20.0},8:{p3:12.8,p50:15.9,p97:20.8},9:{p3:13.1,p50:16.2,p97:21.7},10:{p3:13.4,p50:16.7,p97:22.7},11:{p3:13.8,p50:17.2,p97:23.8},12:{p3:14.2,p50:17.8,p97:24.9}},
@@ -1687,7 +2012,7 @@ function _show(view){
   if(view==='trainings') renderTrainings();
   if(view==='ambassadors') renderAmbassadors();
   if(view==='notes') renderNotes();
-  if(view==='settings'){ renderSettingsInfo(); loadCloudUI(); renderTrashList(); }
+  if(view==='settings'){ renderSettingsInfo(); loadCloudUI(); renderTrashList(); renderWhoSettings(); }
   if(view==='education'){ renderEduLibrary(); renderCalendar(); }
   if(view==='reports') renderReportCategories();
 }
@@ -1739,7 +2064,7 @@ function enterApp(){
   try{ checkAutoBackup(); }catch(e){ console.warn(e); }
   renderDashboard(); renderDashboardReminders(); renderPatternAlerts();
   renderInfographic(); renderStudents(); renderTrainings(); renderAmbassadors();
-  renderNotes(); renderSettingsInfo(); renderSignatureSettings();
+  renderNotes(); renderSettingsInfo(); renderSignatureSettings(); renderWhoSettings();
   populateStudentSelects(); renderEduLibrary(); renderCalendar();
   renderReportCategories(); updateNotifBadge();
   buildLetterOptions(); renderInteractiveCharts(); renderTrashList();
@@ -2083,11 +2408,13 @@ function renderInfographic(){
     var rl=getStudentRiskLevel(s);
     if(rl.key==='high') highRisk++;
     else if(rl.key==='mid') midRisk++;
+    /* ✅ اصلاح ۴: استفاده از bmiInfo(s) به جای BMI خام */
+    var info = bmiInfo(s);
+    if(info.key === 'normal') normalWeight++;
     if(r){
       if(r.vision==='ارجاع') visionRef++;
       if(r.hearing==='ارجاع') hearingRef++;
       if(r.dental==='ارجاع') dentalRef++;
-      if(r.bmi!=null && r.bmi>=18.5 && r.bmi<25) normalWeight++;
     }
   });
   function card(num, lbl, pctVal, colorVar, cls){
@@ -2101,7 +2428,7 @@ function renderInfographic(){
   var html='';
   html+=card(screened, 'غربال‌شده', pct(screened), '--c-ok', 'ok');
   html+=card(amb, 'سفیر سلامت', pct(amb), '--c-gold', 'gold');
-  html+=card(normalWeight, 'وزن طبیعی', pct(normalWeight), '--c-ok', 'ok');
+  html+=card(normalWeight, 'BMI طبیعی (WHO)', pct(normalWeight), '--c-ok', 'ok');
   html+=card(withBirth, 'با تاریخ تولد', pct(withBirth), '--c-info', withoutBirth>0?'warn':'info');
   html+=card(visionRef, 'ارجاع بینایی', pct(visionRef), '--c-bad', visionRef>0?'bad':'info');
   html+=card(hearingRef, 'ارجاع شنوایی', pct(hearingRef), '--c-warn', hearingRef>0?'warn':'info');
@@ -2111,14 +2438,23 @@ function renderInfographic(){
 }
 
 /* ==================== نمودارهای تعاملی ==================== */
+/* ✅ اصلاح ۳: نمودار با ۷ دسته (۶ دسته WHO + بدون ثبت) */
 function renderInteractiveCharts(){
   var el=$('#interactiveCharts'); if(!el) return;
   var total = db.students.length;
   if(!total){ el.innerHTML='<div class="empty">داده‌ای برای نمودار وجود ندارد.</div>'; return; }
-  var bmiCounts = {under:0, normal:0, over:0, obese:0, none:0};
+  var bmiCounts = {
+    'severe-thin': 0,
+    'thin': 0,
+    'normal': 0,
+    'overweight-risk': 0,
+    'overweight': 0,
+    'obese': 0,
+    'none': 0
+  };
   db.students.forEach(function(s){
-    var r = lastRecord(s);
-    var info = bmiInfo(r?r.bmi:null);
+    var info = bmiInfo(s);
+    if(bmiCounts[info.key] == null) bmiCounts[info.key] = 0;
     bmiCounts[info.key]++;
   });
   var scr = {vision:0, hearing:0, dental:0, skin:0, normal:0};
@@ -2132,11 +2468,13 @@ function renderInteractiveCharts(){
     if(r.skin==='مشکوک') scr.skin++;
   });
   var bmiData = [
-    { key:'normal', label:'طبیعی', value:bmiCounts.normal, color:'#2e7a4f' },
-    { key:'under', label:'کمبود وزن', value:bmiCounts.under, color:'#2f7ab8' },
-    { key:'over', label:'اضافه وزن', value:bmiCounts.over, color:'#c98a1f' },
-    { key:'obese', label:'چاقی', value:bmiCounts.obese, color:'#c53b3b' },
-    { key:'none', label:'ثبت نشده', value:bmiCounts.none, color:'#9caaa8' }
+    { key:'severe-thin', label:'لاغری شدید', value:bmiCounts['severe-thin'], color:'#8a1818' },
+    { key:'thin', label:'لاغری', value:bmiCounts['thin'], color:'#2f7ab8' },
+    { key:'normal', label:'طبیعی', value:bmiCounts['normal'], color:'#2e7a4f' },
+    { key:'overweight-risk', label:'در معرض اضافه وزن', value:bmiCounts['overweight-risk'], color:'#c98a1f' },
+    { key:'overweight', label:'اضافه وزن', value:bmiCounts['overweight'], color:'#d97706' },
+    { key:'obese', label:'چاقی', value:bmiCounts['obese'], color:'#c53b3b' },
+    { key:'none', label:'ثبت نشده', value:bmiCounts['none'], color:'#9caaa8' }
   ];
   var scrData = [
     { key:'vision', label:'بینایی', value:scr.vision, color:'#c53b3b', filter:'vision' },
@@ -2145,7 +2483,7 @@ function renderInteractiveCharts(){
     { key:'skin', label:'پوست', value:scr.skin, color:'#8b5cf6', filter:null }
   ];
   var html='';
-  html+='<div class="chart-card"><h3>🥧 توزیع BMI</h3>'+buildPieChartSVG(bmiData)+'</div>';
+  html+='<div class="chart-card"><h3>🥧 توزیع BMI (۶ دسته WHO)</h3>'+buildPieChartSVG(bmiData)+'</div>';
   html+='<div class="chart-card"><h3>📊 نتایج غربالگری (ارجاع)</h3>'+buildBarChartSVG(scrData)+'</div>';
   el.innerHTML=html;
 }
@@ -2198,11 +2536,10 @@ function buildBarChartSVG(data){
   return html;
 }
 function filterByBMI(key){
-  var map = {normal:'normal', under:'under', over:'over', obese:'obese', none:'none'};
-  var el = $('#filterBMI'); if(el){ el.value = map[key]||''; }
+  var el = $('#filterBMI'); if(el){ el.value = key || ''; }
   show('students');
   setTimeout(function(){ renderStudents(); }, 100);
-  toast('فیلتر BMI اعمال شد: '+bmiInfo(key==='none'?null:key==='normal'?22:key==='under'?17:key==='over'?27:32).label);
+  toast('فیلتر BMI اعمال شد');
 }
 function filterByScreening(type){
   var map = {vision:'vision', hearing:'hearing', dental:'dental'};
@@ -2245,7 +2582,9 @@ function renderDashboard(){
     if(!s.birthJDN) nb++;
     var r=lastRecord(s);
     if(!r){ nr++; return; }
-    if(r.bmi!=null){ if(r.bmi>=25) ow++; if(r.bmi<18.5) uw++; }
+    var info = bmiInfo(s);
+    if(info.key === 'overweight' || info.key === 'obese') ow++;
+    if(info.key === 'thin' || info.key === 'severe-thin') uw++;
     if(r.vision==='ارجاع') v++;
     if(r.hearing==='ارجاع') h++;
     if(r.dental==='ارجاع') d++;
@@ -2254,8 +2593,8 @@ function renderDashboard(){
   if(st) st.innerHTML=
     '<div class="stat"><div class="num">'+fa(list.length)+'</div><div class="lbl">کل</div></div>'+
     '<div class="stat gold"><div class="num">'+fa(amb)+'</div><div class="lbl">سفیر</div></div>'+
-    '<div class="stat warn"><div class="num">'+fa(ow)+'</div><div class="lbl">اضافه وزن</div></div>'+
-    '<div class="stat warn"><div class="num">'+fa(uw)+'</div><div class="lbl">کمبود وزن</div></div>'+
+    '<div class="stat warn"><div class="num">'+fa(ow)+'</div><div class="lbl">اضافه وزن/چاقی</div></div>'+
+    '<div class="stat warn"><div class="num">'+fa(uw)+'</div><div class="lbl">لاغری</div></div>'+
     '<div class="stat bad"><div class="num">'+fa(v)+'</div><div class="lbl">بینایی</div></div>'+
     '<div class="stat bad"><div class="num">'+fa(h)+'</div><div class="lbl">شنوایی</div></div>'+
     '<div class="stat '+(nb?'warn':'ok')+'"><div class="num">'+fa(nb)+'</div><div class="lbl">بدون تاریخ تولد</div></div>';
@@ -2310,8 +2649,7 @@ function getFilteredStudents(){
     }
     if(fg && s.grade!==fg) return false;
     if(fl){ var L2=firstLetterOf(s.name); if(L2!==fl) return false; }
-    var r=lastRecord(s);
-    var info=bmiInfo(r?r.bmi:null);
+    var info = bmiInfo(s);
     if(fb && info.key!==fb) return false;
     if(fs==='follow' && !needsFollowUp(s)) return false;
     if(fs==='ok' && needsFollowUp(s)) return false;
@@ -2340,7 +2678,7 @@ function renderStudents(){
     html+='<tr class="group-header no-hover"><td colspan="10">'+esc('پایه '+g.grade)+' <span class="cnt">'+fa(g.students.length)+' نفر</span></td></tr>';
     g.students.forEach(function(s){
       var r=lastRecord(s);
-      var info=bmiInfo(r?r.bmi:null);
+      var info=bmiInfo(s);
       var status=needsFollowUp(s)?'<span class="badge b-bad">پیگیری</span>':'<span class="badge b-ok">مطلوب</span>';
       var star=s.isAmbassador?'★':'☆';
       var starCls=s.isAmbassador?'color:var(--gold)':'color:#c5d0ce';
@@ -2410,7 +2748,7 @@ function bulkPrintHealthCards(){
   students.forEach(function(s){
     var records=(s.records||[]).slice().sort(function(a,b){ return b.ts-a.ts; });
     var last=records[0]||null;
-    var info=bmiInfo(last?last.bmi:null);
+    var info=bmiInfo(s);
     cardsHtml += '<div class="health-card-print">'+
       '<div class="hc-head"><h2>کارت سلامت دانش‌آموز</h2>'+(profile.school?'<div>'+esc(profile.school)+'</div>':'')+'</div>'+
       '<div class="hc-row"><b>نام:</b> '+esc(s.name)+'</div>'+
@@ -2565,7 +2903,7 @@ function deleteTraining(id){ if(!confirm('این آموزش حذف شود؟')) r
 
 /* ==================== Footer ==================== */
 function creatorFooterFa(){
-  return '<div style="margin-top:18px;padding-top:8px;border-top:1px solid #ddd;font-size:9.5px;color:#888;text-align:left;direction:rtl">خروجی از سامانه مراقبان سلامت — سازنده مهدی حسینی — نسخه ۱.۰.۵</div>';
+  return '<div style="margin-top:18px;padding-top:8px;border-top:1px solid #ddd;font-size:9.5px;color:#888;text-align:left;direction:rtl">خروجی از سامانه مراقبان سلامت — سازنده مهدی حسینی — نسخه ۱.۲.۰</div>';
 }
 
 function printTrainingsPDF(){
@@ -2710,7 +3048,6 @@ function setViceParent(memberId, viceId){
   }
   var prevVice = s.viceParentId;
   s.viceParentId = viceId || '';
-  /* ✅ NEW: تنظیم ترتیب در زیرگروه جدید */
   if(viceId && prevVice !== viceId){
     s.subgroupOrder = getNextSubgroupOrder(viceId);
   } else if(!viceId){
@@ -2734,7 +3071,6 @@ function editResponsibility(id){
   if(v===null) return;
   s.responsibility=v.trim(); saveDB(); renderAmbassadors(); toast('ثبت شد');
 }
-/* ✅ NEW: توابع جابه‌جایی و ترتیب زیرگروه */
 function getNextSubgroupOrder(viceId){
   var mx = 0;
   db.students.forEach(function(x){
@@ -2764,7 +3100,6 @@ function moveMemberUp(memberId){
   var tmp = s.subgroupOrder||0;
   s.subgroupOrder = prev.subgroupOrder||0;
   prev.subgroupOrder = tmp;
-  /* اگر هر دو صفر بودند، ترتیب واقعی بده */
   if(s.subgroupOrder === prev.subgroupOrder){
     for(var i=0;i<sib.length;i++){ sib[i].subgroupOrder = i+1; }
     var tmp2 = s.subgroupOrder;
@@ -2851,7 +3186,6 @@ function attachAmbassadorDragDrop(){
   });
 }
 
-/* ✅ NEW: محاسبه آمار کلی سفیران */
 function getAmbassadorStats(){
   var all = db.students.filter(function(s){ return s.isAmbassador; });
   var heads = all.filter(function(s){ return (s.ambassadorRole||'member')==='head'; });
@@ -2924,7 +3258,6 @@ function renderAmbassadors(){
       '<button class="btn icon danger" onclick="toggleAmbassador(\''+s.id+'\')">×</button></td>';
     return '<tr class="'+rowCls+' draggable-row" draggable="true" data-aid="'+s.id+'" data-role="'+role+'">'+cells+'</tr>';
   }
-  /* ✅ NEW: ردیف خلاصه زیرگروه */
   function subgroupSummaryRow(viceName, count){
     return '<tr class="subgroup-summary no-hover"><td colspan="6">📊 آمار زیرگروه «'+esc(viceName)+'» — تعداد اعضا: <b>'+fa(count)+'</b> نفر</td></tr>';
   }
@@ -2937,7 +3270,6 @@ function renderAmbassadors(){
       myVices.forEach(function(v){
         html += '<tr class="vice-row no-hover"><td colspan="6">🥈 زیرگروه: <b>'+esc(v.name)+'</b>'+(v.responsibility?' — '+esc(v.responsibility):'')+'</td></tr>';
         html += rowFor(v, 'no-hover', '&nbsp;&nbsp;&nbsp;&nbsp;');
-        /* ✅ NEW: اعضا با ترتیب subgroupOrder */
         var myMembers = data.members.filter(function(m){ return m.viceParentId===v.id; })
           .sort(function(a,b){
             var oa = a.subgroupOrder||0, ob = b.subgroupOrder||0;
@@ -2948,7 +3280,6 @@ function renderAmbassadors(){
           myMembers.forEach(function(m){
             html += rowFor(m, 'member-row no-hover', '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↳ ', { showReorder: true });
           });
-          /* ✅ NEW: ردیف آمار زیرگروه */
           html += subgroupSummaryRow(v.name, myMembers.length);
         } else {
           html += '<tr class="no-hover member-row"><td colspan="6" style="color:var(--muted);font-size:.74rem">— عضوی برای این زیرگروه —</td></tr>';
@@ -2987,7 +3318,6 @@ function renderAmbassadors(){
       html += rowFor(m, 'member-row no-hover', '&nbsp;&nbsp;• ', { showReorder: false });
     });
   }
-  /* ✅ NEW: ردیف آمار کلی سفیران */
   var stats = getAmbassadorStats();
   html += '<tr class="overall-summary no-hover"><td colspan="6">📊 <b>آمار کلی سفیران سلامت:</b> '+
     '<span class="stat-chip">کل: '+fa(stats.total)+'</span>'+
@@ -3018,14 +3348,12 @@ function managerStampOnlyFooter(){
     '</div>';
 }
 
-/* ✅ NEW: چاپ PDF فهرست سفیران با آمار */
 function printAmbassadorsPDF(){
   var data = getAmbassadorData();
   if(!data.all.length){ toast('سفیری وجود ندارد'); return; }
   var stats = getAmbassadorStats();
   var headerSub=[]; if(profile.school) headerSub.push(esc(profile.school)); if(profile.year) headerSub.push('سال '+esc(profile.year));
 
-  /* چاپ آمار کلی در ابتدا */
   var statsBoxHtml = '<div class="stats-box">'+
     '<b>📊 آمار کلی سفیران:</b> '+
     '<span class="stat-chip">کل: '+fa(stats.total)+'</span>'+
@@ -3078,7 +3406,6 @@ function printAmbassadorsPDF(){
         myMembers.forEach(function(m){
           html+='<tr class="member-line"><td>↳↳ '+esc(m.name)+'</td><td>'+esc(m.grade)+'</td><td>عضو</td><td>'+(esc(m.responsibility)||'—')+'</td></tr>';
         });
-        /* ✅ NEW: آمار زیرگروه در PDF */
         html+='<tr class="subgroup-summary-line"><td colspan="4">📊 آمار زیرگروه «'+esc(v.name)+'» — تعداد اعضا: <b>'+fa(myMembers.length)+'</b> نفر</td></tr>';
       });
     });
@@ -3112,7 +3439,6 @@ function printAmbassadorsPDF(){
     });
     html+='</tbody></table>';
   }
-  /* ✅ NEW: آمار کلی در انتهای PDF */
   html+='<table style="margin-top:14px"><tbody><tr class="overall-summary-line"><td>📊 <b>آمار کلی سفیران سلامت:</b> '+
     '<span class="stat-chip">کل: '+fa(stats.total)+'</span> '+
     '<span class="stat-chip">🎯 سرگروه: '+fa(stats.heads)+'</span> '+
@@ -3346,17 +3672,23 @@ function buildGrowthChartHTML(studentId){
   } else if(!s.gender){
     html+='<div class="alert-warn" style="margin-top:10px">⚠️ برای محاسبه صدک WHO، جنسیت دانش‌آموز تعیین نشده است.</div>';
   } else {
-    var last=records[records.length-1];
-    var ageAtScreening = last.ageAtScreening;
-    if(ageAtScreening==null){
-      var a=calcAge(s.birthJDN);
-      ageAtScreening = a ? a.total : null;
-    }
-    var who=whoBMIForAge(s.gender, ageAtScreening);
-    if(who && last.bmi!=null){
-      if(last.bmi<who.p3) html+='<div class="alert-box" style="margin-top:10px">⚠️ BMI ('+fa(last.bmi)+') کمتر از صدک ۳ WHO ('+fa(who.p3)+')</div>';
-      else if(last.bmi>who.p97) html+='<div class="alert-box" style="margin-top:10px">⚠️ BMI ('+fa(last.bmi)+') بیشتر از صدک ۹۷ WHO ('+fa(who.p97)+')</div>';
-      else html+='<div class="alert-success" style="margin-top:10px">✓ BMI ('+fa(last.bmi)+') در محدوده طبیعی WHO</div>';
+    var lastRec = records[records.length - 1];
+    var whoEval = getWhoEvaluation(studentId, lastRec ? lastRec.ts : null);
+    if(whoEval && whoEval.error){
+      html+='<div class="alert-warn" style="margin-top:10px">⚠️ '+esc(whoEval.error)+'</div>';
+    } else if(whoEval && whoEval.z != null){
+      var cat = whoEval.category;
+      if(cat.key === 'normal'){
+        html+='<div class="alert-success" style="margin-top:10px">✅ Z-score: '+fa(whoEval.z.toFixed(2))+' — دسته‌بندی: <b>'+cat.label+'</b></div>';
+      } else if(cat.key === 'thin' || cat.key === 'severe-thin'){
+        html+='<div class="alert-box" style="margin-top:10px">⚠️ Z-score: '+fa(whoEval.z.toFixed(2))+' — دسته‌بندی: <b>'+cat.label+'</b></div>';
+      } else {
+        html+='<div class="alert-warn" style="margin-top:10px">⚠️ Z-score: '+fa(whoEval.z.toFixed(2))+' — دسته‌بندی: <b>'+cat.label+'</b></div>';
+      }
+      html+='<div style="margin-top:6px;font-size:.78rem;color:var(--muted)">'+
+        'مرجع: L='+fa(whoEval.ref.L.toFixed(4))+' — M='+fa(whoEval.ref.M.toFixed(2))+' — S='+fa(whoEval.ref.S.toFixed(5))+' — سن دقیق: '+fa(whoEval.ageMonths.toFixed(2))+' ماه</div>';
+    } else if(!whoLMS.boys.length && !whoLMS.girls.length){
+      html+='<div class="alert-warn" style="margin-top:10px">⚠️ جدول WHO بارگذاری نشده است. برای فعال‌سازی Z-score، به تنظیمات → WHO بروید.</div>';
     }
   }
   return html;
@@ -3398,7 +3730,7 @@ function renderProfile(id){
   ensureStudentFields(s);
   var records=(s.records||[]).slice().sort(function(a,b){ return b.ts-a.ts; });
   var last=records[0]||null;
-  var info=bmiInfo(last?last.bmi:null);
+  var info=bmiInfo(s);
   var meds=s.medications||[], docReports=s.doctorReports||[];
   var incidents=s.incidents||[], referrals=s.referrals||[];
   var rl=getStudentRiskLevel(s);
@@ -3417,6 +3749,7 @@ function renderProfile(id){
   if(incidents.length) html+='<span class="chip">'+fa(incidents.length)+' حادثه</span>';
   if(referrals.length) html+='<span class="chip">'+fa(referrals.length)+' ارجاع</span>';
   if(meds.length) html+='<span class="chip">'+fa(meds.length)+' دارو</span>';
+  if(info.z != null) html+='<span class="chip">Z: '+fa(info.z.toFixed(2))+'</span>';
   if(tchip) html+=tchip;
   html+='</div></div>';
 
@@ -3464,7 +3797,9 @@ function renderProfile(id){
   if(last){
     html+='<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">';
     html+='<div><div style="font-size:1.6rem;font-weight:800;color:var(--'+(info.cls==='b-ok'?'ok':info.cls==='b-bad'?'bad':'warn')+')">'+(last.bmi!=null?fa(last.bmi):'—')+'</div><div class="hint">BMI</div></div>';
-    html+='<div><span class="badge '+info.cls+'">'+info.label+'</span></div></div>';
+    html+='<div><span class="badge '+info.cls+'">'+info.label+'</span></div>';
+    if(info.z != null) html+='<div><span class="badge b-info">Z = '+fa(info.z.toFixed(2))+'</span></div>';
+    html+='</div>';
     html+='<div class="grid3" style="margin-top:10px">';
     html+='<div class="field"><label>قد</label><div>'+(last.height?fa(last.height)+' cm':'—')+'</div></div>';
     html+='<div class="field"><label>وزن</label><div>'+(last.weight?fa(last.weight)+' kg':'—')+'</div></div>';
@@ -3496,7 +3831,8 @@ function renderProfile(id){
     html+='<div class="table-wrap"><table><thead><tr><th>تاریخ</th><th>قد</th><th>وزن</th><th>BMI</th><th>سن غربال</th><th>ب</th><th>ش</th><th>د</th><th>پ</th><th style="width:80px"></th></tr></thead><tbody>';
     records.forEach(function(r){
       html+='<tr class="no-hover"><td>'+faDateShort(r.ts)+'</td><td>'+(r.height?fa(r.height):'—')+'</td><td>'+(r.weight?fa(r.weight):'—')+'</td>';
-      html+='<td>'+(r.bmi!=null?'<span class="badge '+bmiInfo(r.bmi).cls+'">'+fa(r.bmi)+'</span>':'—')+'</td>';
+      var rInfo = r.bmi!=null ? bmiInfoRaw(r.bmi) : {cls:'b-info'};
+      html+='<td>'+(r.bmi!=null?'<span class="badge '+rInfo.cls+'">'+fa(r.bmi)+'</span>':'—')+'</td>';
       html+='<td style="font-size:.76rem;color:var(--muted)">'+(r.ageAtScreening!=null?fa(r.ageAtScreening.toFixed(1))+' سال':'—')+'</td>';
       html+='<td>'+badge(r.vision)+'</td><td>'+badge(r.hearing)+'</td><td>'+badge(r.dental)+'</td><td>'+badge(r.skin)+'</td>';
       html+='<td><button class="btn icon" title="ویرایش" onclick="editRecord(\''+s.id+'\',\''+r.id+'\')">✏️</button><button class="btn icon danger" title="حذف" onclick="deleteRecord(\''+s.id+'\',\''+r.id+'\')">×</button></td></tr>';
@@ -3836,7 +4172,7 @@ var MSG_TEMPLATES={
 function buildParentMessage(sid){
   var s=getStudent(sid); if(!s) return;
   var type=$('#msgType').value;
-  var r=lastRecord(s); var info=bmiInfo(r?r.bmi:null);
+  var r=lastRecord(s); var info=bmiInfo(s);
   var map={'{name}':s.name,'{type}':'عمومی','{bmi}':r&&r.bmi!=null?fa(r.bmi):'—','{bmi_label}':info.label,'{assistant}':profile.signature||profile.assistant||'مراقب سلامت'};
   var msg=MSG_TEMPLATES[type]||'';
   Object.keys(map).sort(function(a,b){ return b.length - a.length; }).forEach(function(k){ msg=msg.split(k).join(map[k]); });
@@ -3941,7 +4277,7 @@ function printHealthCard(sid){
   var s=getStudent(sid); if(!s) return;
   var records=(s.records||[]).slice().sort(function(a,b){ return b.ts-a.ts; });
   var last=records[0]||null;
-  var info=bmiInfo(last?last.bmi:null);
+  var info=bmiInfo(s);
   var w=window.open('','_blank'); if(!w){ toast('لطفاً پاپ‌آپ را برای این سایت مجاز کنید'); return; }
   var html='<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="UTF-8"><title>کارت سلامت</title><style>@page{size:A4;margin:14mm}body{font-family:Tahoma,sans-serif;direction:rtl;font-size:13px;line-height:1.9}'+
     '.head{text-align:center;border-bottom:3px double #8a6a2c;padding-bottom:10px;margin-bottom:16px}.head h1{color:#8a6a2c}h2{background:#f4ecd9;color:#6a4f1f;font-size:13px;padding:6px 10px;margin:12px 0 8px;border-right:4px solid #8a6a2c}'+
@@ -3956,6 +4292,7 @@ function printHealthCard(sid){
   if(last){
     html+='<h2>آخرین وضعیت</h2>';
     html+='<div class="row"><b>BMI:</b><span>'+(last.bmi!=null?fa(last.bmi):'—')+' ('+info.label+')</span></div>';
+    if(info.z != null) html+='<div class="row"><b>Z-score:</b><span>'+fa(info.z.toFixed(2))+'</span></div>';
     html+='<div class="row"><b>قد:</b><span>'+(last.height?fa(last.height)+' cm':'—')+'</span></div>';
     html+='<div class="row"><b>وزن:</b><span>'+(last.weight?fa(last.weight)+' kg':'—')+'</span></div>';
     html+='<div class="row"><b>تاریخ:</b><span>'+faDate(last.ts)+'</span></div>';
@@ -4000,6 +4337,7 @@ function populateStudentSelects(){
 }
 
 /* ==================== گزارش‌ها ==================== */
+/* ✅ اصلاح ۲: ۴ گزارش جدید + دسته‌بندی WHO */
 var REPORT_CATS = [
   { key:'overview', icon:'📊', title:'آمار کلی', desc:'نمای کلی مدرسه' },
   { key:'risk', icon:'🚦', title:'دانش‌آموزان پرخطر', desc:'طبقه‌بندی بر اساس ریسک' },
@@ -4014,8 +4352,12 @@ var REPORT_CATS = [
   { key:'vision', icon:'👁️', title:'مشکلات بینایی', desc:'ارجاع بینایی' },
   { key:'hearing', icon:'👂', title:'مشکلات شنوایی', desc:'ارجاع شنوایی' },
   { key:'dental', icon:'🦷', title:'مشکلات دندان', desc:'ارجاع دندان' },
-  { key:'over', icon:'⚖️', title:'اضافه وزن', desc:'BMI ۲۵+' },
-  { key:'under', icon:'📉', title:'کمبود وزن', desc:'BMI زیر ۱۸.۵' },
+  { key:'severe-thin', icon:'🚨', title:'لاغری شدید (WHO)', desc:'Z کمتر از −۳' },
+  { key:'thin', icon:'⚠️', title:'لاغری (WHO)', desc:'Z بین −۳ و −۲' },
+  { key:'overweight-risk', icon:'⚠️', title:'در معرض اضافه وزن (WHO)', desc:'Z بین +۱ و +۲' },
+  { key:'over', icon:'⚖️', title:'اضافه وزن (WHO)', desc:'Z بین +۲ و +۳' },
+  { key:'obese-who', icon:'🚨', title:'چاقی (WHO)', desc:'Z بیشتر از +۳' },
+  { key:'under', icon:'📉', title:'کمبود وزن (تجمعی)', desc:'لاغری شدید + لاغری' },
   { key:'noscreen', icon:'⏰', title:'بدون غربالگری', desc:'غربال نشده' },
   { key:'nobirth', icon:'📅', title:'بدون تاریخ تولد', desc:'نیازمند تکمیل داده' },
   { key:'transfer', icon:'🔀', title:'منتقل‌شده‌ها', desc:'رفته یا آمده' },
@@ -4047,6 +4389,7 @@ function selectReportCat(key){
   if(key==='pattern'){ content.innerHTML=buildPatternReportHTML(); return; }
   if(key==='ministry'){ content.innerHTML=buildMinistryFormHTML(); return; }
   if(key==='consent'){ content.innerHTML=buildConsentFormHTML(); attachConsentHandlers(); return; }
+  if(key==='nobirth'){ content.innerHTML=buildNoBirthReportHTML(); return; }
   if(key==='nobirth'){ content.innerHTML=buildNoBirthReportHTML(); return; }
   var rows=buildReportData(key);
   if(!rows.length){ content.innerHTML='<div class="empty">موردی یافت نشد.</div>'; return; }
@@ -4080,10 +4423,12 @@ function buildRiskReportHTML(){
     if(!arr.length) return '';
     arr.sort(function(a,b){ return compareStudents(a.s,b.s); });
     var o='<div style="break-inside:auto"><h3 style="font-size:.9rem;color:var(--primary-d);margin:10px 0 8px;break-after:avoid;page-break-after:avoid">'+icon+' '+title+' ('+fa(arr.length)+' نفر)</h3>';
-    o+='<div class="table-wrap"><table><thead><tr><th>#</th><th>نام</th><th>پایه</th><th>سن</th><th>سطح</th></tr></thead><tbody>';
+    o+='<div class="table-wrap"><table><thead><tr><th>#</th><th>نام</th><th>پایه</th><th>سن</th><th>سطح</th><th>BMI</th></tr></thead><tbody>';
     arr.forEach(function(x,i){
+      var info = bmiInfo(x.s);
       o+='<tr class="no-hover"><td>'+fa(i+1)+'</td><td>'+esc(x.s.name)+'</td><td>'+esc(x.s.grade)+'</td><td>'+getAgeDisplay(x.s)+'</td>';
-      o+='<td><span class="badge '+x.rl.cls+'">'+x.rl.label+'</span></td></tr>';
+      o+='<td><span class="badge '+x.rl.cls+'">'+x.rl.label+'</span></td>';
+      o+='<td><span class="badge '+info.cls+'">'+esc(info.label)+'</span></td></tr>';
     });
     o+='</tbody></table></div></div>';
     return o;
@@ -4097,23 +4442,32 @@ function buildRiskReportHTML(){
 function buildOverviewReportHTML(){
   var total=db.students.length;
   if(!total) return '<div class="empty">دانش‌آموزی ثبت نشده.</div>';
-  var bmiDist={under:0,normal:0,over:0,obese:0,none:0};
+  /* ✅ اصلاح ۵: ۶ دسته WHO + none */
+  var bmiDist = {
+    'severe-thin': 0, 'thin': 0, 'normal': 0,
+    'overweight-risk': 0, 'overweight': 0, 'obese': 0, 'none': 0
+  };
   var results={vision:0,hearing:0,dental:0,skin:0};
   var grades=['اول','دوم','سوم','چهارم','پنجم','ششم'];
   var gs={}; grades.forEach(function(g){ gs[g]={total:0,screened:0,follow:0,amb:0}; });
   db.students.forEach(function(s){
-    var r=lastRecord(s); var info=bmiInfo(r?r.bmi:null); bmiDist[info.key]++;
+    var r=lastRecord(s); var info=bmiInfo(s);
+    if(bmiDist[info.key] == null) bmiDist[info.key] = 0;
+    bmiDist[info.key]++;
     if(gs[s.grade]){ gs[s.grade].total++; if(r) gs[s.grade].screened++; if(needsFollowUp(s)) gs[s.grade].follow++; if(s.isAmbassador) gs[s.grade].amb++; }
     if(r){ if(r.vision==='ارجاع') results.vision++; if(r.hearing==='ارجاع') results.hearing++; if(r.dental==='ارجاع') results.dental++; if(r.skin==='مشکوک') results.skin++; }
   });
   function pct(v){ return total?((v/total)*100).toFixed(0):0; }
   function bar(l,v,p,c){ return '<div class="bar-row"><span class="lbl">'+l+'</span><div class="bar"><span style="width:'+p+'%;background:'+c+'"></span></div><span class="val">'+fa(v)+'</span></div>'; }
   var html='<div class="grid2"><div style="background:var(--soft);padding:13px;border-radius:10px;border:1px solid var(--border)">';
-  html+='<h3 style="font-size:.88rem;color:var(--primary-d);margin-bottom:10px">توزیع BMI</h3>';
-  html+=bar('طبیعی',bmiDist.normal,pct(bmiDist.normal),'#2e7a4f');
-  html+=bar('کمبود وزن',bmiDist.under,pct(bmiDist.under),'#2f7ab8');
-  html+=bar('اضافه وزن',bmiDist.over,pct(bmiDist.over),'#c98a1f');
-  html+=bar('چاقی',bmiDist.obese,pct(bmiDist.obese),'#c53b3b');
+  html+='<h3 style="font-size:.88rem;color:var(--primary-d);margin-bottom:10px">توزیع BMI (۶ دسته WHO)</h3>';
+  html+=bar('لاغری شدید',bmiDist['severe-thin'],pct(bmiDist['severe-thin']),'#8a1818');
+  html+=bar('لاغری',bmiDist['thin'],pct(bmiDist['thin']),'#2f7ab8');
+  html+=bar('طبیعی',bmiDist['normal'],pct(bmiDist['normal']),'#2e7a4f');
+  html+=bar('در معرض اضافه وزن',bmiDist['overweight-risk'],pct(bmiDist['overweight-risk']),'#c98a1f');
+  html+=bar('اضافه وزن',bmiDist['overweight'],pct(bmiDist['overweight']),'#d97706');
+  html+=bar('چاقی',bmiDist['obese'],pct(bmiDist['obese']),'#c53b3b');
+  html+=bar('بدون ثبت',bmiDist['none'],pct(bmiDist['none']),'#9caaa8');
   html+='</div>';
   html+='<div style="background:var(--soft);padding:13px;border-radius:10px;border:1px solid var(--border)">';
   html+='<h3 style="font-size:.88rem;color:var(--primary-d);margin-bottom:10px">غربالگری (ارجاع)</h3>';
@@ -4383,16 +4737,22 @@ function printConsent(){
   w.document.close();
   setTimeout(function(){ w.print(); },500);
 }
+/* ✅ اصلاح ۱: buildReportData با معیار WHO برای همه دسته‌ها */
 function buildReportData(key){
   var res=[];
   db.students.forEach(function(s){
     ensureStudentFields(s);
     var r=lastRecord(s);
+    var info = bmiInfo(s);
     if(key==='vision' && r && r.vision==='ارجاع') res.push({name:s.name,grade:s.grade,detail:'<span class="badge b-bad">ارجاع</span> '+faDateShort(r.ts)});
     else if(key==='hearing' && r && r.hearing==='ارجاع') res.push({name:s.name,grade:s.grade,detail:'<span class="badge b-bad">ارجاع</span> '+faDateShort(r.ts)});
     else if(key==='dental' && r && r.dental==='ارجاع') res.push({name:s.name,grade:s.grade,detail:'<span class="badge b-bad">ارجاع</span> '+faDateShort(r.ts)});
-    else if(key==='over' && r && r.bmi!=null && r.bmi>=25) res.push({name:s.name,grade:s.grade,detail:'<span class="badge b-warn">BMI '+fa(r.bmi)+'</span>'});
-    else if(key==='under' && r && r.bmi!=null && r.bmi<18.5) res.push({name:s.name,grade:s.grade,detail:'<span class="badge b-warn">BMI '+fa(r.bmi)+'</span>'});
+    else if(key==='over' && info.key === 'overweight') res.push({name:s.name,grade:s.grade,detail:'<span class="badge '+info.cls+'">'+esc(info.label)+'</span> BMI: '+fa(r.bmi)+(info.z!=null?' | Z: '+fa(info.z.toFixed(2)):'')});
+    else if(key==='under' && (info.key === 'thin' || info.key === 'severe-thin')) res.push({name:s.name,grade:s.grade,detail:'<span class="badge '+info.cls+'">'+esc(info.label)+'</span> BMI: '+fa(r.bmi)+(info.z!=null?' | Z: '+fa(info.z.toFixed(2)):'')});
+    else if(key==='severe-thin' && info.key === 'severe-thin') res.push({name:s.name,grade:s.grade,detail:'<span class="badge '+info.cls+'">'+esc(info.label)+'</span> BMI: '+fa(r.bmi)+(info.z!=null?' | Z: '+fa(info.z.toFixed(2)):'')});
+    else if(key==='thin' && info.key === 'thin') res.push({name:s.name,grade:s.grade,detail:'<span class="badge '+info.cls+'">'+esc(info.label)+'</span> BMI: '+fa(r.bmi)+(info.z!=null?' | Z: '+fa(info.z.toFixed(2)):'')});
+    else if(key==='overweight-risk' && info.key === 'overweight-risk') res.push({name:s.name,grade:s.grade,detail:'<span class="badge '+info.cls+'">'+esc(info.label)+'</span> BMI: '+fa(r.bmi)+(info.z!=null?' | Z: '+fa(info.z.toFixed(2)):'')});
+    else if(key==='obese-who' && info.key === 'obese') res.push({name:s.name,grade:s.grade,detail:'<span class="badge '+info.cls+'">'+esc(info.label)+'</span> BMI: '+fa(r.bmi)+(info.z!=null?' | Z: '+fa(info.z.toFixed(2)):'')});
     else if(key==='noscreen' && !r) res.push({name:s.name,grade:s.grade,detail:'<span class="badge b-warn">بدون غربال</span>'});
     else if(key==='cold') (s.incidents||[]).forEach(function(inc){ if(inc.type==='سرماخوردگی') res.push({name:s.name,grade:s.grade,detail:faDateShort(inc.ts)}); });
     else if(key==='flu') (s.incidents||[]).forEach(function(inc){ if(inc.type==='آنفلوانزا') res.push({name:s.name,grade:s.grade,detail:faDateShort(inc.ts)}); });
@@ -4909,12 +5269,14 @@ function clearAll(){
   location.reload();
 }
 function exportStudentsCSV(){
-  var rows=[['ردیف','نام','پایه','تاریخ تولد','منبع تولد','سن','جنسیت','کد ملی','سفیر','نقش','مسئولیت','تعداد غربال','BMI']];
+  var rows=[['ردیف','نام','پایه','تاریخ تولد','منبع تولد','سن','جنسیت','کد ملی','سفیر','نقش','مسئولیت','تعداد غربال','BMI','دسته‌بندی WHO','Z-score']];
   db.students.slice().sort(compareStudents).forEach(function(s,i){
     var r=lastRecord(s);
     var g = s.gender==='m'?'پسر':s.gender==='f'?'دختر':'';
     var bs = s.birthSource==='manual'?'تاریخ‌ستون':s.birthSource==='nationalId'?'کد ملی':'';
-    rows.push([i+1,s.name,s.grade,formatBirthDate(s.birthJDN),bs,getAgeDisplay(s),g,s.nationalId||'',s.isAmbassador?'بله':'خیر',s.isAmbassador?ROLE_MAP[s.ambassadorRole||'member']:'',s.responsibility||'',(s.records||[]).length,r&&r.bmi!=null?r.bmi:'']);
+    var info = bmiInfo(s);
+    var zVal = info.z != null ? info.z.toFixed(2) : '';
+    rows.push([i+1,s.name,s.grade,formatBirthDate(s.birthJDN),bs,getAgeDisplay(s),g,s.nationalId||'',s.isAmbassador?'بله':'خیر',s.isAmbassador?ROLE_MAP[s.ambassadorRole||'member']:'',s.responsibility||'',(s.records||[]).length,r&&r.bmi!=null?r.bmi:'',info.label,zVal]);
   });
   downloadCSV('students-'+new Date().toISOString().slice(0,10)+'.csv',rows);
   toast('دانلود شد');
@@ -4926,10 +5288,11 @@ function exportScreeningsCSV(){
   toast('دانلود شد');
 }
 function exportBMIReportCSV(){
-  var rows=[['نام','پایه','تاریخ تولد','سن','قد','وزن','BMI','وضعیت']];
+  var rows=[['نام','پایه','تاریخ تولد','سن','قد','وزن','BMI','دسته‌بندی WHO','Z-score']];
   db.students.forEach(function(s){
-    var r=lastRecord(s); var info=bmiInfo(r?r.bmi:null);
-    rows.push([s.name,s.grade,formatBirthDate(s.birthJDN),getAgeDisplay(s),r&&r.height?r.height:'',r&&r.weight?r.weight:'',r&&r.bmi!=null?r.bmi:'',info.label]);
+    var r=lastRecord(s); var info=bmiInfo(s);
+    var zVal = info.z != null ? info.z.toFixed(2) : '';
+    rows.push([s.name,s.grade,formatBirthDate(s.birthJDN),getAgeDisplay(s),r&&r.height?r.height:'',r&&r.weight?r.weight:'',r&&r.bmi!=null?r.bmi:'',info.label,zVal]);
   });
   downloadCSV('bmi-'+new Date().toISOString().slice(0,10)+'.csv',rows);
   toast('دانلود شد');
@@ -5145,6 +5508,7 @@ function attachAllHandlers(){
       if(b.dataset.set==='cloud') loadCloudUI();
       if(b.dataset.set==='trash') renderTrashList();
       if(b.dataset.set==='signature') renderSignatureSettings();
+      if(b.dataset.set==='who') renderWhoSettings();
     });
   });
   var debouncedStd = debounce(renderStudents, 300);
@@ -5170,6 +5534,7 @@ function attachAllHandlers(){
   attachTrainingForm();
   attachSignatureHandlers();
   attachCsvHandlers();
+  attachWhoHandlers();
   attachPinHandlers();
   bindInactivityListeners();
 }
@@ -5193,6 +5558,7 @@ function attachAllHandlers(){
   renderNotes();
   renderSettingsInfo();
   renderSignatureSettings();
+  renderWhoSettings();
   populateStudentSelects();
   renderEduLibrary();
   ensureCalendarDefaults();
@@ -5208,4 +5574,4 @@ function attachAllHandlers(){
 })();
 </script>
 </body>
-      </html>
+  </html>
