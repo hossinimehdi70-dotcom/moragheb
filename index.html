@@ -272,7 +272,7 @@ tr.dragging{opacity:.4}
 .theme-opt.active{border-color:var(--primary);background:var(--soft)}
 .theme-opt .swatch{width:24px;height:24px;border-radius:50%;border:2px solid var(--border)}
 .backup-history{list-style:none;font-size:.82rem}
-.backup-history li{display:flex;justify-content:space-between;gap:8px;padding:8px 11px;background:var(--soft);border-radius:7px;margin-bottom:5px;border-right:3px solid var(--primary);flex-wrap:wrap}
+.backup-history li{display:flex;justify-content:space-between;gap:8px;padding:8px 11px;background:var(--soft);border-radius:7px;margin-bottom:5px;border-right:3px solid var(--primary);flex-wrap:wrap;align-items:center}
 .trash-item{display:flex;justify-content:space-between;gap:10px;padding:10px 13px;background:var(--soft);border-radius:9px;margin-bottom:7px;border-right:3px solid var(--bad);flex-wrap:wrap;align-items:center}
 .trash-item .t-info{flex:1;min-width:150px;font-size:.82rem}
 .trash-item .t-info b{color:var(--primary-d)}
@@ -539,6 +539,7 @@ tr.dragging{opacity:.4}
     <button data-view="notes">یادداشت</button>
     <button data-view="add">ثبت</button>
     <button data-view="reports">گزارش‌ها</button>
+    <button data-view="events">مناسبت‌ها</button>
     <button data-view="settings">تنظیمات</button>
   </nav>
 
@@ -777,6 +778,22 @@ tr.dragging{opacity:.4}
       </div>
     </section>
 
+    <section id="view-events" class="view">
+      <div class="card">
+        <h2>📅 مناسبت‌های بهداشتی سالانه</h2>
+        <div class="field">
+          <label>جستجو در مناسبت‌ها</label>
+          <div class="search-wrap">
+            <input id="eventsSearch" class="input" placeholder="مثلاً: بهداشت، قلب، ماما...">
+          </div>
+        </div>
+        <p class="hint" style="margin-bottom:10px">
+          مناسبت‌ها به تفکیک ماه شمسی. برای افزودن مناسبت جدید به هر ماه، دکمه <b>+</b> را بزنید. برای ویرایش یا حذف، از دکمه‌های <b>✏️</b> و <b>×</b> استفاده کنید.
+        </p>
+        <div class="grid3" id="eventsGrid"></div>
+      </div>
+    </section>
+
     <section id="view-settings" class="view">
       <div class="settings-nav" id="settingsNav">
         <button data-set="info" class="active">اطلاعات</button>
@@ -962,6 +979,30 @@ tr.dragging{opacity:.4}
   </div>
 </div></div>
 
+<div class="modal" id="eventModal"><div class="modal-card" style="max-width:520px">
+  <button class="modal-close" onclick="closeModal('eventModal')">✕</button>
+  <h3 id="eventModalTitle">افزودن مناسبت</h3>
+  <div class="field">
+    <label>متن مناسبت *</label>
+    <input class="input" id="eventModalInput" placeholder="مثلاً: ۱۵ - روز جهانی ماما">
+  </div>
+  <div class="alert-info" id="eventModalMonthLabel"></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+    <button class="btn primary" onclick="saveEventFromModal()">ذخیره</button>
+    <button class="btn ghost" onclick="closeModal('eventModal')">انصراف</button>
+  </div>
+</div></div>
+
+<div class="modal" id="confirmModal"><div class="modal-card" style="max-width:440px">
+  <button class="modal-close" onclick="closeModal('confirmModal')">✕</button>
+  <h3 id="confirmTitle">تأیید</h3>
+  <p id="confirmMessage" style="white-space:pre-wrap;line-height:1.8"></p>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+    <button class="btn danger" id="confirmYesBtn" onclick="confirmYesAction()">تأیید</button>
+    <button class="btn ghost" onclick="closeModal('confirmModal')">انصراف</button>
+  </div>
+</div></div>
+
 <div class="modal" id="whatsNewModal">
   <div class="modal-card">
     <button class="modal-close" onclick="closeModal('whatsNewModal')">✕</button>
@@ -1115,6 +1156,21 @@ function persianToEnglishDigits(str){
     .replace(/[٠-٩]/g, function(d){ return '٠١٢٣٤٥٦٧٨٩'.indexOf(d); });
 }
 
+/* ==================== مودال تأیید اختصاصی ==================== */
+var _confirmCallback = null;
+function showConfirm(title, message, onConfirm){
+  $('#confirmTitle').textContent = title || 'تأیید';
+  $('#confirmMessage').textContent = message || '';
+  _confirmCallback = onConfirm;
+  openModal('confirmModal');
+}
+function confirmYesAction(){
+  var cb = _confirmCallback;
+  _confirmCallback = null;
+  closeModal('confirmModal');
+  if(cb){ try{ cb(); }catch(e){ console.error('[confirm]', e); } }
+}
+
 /* ==================== نسخه ==================== */
 var APP_VERSION = '1.1.3';
 var SEEN_VERSION_KEY = 'moragheb_seen_version';
@@ -1188,22 +1244,13 @@ function getWhoDataInterp(gender, ageMonths){
   var lower = null, upper = null;
   for(var i = 0; i < data.length; i++){
     if(data[i].month === ageMonths) return data[i];
-    if(data[i].month < ageMonths){
-      lower = data[i];
-    } else {
-      upper = data[i];
-      break;
-    }
+    if(data[i].month < ageMonths){ lower = data[i]; }
+    else { upper = data[i]; break; }
   }
   if(!lower) return upper;
   if(!upper) return lower;
   var t = (ageMonths - lower.month) / (upper.month - lower.month);
-  return {
-    month: ageMonths,
-    L: lower.L + t * (upper.L - lower.L),
-    M: lower.M + t * (upper.M - lower.M),
-    S: lower.S + t * (upper.S - lower.S)
-  };
+  return { month: ageMonths, L: lower.L + t * (upper.L - lower.L), M: lower.M + t * (upper.M - lower.M), S: lower.S + t * (upper.S - lower.S) };
 }
 function calcZScore(bmi, L, M, S){
   if(bmi == null || !M || M === 0 || S === 0) return null;
@@ -1222,13 +1269,8 @@ function getZCategory(z){
 function calcAgeMonthsExact(birthJDN, atTimestamp){
   if(!birthJDN) return null;
   var atJDN;
-  if(atTimestamp){
-    var d = new Date(atTimestamp);
-    atJDN = g2jdn(d.getFullYear(), d.getMonth()+1, d.getDate());
-  } else {
-    var now = getJalaliNow();
-    atJDN = jalaliToJDN(now.year, now.month, now.day);
-  }
+  if(atTimestamp){ var d = new Date(atTimestamp); atJDN = g2jdn(d.getFullYear(), d.getMonth()+1, d.getDate()); }
+  else { var now = getJalaliNow(); atJDN = jalaliToJDN(now.year, now.month, now.day); }
   if(!atJDN) return null;
   var totalDays = atJDN - birthJDN;
   if(totalDays < 0) return null;
@@ -1252,7 +1294,6 @@ function getWhoEvaluation(studentId, atTimestamp){
   var effectiveTs = atTimestamp || last.ts;
   var cacheKey = studentId + '|' + s.birthJDN + '|' + gender + '|' + effectiveTs + '|' + last.bmi;
   if(_zScoreCache.has(cacheKey)) return _zScoreCache.get(cacheKey);
-
   var ageMonthsExact = calcAgeMonthsExact(s.birthJDN, effectiveTs);
   if(ageMonthsExact == null){ return { error:'سن قابل محاسبه نیست.' }; }
   if(ageMonthsExact < 61 || ageMonthsExact > 228){ return { error:'سن خارج از محدوده ۶۱ تا ۲۲۸ ماه (۵ تا ۱۹ سال).' }; }
@@ -1262,48 +1303,36 @@ function getWhoEvaluation(studentId, atTimestamp){
   var cat = getZCategory(z);
   var result = { z: z, category: cat, ref: ref, ageMonths: ageMonthsExact, ageMonthsInt: Math.round(ageMonthsExact) };
   _zScoreCache.set(cacheKey, result);
-  if(_zScoreCache.size > 800){
-    var firstKey = _zScoreCache.keys().next().value;
-    _zScoreCache.delete(firstKey);
-  }
+  if(_zScoreCache.size > 800){ var firstKey = _zScoreCache.keys().next().value; _zScoreCache.delete(firstKey); }
   return result;
 }
 function renderWhoSettings(){
-  var status = $('#whoStatusBox');
-  var info = $('#whoInfoBox');
+  var status = $('#whoStatusBox'); var info = $('#whoInfoBox');
   if(!status || !info) return;
-  var b = whoLMS.boys.length;
-  var g = whoLMS.girls.length;
-  var html = '';
+  var b = whoLMS.boys.length; var g = whoLMS.girls.length; var html = '';
   if(b && g){
     html = '<div class="alert-success">✅ جدول WHO بارگذاری شده است.</div>';
     html += '<div class="info-row"><span>پسران</span><b>' + fa(b) + ' ردیف</b></div>';
     html += '<div class="info-row"><span>دختران</span><b>' + fa(g) + ' ردیف</b></div>';
   } else if(b){
-    html = '<div class="alert-warn">⚠️ فقط جدول پسران بارگذاری شده. لطفاً فایل دختران را نیز بارگذاری کنید.</div>';
+    html = '<div class="alert-warn">⚠️ فقط جدول پسران بارگذاری شده.</div>';
     html += '<div class="info-row"><span>پسران</span><b>' + fa(b) + ' ردیف</b></div>';
-    html += '<div class="info-row"><span>دختران</span><b>—</b></div>';
   } else if(g){
-    html = '<div class="alert-warn">⚠️ فقط جدول دختران بارگذاری شده. لطفاً فایل پسران را نیز بارگذاری کنید.</div>';
-    html += '<div class="info-row"><span>پسران</span><b>—</b></div>';
+    html = '<div class="alert-warn">⚠️ فقط جدول دختران بارگذاری شده.</div>';
     html += '<div class="info-row"><span>دختران</span><b>' + fa(g) + ' ردیف</b></div>';
   } else {
-    html = '<div class="alert-info">📌 جدول WHO بارگذاری نشده است. برای فعال‌سازی Z-score، فایل CSV را بارگذاری کنید.</div>';
+    html = '<div class="alert-info">📌 جدول WHO بارگذاری نشده است.</div>';
   }
   status.innerHTML = html;
   if(b || g){
-    var firstB = whoLMS.boys[0];
-    var lastB = whoLMS.boys[whoLMS.boys.length - 1];
-    var firstG = whoLMS.girls[0];
-    var lastG = whoLMS.girls[whoLMS.girls.length - 1];
+    var firstB = whoLMS.boys[0]; var lastB = whoLMS.boys[whoLMS.boys.length - 1];
+    var firstG = whoLMS.girls[0]; var lastG = whoLMS.girls[whoLMS.girls.length - 1];
     var det = '<div class="note-box"><b>محدوده داده‌ها:</b><br>';
     if(b) det += 'پسران: ' + fa(firstB.month) + ' تا ' + fa(lastB.month) + ' ماه<br>';
     if(g) det += 'دختران: ' + fa(firstG.month) + ' تا ' + fa(lastG.month) + ' ماه';
     det += '</div>';
     info.innerHTML = det;
-  } else {
-    info.innerHTML = '';
-  }
+  } else { info.innerHTML = ''; }
 }
 function attachWhoHandlers(){
   var input = $('#whoFileInput');
@@ -1340,14 +1369,8 @@ function attachWhoHandlers(){
         if(monthIdx < 0) monthIdx = headers.indexOf('Months');
         if(monthIdx < 0) monthIdx = headers.indexOf('month');
         if(monthIdx < 0) monthIdx = headers.indexOf('Age');
-        var lIdx = headers.indexOf('L');
-        var mIdx = headers.indexOf('M');
-        var sIdx = headers.indexOf('S');
-        var sexIdx = headers.indexOf('Sex');
-        if(monthIdx < 0 || lIdx < 0 || mIdx < 0 || sIdx < 0){
-          toast('❌ ستون Month/L/M/S یافت نشد');
-          return;
-        }
+        var lIdx = headers.indexOf('L'); var mIdx = headers.indexOf('M'); var sIdx = headers.indexOf('S'); var sexIdx = headers.indexOf('Sex');
+        if(monthIdx < 0 || lIdx < 0 || mIdx < 0 || sIdx < 0){ toast('❌ ستون Month/L/M/S یافت نشد'); return; }
         var parsed = [];
         for(var r = 1; r < lines.length; r++){
           var cols = parseLine(lines[r]);
@@ -1360,7 +1383,6 @@ function attachWhoHandlers(){
           parsed.push({ month: month, L: L, M: M, S: S });
         }
         if(!parsed.length){ toast('❌ هیچ ردیف معتبری یافت نشد'); return; }
-        if(parsed.length > 5000){ toast('⚠️ حجم جدول برای ذخیره‌سازی محلی زیاد است'); }
         var gender = null;
         if(sexIdx >= 0){
           var firstSex = parseLine(lines[1])[sexIdx];
@@ -1378,14 +1400,9 @@ function attachWhoHandlers(){
           }
         }
         if(gender){
-          saveWhoLMS(gender, parsed);
-          loadWhoLMS();
-          renderWhoSettings();
+          saveWhoLMS(gender, parsed); loadWhoLMS(); renderWhoSettings();
           toast('✅ جدول WHO بارگذاری شد — ' + fa(parsed.length) + ' ردیف برای ' + (gender === 'm' ? 'پسران' : 'دختران'));
-        } else {
-          window._pendingWhoData = parsed;
-          openModal('whoGenderModal');
-        }
+        } else { window._pendingWhoData = parsed; openModal('whoGenderModal'); }
         input.value = '';
       }catch(err){ console.error(err); toast('خطا در خواندن فایل'); }
     };
@@ -1395,20 +1412,15 @@ function attachWhoHandlers(){
 function confirmWhoGender(gender){
   var data = window._pendingWhoData;
   if(!data || !data.length){ closeModal('whoGenderModal'); toast('داده‌ای برای ذخیره نیست'); return; }
-  saveWhoLMS(gender, data);
-  loadWhoLMS();
-  renderWhoSettings();
-  window._pendingWhoData = null;
-  closeModal('whoGenderModal');
+  saveWhoLMS(gender, data); loadWhoLMS(); renderWhoSettings();
+  window._pendingWhoData = null; closeModal('whoGenderModal');
   toast('✅ جدول WHO بارگذاری شد — ' + fa(data.length) + ' ردیف برای ' + (gender === 'm' ? 'پسران' : 'دختران'));
 }
 function downloadWhoSampleCSV(){
   var rows = [['Month','L','M','S','Sex']];
-  for(var m = 61; m <= 72; m++){
-    rows.push([m, '-1.0996', '15.3', '0.13963', '1']);
-  }
+  for(var m = 61; m <= 72; m++){ rows.push([m, '-1.0996', '15.3', '0.13963', '1']); }
   downloadCSV('who-lms-sample.csv', rows);
-  toast('نمونه دانلود شد (۱۲ ردیف برای پسران)');
+  toast('نمونه دانلود شد');
 }
 
 /* ==================== تاریخ ==================== */
@@ -1418,17 +1430,13 @@ function j2g(jy,jm,jd){
   var jy2=jy-979, jm2=jm-1, jd2=jd-1;
   var jdn=365*jy2+Math.floor(jy2/33)*8+Math.floor(((jy2%33)+3)/4);
   for(var i=0;i<jm2;i++) jdn+=(i<6)?31:30;
-  jdn+=jd2;
-  var gdn=jdn+79;
-  var gy=1600+400*Math.floor(gdn/146097);
-  gdn=gdn%146097;
-  var leap=true;
+  jdn+=jd2; var gdn=jdn+79; var gy=1600+400*Math.floor(gdn/146097);
+  gdn=gdn%146097; var leap=true;
   if(gdn>=36525){ gdn--; gy+=100*Math.floor(gdn/36524); gdn=gdn%36524; if(gdn>=365) gdn++; else leap=false; }
   gy+=4*Math.floor(gdn/1461); gdn%=1461;
   if(gdn>=366){ leap=false; gdn--; gy+=Math.floor(gdn/365); gdn=gdn%365; }
   var sal=[0,31,(leap||(gy%4===0&&gy%100!==0)||(gy%400===0))?29:28,31,30,31,30,31,31,30,31,30,31];
-  var gm;
-  for(gm=0;gm<13&&gdn>=sal[gm];gm++) gdn-=sal[gm];
+  var gm; for(gm=0;gm<13&&gdn>=sal[gm];gm++) gdn-=sal[gm];
   return [gy,gm,gdn+1];
 }
 function g2jdn(gy,gm,gd){ var a=Math.floor((14-gm)/12); var y=gy+4800-a; var m=gm+12*a-3; return gd+Math.floor((153*m+2)/5)+365*y+Math.floor(y/4)-Math.floor(y/100)+Math.floor(y/400)-32045; }
@@ -1452,33 +1460,24 @@ function approximateJalaliNow(){
   var jy = nowJDN >= g2jdn(gy,3,21) ? gy-621 : gy-622;
   var startJDN = nowJDN >= g2jdn(gy,3,21) ? g2jdn(gy,3,21) : g2jdn(gy-1,3,21);
   var monthDays=[31,31,31,31,31,31,30,30,30,30,30,29];
-  var diff=nowJDN-startJDN;
-  var acc=0, jm=1, jd=1;
-  for(var i=0;i<12;i++){
-    if(acc+monthDays[i]>diff){ jm=i+1; jd=diff-acc+1; break; }
-    acc+=monthDays[i];
-  }
+  var diff=nowJDN-startJDN; var acc=0, jm=1, jd=1;
+  for(var i=0;i<12;i++){ if(acc+monthDays[i]>diff){ jm=i+1; jd=diff-acc+1; break; } acc+=monthDays[i]; }
   return { year:jy, month:jm, day:jd };
 }
 function calcAge(jdn){
   if(!jdn) return null;
-  var now=getJalaliNow();
-  var birth=jdnToJalali(jdn);
+  var now=getJalaliNow(); var birth=jdnToJalali(jdn);
   if(!birth) return null;
   var years=now.year-birth.year, months=now.month-birth.month, days=now.day-birth.day;
-  if(days<0){ months--; days+=30; }
-  if(months<0){ years--; months+=12; }
+  if(days<0){ months--; days+=30; } if(months<0){ years--; months+=12; }
   if(years<0) return null;
   return { years:years, months:months, days:days, total:years+months/12 };
 }
 function getJalaliNow(){
   try{
-    var d=new Date();
-    var parts={};
+    var d=new Date(); var parts={};
     new Intl.DateTimeFormat('fa-IR',{year:'numeric',month:'numeric',day:'numeric'}).formatToParts(d).forEach(function(p){ parts[p.type]=p.value; });
-    var y=parseInt(persianToEnglishDigits(parts.year));
-    var m=parseInt(persianToEnglishDigits(parts.month));
-    var dd=parseInt(persianToEnglishDigits(parts.day));
+    var y=parseInt(persianToEnglishDigits(parts.year)); var m=parseInt(persianToEnglishDigits(parts.month)); var dd=parseInt(persianToEnglishDigits(parts.day));
     if(isNaN(y)||isNaN(m)||isNaN(dd)) return approximateJalaliNow();
     return { year:y, month:m, day:dd };
   }catch(e){ return approximateJalaliNow(); }
@@ -1517,9 +1516,7 @@ function parseBirthDate(raw, nationalId){
   }
   var m4 = raw.match(/^(\d{6})$/);
   if(m4){
-    var yy4=parseInt(raw.substr(0,2));
-    var mo4=parseInt(raw.substr(2,2));
-    var d4=parseInt(raw.substr(4,2));
+    var yy4=parseInt(raw.substr(0,2)); var mo4=parseInt(raw.substr(2,2)); var d4=parseInt(raw.substr(4,2));
     var fullY4 = yy4 >= 50 ? 1300 + yy4 : 1400 + yy4;
     if(mo4>=1 && mo4<=12 && d4>=1 && d4<=31){
       var jdn4 = jalaliToJDN(fullY4, mo4, d4);
@@ -1529,9 +1526,7 @@ function parseBirthDate(raw, nationalId){
   if(nationalId){
     var nid = persianToEnglishDigits(String(nationalId)).replace(/\D/g,'');
     if(nid.length === 10){
-      var yy5 = parseInt(nid.substr(0,2));
-      var mo5 = parseInt(nid.substr(2,2));
-      var d5 = parseInt(nid.substr(4,2));
+      var yy5 = parseInt(nid.substr(0,2)); var mo5 = parseInt(nid.substr(2,2)); var d5 = parseInt(nid.substr(4,2));
       var fullY5 = yy5 >= 50 ? 1300 + yy5 : 1400 + yy5;
       if(mo5>=1 && mo5<=12 && d5>=1 && d5<=31){
         var jdn5 = jalaliToJDN(fullY5, mo5, d5);
@@ -1550,21 +1545,18 @@ function normalizeGender(raw){
 }
 function suggestBirthYear(grade){
   var order = {'اول':1,'دوم':2,'سوم':3,'چهارم':4,'پنجم':5,'ششم':6};
-  var g = order[grade];
-  if(!g) return 0;
+  var g = order[grade]; if(!g) return 0;
   var currentYear = getJalaliNow().year;
   return currentYear - 6 - (g - 1);
 }
 function validateBirthYear(jy){
-  var nowY = getJalaliNow().year;
-  var age = nowY - jy;
+  var nowY = getJalaliNow().year; var age = nowY - jy;
   if(age < 4 || age > 16) return { ok: false, reason: 'سن ' + fa(age) + ' سال برای دانش‌آموز ابتدایی غیرعادی است.' };
   return { ok: true, age: age };
 }
 function formatBirthDate(jdn){
   if(!jdn) return '—';
-  var j = jdnToJalali(jdn);
-  if(!j) return '—';
+  var j = jdnToJalali(jdn); if(!j) return '—';
   return fa(j.year) + '/' + fa(String(j.month).padStart(2,'0')) + '/' + fa(String(j.day).padStart(2,'0'));
 }
 function birthSourceLabel(src){
@@ -1601,10 +1593,7 @@ function levenshtein(a,b){
   for(var j=0;j<=b.length;j++) prev[j]=j;
   for(var i=1;i<=a.length;i++){
     cur[0]=i;
-    for(var k=1;k<=b.length;k++){
-      var cost = a[i-1]===b[k-1] ? 0 : 1;
-      cur[k]=Math.min(prev[k]+1,cur[k-1]+1,prev[k-1]+cost);
-    }
+    for(var k=1;k<=b.length;k++){ var cost = a[i-1]===b[k-1] ? 0 : 1; cur[k]=Math.min(prev[k]+1,cur[k-1]+1,prev[k-1]+cost); }
     prev=cur.slice();
   }
   return prev[b.length];
@@ -1627,8 +1616,7 @@ function buildHistoryCache(){
   var map = {};
   db.students.forEach(function(s){
     ensureStudentFields(s);
-    var texts = [];
-    texts.push(s.history||''); texts.push(s.specialNotes||''); texts.push(s.responsibility||'');
+    var texts = [s.history||'', s.specialNotes||'', s.responsibility||''];
     (s.medications||[]).forEach(function(m){ texts.push((m.name||'')+' '+(m.notes||'')); });
     (s.incidents||[]).forEach(function(inc){ texts.push((inc.type||'')+' '+(inc.description||'')+' '+(inc.action||'')); });
     (s.referrals||[]).forEach(function(r){ texts.push((r.type||'')+' '+(r.notes||'')); });
@@ -1642,10 +1630,7 @@ function buildHistoryCache(){
 function historyMatch(s, query){
   if(!query) return false;
   var cacheKey = db.students.length + '|' + notes.length + '|' + notes.map(function(n){ return n.id+(n.title||'').length; }).join('');
-  if(_historyCache.key !== cacheKey){
-    _historyCache.map = buildHistoryCache();
-    _historyCache.key = cacheKey;
-  }
+  if(_historyCache.key !== cacheKey){ _historyCache.map = buildHistoryCache(); _historyCache.key = cacheKey; }
   var norm = normalizePersian(query);
   var text = _historyCache.map[s.id] || '';
   var notesText = _historyCache.map['__notes__'] || '';
@@ -1667,16 +1652,8 @@ function parseSearchQuery(q){
       else if(/پایین|عادی|low/i.test(r)) filters.risk='low';
       return;
     }
-    if((m = p.match(/^BMI\s*([<>]=?|=)\s*([\d.۰-۹]+)$/i))){
-      filters.bmiOp = m[1];
-      filters.bmiVal = parseFloat(persianToEnglishDigits(m[2]));
-      return;
-    }
-    if((m = p.match(/^(?:سفیر|ambassador)[:：](.+)$/i))){
-      var v = m[1];
-      filters.ambassador = /بله|yes|1|true|آری/i.test(v) ? true : (/خیر|no|0|false/i.test(v) ? false : null);
-      return;
-    }
+    if((m = p.match(/^BMI\s*([<>]=?|=)\s*([\d.۰-۹]+)$/i))){ filters.bmiOp = m[1]; filters.bmiVal = parseFloat(persianToEnglishDigits(m[2])); return; }
+    if((m = p.match(/^(?:سفیر|ambassador)[:：](.+)$/i))){ var v = m[1]; filters.ambassador = /بله|yes|1|true|آری/i.test(v) ? true : (/خیر|no|0|false/i.test(v) ? false : null); return; }
     textParts.push(p);
   });
   filters.text = textParts.join(' ');
@@ -1710,8 +1687,7 @@ var activeVoiceBtn = null;
 function stopActiveVoice(){
   if(activeVoiceBtn){
     try{ activeVoiceBtn._rec && activeVoiceBtn._rec.stop(); }catch(e){}
-    activeVoiceBtn.classList.remove('listening');
-    activeVoiceBtn = null;
+    activeVoiceBtn.classList.remove('listening'); activeVoiceBtn = null;
   }
 }
 function voiceSearch(inputId, btn){
@@ -1747,8 +1723,7 @@ function voiceSearch(inputId, btn){
 /* ==================== حروف الفبا ==================== */
 var ALPHABET = ['آ','ا','ب','پ','ت','ث','ج','چ','ح','خ','د','ذ','ر','ز','ژ','س','ش','ص','ض','ط','ظ','ع','غ','ف','ق','ک','گ','ل','م','ن','و','ه','ی'];
 function firstLetterOf(name){
-  var n=normalizePersian(name);
-  if(!n) return '';
+  var n=normalizePersian(name); if(!n) return '';
   var first=n.charAt(0);
   if(first==='آ'||first==='ا') return 'ا';
   return first;
@@ -1812,7 +1787,7 @@ function detectSuddenWeightChange(s){
 var DB_KEY='moragheb_db_v14', PROFILE_KEY='moragheb_profile_v14', THEME_KEY='moragheb_theme_v14';
 var BACKUPS_KEY='moragheb_backups_v14', DISEASES_KEY='moragheb_diseases_v14', NOTES_KEY='moragheb_notes_v14';
 var CLOUD_KEY='moragheb_cloud_v14', TRAININGS_KEY='moragheb_trainings_v14', TRASH_KEY='moragheb_trash_v14';
-var ECONOMY_KEY='moragheb_economyprint_v14';
+var ECONOMY_KEY='moragheb_economyprint_v14', EVENTS_KEY='moragheb_events_v14';
 var OLD_DB_KEY='moragheb_db_v13', OLD_PROFILE_KEY='moragheb_profile_v13', OLD_THEME_KEY='moragheb_theme_v13';
 var OLD_BACKUPS_KEY='moragheb_backups_v13', OLD_DISEASES_KEY='moragheb_diseases_v13', OLD_NOTES_KEY='moragheb_notes_v13';
 var OLD_CLOUD_KEY='moragheb_cloud_v13', OLD_TRAININGS_KEY='moragheb_trainings_v13';
@@ -1822,7 +1797,9 @@ var profile={school:'',assistant:'',year:'',signature:'',signatureImg:'',manager
 var cloud={url:'',user:'',pass:'',file:'moragheb-backup.json',auto:false,lastSync:0};
 var diseases=[], notes=[], trainings=[];
 var trash = [];
+var eventsData = {};
 var economyPrint = false;
+var MAX_BACKUPS = 3;
 var currentStudentId=null, editingNoteId=null, editingTrainingId=null, reminderTimer=null;
 var csvParsedData=null, currentReportCat=null;
 var lastReferralHTMLByStudent={}, exportSelections={};
@@ -1843,12 +1820,361 @@ var groupReferralSelections = {
 var _inactivityTimer = null;
 var INACTIVITY_MS = 10 * 60 * 1000;
 
+/* ==================== مناسبت‌ها (Events) ==================== */
+var EVENT_MONTH_NAMES = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+var EVENTS_SCHEMA_VERSION = 2;
+
+function getDefaultEventsData(){
+  var defaults = {
+    m1:  ['۴ - روز جهانی سل', '۱۸ - روز جهانی بهداشت', '۲۵ - روز ملی پرستار'],
+    m2:  ['۱ تا ۷ - هفته سلامت', '۱۵ - روز جهانی ماما'],
+    m3:  ['۱۰ - روز جهانی بدون دخانیات', '۱۵ - روز جهانی محیط زیست', '۲۴ - روز جهانی اهدای خون'],
+    m4:  ['۵ - روز جهانی مبارزه با مواد مخدر'],
+    m5:  ['۶ - روز جهانی هپاتیت', '۱۰ تا ۱۶ - هفته جهانی شیر مادر'],
+    m6:  ['۱۹ - روز جهانی پیشگیری از خودکشی'],
+    m7:  ['۷ - روز جهانی قلب', '۹ - روز جهانی سالمندان', '۱۸ - روز جهانی سلامت روان', '۲۳ - روز جهانی عصای سفید'],
+    m8:  ['۲۳ - روز جهانی دیابت', '۲۹ - روز جهانی کودکان'],
+    m9:  ['۴ - روز جهانی مبارزه با خشونت علیه زنان', '۱۰ - روز جهانی ایدز', '۱۲ - روز جهانی معلولان'],
+    m10: [],
+    m11: ['۱۵ - روز جهانی سرطان', '۲۶ - روز جهانی سرطان کودکان'],
+    m12: ['۱۸ - روز جهانی زنان']
+  };
+  var result = {};
+  for(var i = 0; i < 12; i++){
+    var k = 'm' + (i+1);
+    result[k] = { name: EVENT_MONTH_NAMES[i], items: (defaults[k] || []).map(function(txt){ return { id: uid(), text: txt }; }) };
+  }
+  result._schemaVersion = EVENTS_SCHEMA_VERSION;
+  return result;
+}
+
+function normalizeEventsData(){
+  var changed = false;
+  if(typeof eventsData !== 'object' || eventsData === null || Array.isArray(eventsData)){
+    eventsData = getDefaultEventsData();
+    changed = true;
+  }
+  for(var i = 0; i < 12; i++){
+    var k = 'm' + (i+1);
+    if(!eventsData[k] || typeof eventsData[k] !== 'object'){
+      eventsData[k] = { name: EVENT_MONTH_NAMES[i], items: [] };
+      changed = true;
+    }
+    if(eventsData[k].name !== EVENT_MONTH_NAMES[i]){
+      eventsData[k].name = EVENT_MONTH_NAMES[i];
+      changed = true;
+    }
+    if(!Array.isArray(eventsData[k].items)){
+      eventsData[k].items = [];
+      changed = true;
+    }
+    var filtered = [];
+    eventsData[k].items.forEach(function(it){
+      if(!it || typeof it !== 'object'){ changed = true; return; }
+      if(!it.id){ it.id = uid(); changed = true; }
+      if(typeof it.text !== 'string'){ it.text = String(it.text || ''); changed = true; }
+      filtered.push(it);
+    });
+    if(filtered.length !== eventsData[k].items.length){
+      eventsData[k].items = filtered;
+      changed = true;
+    }
+  }
+  return changed;
+}
+
+/* bug 2 fix - migrate old event dates once */
+function migrateEventsDates(){
+  if(eventsData && eventsData._schemaVersion >= EVENTS_SCHEMA_VERSION) return false;
+  var changed = false;
+  function removeFromMonth(key, text){
+    var m = eventsData[key];
+    if(!m || !Array.isArray(m.items)) return;
+    var before = m.items.length;
+    m.items = m.items.filter(function(it){ return it.text !== text; });
+    if(m.items.length !== before) changed = true;
+  }
+  function addToMonth(key, text){
+    var m = eventsData[key];
+    if(!m){ return; }
+    if(!Array.isArray(m.items)) m.items = [];
+    var exists = m.items.some(function(it){ return it.text === text; });
+    if(!exists){ m.items.push({ id: uid(), text: text }); changed = true; }
+  }
+  // Corrected dates: mama, salmandan, childhood cancer, TB
+  removeFromMonth('m2', '۱۰ - روز جهانی ماما');
+  addToMonth('m2', '۱۵ - روز جهانی ماما');
+  removeFromMonth('m6', '۳۰ - روز جهانی سالمندان');
+  addToMonth('m7', '۹ - روز جهانی سالمندان');
+  removeFromMonth('m10', '۲۵ - روز جهانی سرطان کودکان');
+  addToMonth('m11', '۲۶ - روز جهانی سرطان کودکان');
+  removeFromMonth('m12', '۴ - روز جهانی سل');
+  addToMonth('m1', '۴ - روز جهانی سل');
+  eventsData._schemaVersion = EVENTS_SCHEMA_VERSION;
+  return true;
+}
+
+/* bug 1 fix - return boolean */
+function saveEvents(){
+  try{
+    localStorage.setItem(EVENTS_KEY, JSON.stringify(eventsData));
+    return true;
+  }catch(e){
+    if(e && (e.name === 'QuotaExceededError' || e.code === 22)){
+      toast('⚠️ فضای ذخیره‌سازی پر است — مناسبت ذخیره نشد');
+    } else {
+      toast('خطا در ذخیره مناسبت‌ها');
+    }
+    console.error('[saveEvents]', e);
+    return false;
+  }
+}
+
+function loadEvents(){
+  try{
+    var r = localStorage.getItem(EVENTS_KEY);
+    if(r){ eventsData = JSON.parse(r); }
+    else { eventsData = getDefaultEventsData(); }
+  }catch(e){
+    eventsData = getDefaultEventsData();
+  }
+  var structureChanged = normalizeEventsData();
+  var datesMigrated = migrateEventsDates();
+  if(structureChanged || datesMigrated){ saveEvents(); }
+}
+
+/* bug 3 fix - safer getIncomingEvents */
+function getIncomingEvents(incoming){
+  if(incoming && typeof incoming === 'object' && !Array.isArray(incoming)){
+    var hasMonths = false;
+    for(var i = 1; i <= 12; i++){
+      var key = 'm' + i;
+      if(incoming[key] && typeof incoming[key] === 'object' && Array.isArray(incoming[key].items)){
+        hasMonths = true;
+        break;
+      }
+    }
+    if(hasMonths) return incoming;
+  }
+  return getDefaultEventsData();
+}
+
+function renderEvents(){
+  var el = $('#eventsGrid'); if(!el) return;
+  var q = ($('#eventsSearch') ? $('#eventsSearch').value : '').trim();
+  var norm = normalizePersian(q);
+  var html = '';
+  var anyMatch = false;
+  var totalVisible = 0;
+  for(var i = 0; i < 12; i++){
+    var key = 'm' + (i+1);
+    var month = eventsData[key];
+    if(!month) continue;
+    var items = month.items;
+    if(norm){
+      items = items.filter(function(it){ return normalizePersian(it.text || '').indexOf(norm) >= 0; });
+      if(!items.length) continue;
+    }
+    anyMatch = true;
+    totalVisible += items.length;
+    html += '<div style="background:var(--soft);border:1px solid var(--border);border-radius:10px;padding:11px">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">' +
+      '<h4 style="font-size:.86rem;color:var(--primary-d);margin:0">' + esc(month.name) + '</h4>' +
+      '<button class="btn icon primary" style="font-size:.9rem" onclick="openEventModal(\''+key+'\',null)" title="افزودن مناسبت">+</button>' +
+      '</div>';
+    if(!items.length){
+      html += '<p class="hint" style="text-align:center">بدون مناسبت</p>';
+    } else {
+      items.forEach(function(ev){
+        html += '<div style="font-size:.78rem;padding:5px 7px;margin-bottom:4px;background:var(--card);border-radius:6px;border-right:3px solid var(--primary);display:flex;justify-content:space-between;align-items:center;gap:6px">' +
+          '<span style="flex:1;word-break:break-word">' + esc(ev.text) + '</span>' +
+          '<span style="display:flex;gap:3px;flex-shrink:0">' +
+            '<button class="btn icon" style="padding:2px 5px;font-size:.75rem" onclick="openEventModal(\''+key+'\',\''+ev.id+'\')" title="ویرایش">✏️</button>' +
+            '<button class="btn icon danger" style="padding:2px 5px;font-size:.75rem" onclick="deleteEvent(\''+key+'\',\''+ev.id+'\')" title="حذف">×</button>' +
+          '</span>' +
+        '</div>';
+      });
+    }
+    html += '</div>';
+  }
+  if(!anyMatch && norm){
+    el.innerHTML = '<div class="empty" style="grid-column:1/-1"><span class="big">🔍</span>هیچ مناسبتی با «' + esc(q) + '» یافت نشد.</div>';
+    return;
+  }
+  if(norm){
+    html = '<div class="alert-info" style="grid-column:1/-1">🔍 ' + fa(totalVisible) + ' نتیجه برای «' + esc(q) + '»</div>' + html;
+  }
+  el.innerHTML = html;
+}
+
+var _eventEditing = null;
+function openEventModal(key, id){
+  var m = eventsData[key];
+  if(!m){ toast('ماه نامعتبر است'); return; }
+  _eventEditing = { key: key, id: id || null };
+  $('#eventModalTitle').textContent = id ? 'ویرایش مناسبت' : 'افزودن مناسبت';
+  var inp = $('#eventModalInput');
+  inp.value = '';
+  if(id){
+    var ev = null;
+    for(var i = 0; i < m.items.length; i++) if(m.items[i].id === id) ev = m.items[i];
+    if(!ev){ toast('مناسبت یافت نشد'); _eventEditing = null; return; }
+    inp.value = ev.text || '';
+  }
+  $('#eventModalMonthLabel').innerHTML = 'ماه: <b>' + esc(m.name) + '</b>';
+  openModal('eventModal');
+  setTimeout(function(){ try{ inp.focus(); }catch(e){} }, 150);
+}
+
+/* bug 1 fix - if saveEvents fails, don't show success */
+function saveEventFromModal(){
+  if(!_eventEditing){ closeModal('eventModal'); return; }
+  var key = _eventEditing.key;
+  var id = _eventEditing.id;
+  var inp = $('#eventModalInput');
+  var txt = String(inp.value || '').trim();
+  if(!txt){ toast('متن نمی‌تواند خالی باشد'); return; }
+  var m = eventsData[key];
+  if(!m){ toast('ماه نامعتبر است'); closeModal('eventModal'); return; }
+  if(id){
+    var ev = null;
+    for(var i = 0; i < m.items.length; i++) if(m.items[i].id === id) ev = m.items[i];
+    if(!ev){ toast('مناسبت یافت نشد'); closeModal('eventModal'); return; }
+    var dupEdit = m.items.some(function(it){ return it.id !== id && it.text.trim() === txt; });
+    if(dupEdit){ toast('این مناسبت قبلاً در این ماه ثبت شده'); return; }
+    ev.text = txt;
+  } else {
+    var dupAdd = m.items.some(function(it){ return it.text.trim() === txt; });
+    if(dupAdd){ toast('این مناسبت قبلاً در این ماه ثبت شده'); return; }
+    m.items.push({ id: uid(), text: txt });
+  }
+  if(!saveEvents()) return;
+  _eventEditing = null;
+  closeModal('eventModal');
+  renderEvents();
+  toast(id ? 'ویرایش شد' : 'مناسبت اضافه شد');
+}
+function addEvent(key){ openEventModal(key, null); }
+function editEvent(key, id){ openEventModal(key, id); }
+
+/* bug 1 fix - if saveEvents fails, don't show success */
+function deleteEvent(key, id){
+  var m = eventsData[key];
+  if(!m){ toast('ماه نامعتبر است'); return; }
+  var ev = null;
+  for(var i = 0; i < m.items.length; i++) if(m.items[i].id === id) ev = m.items[i];
+  if(!ev){ toast('مناسبت یافت نشد'); return; }
+  var txt = ev.text;
+  showConfirm('حذف مناسبت', 'آیا از حذف «' + txt + '» از ماه ' + m.name + ' مطمئن هستید؟', function(){
+    var cur = eventsData[key];
+    if(!cur || !Array.isArray(cur.items)){ toast('مناسبت یافت نشد'); return; }
+    cur.items = cur.items.filter(function(x){ return x.id !== id; });
+    if(!saveEvents()) return;
+    renderEvents();
+    toast('حذف شد');
+  });
+}
+
+/* ==================== پشتیبان ==================== */
+function getBackups(){ try{ var r=localStorage.getItem(BACKUPS_KEY); if(!r) return []; var a=JSON.parse(r); return Array.isArray(a)?a:[]; }catch(e){ return []; } }
+
+/* bug 1 fix - return boolean */
+function saveBackups(arr){
+  try{
+    localStorage.setItem(BACKUPS_KEY, JSON.stringify(arr));
+    return true;
+  }catch(e){
+    if(e && (e.name === 'QuotaExceededError' || e.code === 22)){
+      toast('⚠️ فضای ذخیره‌سازی پر است — پشتیبان ذخیره نشد');
+    } else {
+      toast('خطا در ذخیره پشتیبان');
+    }
+    console.error('[saveBackups]', e);
+    return false;
+  }
+}
+
+function makeBackupData(){ return {ts:Date.now(),db:JSON.parse(JSON.stringify(db)),profile:JSON.parse(JSON.stringify(profile)),diseases:JSON.parse(JSON.stringify(diseases)),notes:JSON.parse(JSON.stringify(notes)),trainings:JSON.parse(JSON.stringify(trainings)),trash:JSON.parse(JSON.stringify(trash)),events:JSON.parse(JSON.stringify(eventsData))}; }
+
+/* bug 1 fix - only show success toast if saved */
+function manualBackup(){
+  var b=getBackups(); b.unshift(makeBackupData());
+  while(b.length>MAX_BACKUPS) b.pop();
+  if(!saveBackups(b)) return;
+  renderAutoBackupStatus();
+  toast('پشتیبان ساخته شد');
+}
+function checkAutoBackup(){
+  var b=getBackups(); var l=b[0]; var w=7*86400000;
+  if(!l||Date.now()-l.ts>w) manualBackup();
+  renderAutoBackupStatus();
+}
+function renderAutoBackupStatus(){
+  var st=$('#autoBackupStatus'); var h=$('#backupHistory');
+  if(!st||!h) return;
+  var b=getBackups();
+  if(!b.length){ st.innerHTML='<p class="hint">—</p>'; h.innerHTML=''; return; }
+  st.innerHTML='<p style="font-size:.84rem">آخرین: <b>'+faDate(b[0].ts)+'</b> — <span class="hint">'+fa(b.length)+' از '+fa(MAX_BACKUPS)+'</span></p>';
+  var html='';
+  b.forEach(function(x,i){
+    html += '<li>'+
+      '<span>نسخه '+fa(i+1)+'</span>'+
+      '<span style="flex:1;text-align:center;font-size:.78rem;color:var(--muted)">'+faDate(x.ts)+' — '+fa(x.db.students.length)+' دانش‌آموز</span>'+
+      '<button class="btn icon danger" onclick="deleteBackup('+i+')" title="حذف این پشتیبان" style="padding:4px 8px;font-size:.8rem">🗑️</button>'+
+    '</li>';
+  });
+  h.innerHTML=html;
+}
+
+/* bug 1 + bug 3 fix */
+function deleteBackup(index){
+  var b = getBackups();
+  if(index < 0 || index >= b.length){ toast('پشتیبان یافت نشد'); renderAutoBackupStatus(); return; }
+  var bak = b[index];
+  if(!bak || !bak.ts || !bak.db){
+    toast('پشتیبان نامعتبر است');
+    renderAutoBackupStatus();
+    return;
+  }
+  var safeTs = bak.ts;
+  var safeCount = Array.isArray(bak.db.students) ? bak.db.students.length : 0;
+  showConfirm('حذف پشتیبان', 'آیا از حذف پشتیبان «' + faDate(safeTs) + '» با ' + fa(safeCount) + ' دانش‌آموز مطمئن هستید؟ این عمل قابل بازگشت نیست.', function(){
+    var cur = getBackups();
+    if(index >= cur.length){ toast('پشتیبان حذف شده است'); renderAutoBackupStatus(); return; }
+    cur.splice(index, 1);
+    if(!saveBackups(cur)) return;
+    renderAutoBackupStatus();
+    toast('پشتیبان حذف شد');
+  });
+}
+
+/* bug 5 fix - persianToEnglishDigits on prompt input */
+function restoreFromBackup(){
+  var b=getBackups(); if(!b.length){ toast('پشتیبانی نیست'); return; }
+  var idx=prompt('کدام نسخه؟ (۱ تا '+b.length+')','1');
+  if(!idx) return;
+  var n=parseInt(persianToEnglishDigits(idx));
+  if(isNaN(n)||n<1||n>b.length){ toast('نامعتبر — عدد ۱ تا ' + fa(b.length) + ' وارد کنید'); return; }
+  var bak=b[n-1];
+  if(!confirm('بازیابی شود؟')) return;
+  db=bak.db; profile=bak.profile; diseases=bak.diseases||[]; notes=bak.notes||[]; trainings=bak.trainings||[]; trash=bak.trash||[];
+  if(typeof profile.genderMode !== 'string') profile.genderMode = '';
+  eventsData = getIncomingEvents(bak.events);
+  normalizeEventsData();
+  migrateEventsDates();
+  saveEvents();
+  db.students.forEach(function(s){ ensureStudentFields(s); });
+  lastReferralHTMLByStudent={}; exportSelections={};
+  saveDB(); saveProfile(); saveDiseases(); saveNotes(); saveTrainings(); saveTrash();
+  location.reload();
+}
+
 function cleanupOldStorageKeys(){
   try{
     var validKeys = {};
     [DB_KEY, PROFILE_KEY, THEME_KEY, BACKUPS_KEY, DISEASES_KEY, NOTES_KEY,
      CLOUD_KEY, TRAININGS_KEY, TRASH_KEY, WHO_BOYS_KEY, WHO_GIRLS_KEY,
-     SEEN_VERSION_KEY, ECONOMY_KEY].forEach(function(k){ validKeys[k] = true; });
+     SEEN_VERSION_KEY, ECONOMY_KEY, EVENTS_KEY].forEach(function(k){ validKeys[k] = true; });
     var toRemove = [];
     for(var i = 0; i < localStorage.length; i++){
       var k = localStorage.key(i);
@@ -1885,6 +2211,7 @@ function loadAll(){
   try{ var r7=localStorage.getItem(TRASH_KEY); if(r7) trash=JSON.parse(r7); if(!Array.isArray(trash)) trash=[]; }catch(e){ trash=[]; }
   try{ var r9=localStorage.getItem(ECONOMY_KEY); economyPrint = r9 === '1'; }catch(e){ economyPrint = false; }
   loadWhoLMS();
+  loadEvents();
   purgeOldTrash();
 }
 function saveDB(){ try{ localStorage.setItem(DB_KEY,JSON.stringify(db)); invalidateHistoryCache(); _zScoreCache.clear(); scheduleAutoCloud(); }catch(e){ toast('خطای ذخیره'); } }
@@ -1936,10 +2263,8 @@ function restoreFromTrashItem(trashId){
   var idx=-1;
   for(var i=0;i<trash.length;i++) if(trash[i].id===trashId) idx=i;
   if(idx<0) return;
-  var item = trash[idx];
-  delete item.deletedAt;
-  db.students.push(item);
-  trash.splice(idx,1);
+  var item = trash[idx]; delete item.deletedAt;
+  db.students.push(item); trash.splice(idx,1);
   saveTrash(); saveDB();
   renderStudents(); renderAmbassadors(); renderDashboard();
   renderInfographic(); populateStudentSelects(); buildLetterOptions(); renderTrashList();
@@ -1996,6 +2321,10 @@ function cloudDownload(){
       if(!confirm('جایگزین شود؟')) return;
       db=data.db||db; profile=data.profile||profile; diseases=data.diseases||[]; notes=data.notes||[]; trainings=data.trainings||[]; trash=data.trash||[];
       if(typeof profile.genderMode !== 'string') profile.genderMode = '';
+      eventsData = getIncomingEvents(data.events);
+      normalizeEventsData();
+      migrateEventsDates();
+      saveEvents();
       db.students.forEach(function(s){ ensureStudentFields(s); });
       saveDB(); saveProfile(); saveDiseases(); saveNotes(); saveTrainings(); saveTrash();
       location.reload();
@@ -2045,8 +2374,7 @@ function setTheme(mode){ try{ localStorage.setItem(THEME_KEY,mode); }catch(e){} 
 var THEMES_CYCLE=['cream','light','dark','blue','mint'];
 function toggleTheme(){
   var cur=document.documentElement.getAttribute('data-theme');
-  var idx=THEMES_CYCLE.indexOf(cur);
-  if(idx<0) idx=0;
+  var idx=THEMES_CYCLE.indexOf(cur); if(idx<0) idx=0;
   var next=THEMES_CYCLE[(idx+1)%THEMES_CYCLE.length];
   setTheme(next);
 }
@@ -2057,14 +2385,36 @@ function openModal(id){ var m=document.getElementById(id); if(!m) return; m.clas
 function closeModal(id){
   var m=document.getElementById(id); if(!m) return;
   m.classList.remove('open');
+  if(id === 'confirmModal'){ _confirmCallback = null; }
+  if(id === 'eventModal'){ _eventEditing = null; }
   if(id==='csvImportModal') resetCsvImport();
   if(id==='manualAddReferralModal'){
     setTimeout(function(){ if(typeof renderGroupReferralPanel==='function') renderGroupReferralPanel(); }, 50);
   }
 }
 function scrollToHelp(n){ var el=document.getElementById('help-'+n); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); }
+
+/* bug 4 fix - Enter key handler for modals */
 document.addEventListener('keydown', function(e){
-  if(e.key==='Escape'){ $$('.modal.open').forEach(function(m){ closeModal(m.id); }); }
+  if(e.key === 'Escape'){
+    $$('.modal.open').forEach(function(m){ closeModal(m.id); });
+    return;
+  }
+  if(e.key === 'Enter'){
+    var eventModal = document.getElementById('eventModal');
+    var confirmModal = document.getElementById('confirmModal');
+    if(eventModal && eventModal.classList.contains('open')){
+      if(e.target && e.target.tagName === 'TEXTAREA') return;
+      e.preventDefault();
+      saveEventFromModal();
+      return;
+    }
+    if(confirmModal && confirmModal.classList.contains('open')){
+      e.preventDefault();
+      confirmYesAction();
+      return;
+    }
+  }
 });
 document.addEventListener('click', function(e){
   if(e.target.classList && e.target.classList.contains('modal')) closeModal(e.target.id);
@@ -2086,15 +2436,7 @@ function bmiInfo(s){
   var who = getWhoEvaluation(s.id);
   if(who && who.z != null && who.category){
     var cat = who.category;
-    var clsMap = {
-      'severe-thin': 'b-risk-high',
-      'thin': 'b-warn',
-      'normal': 'b-ok',
-      'overweight-risk': 'b-warn',
-      'overweight': 'b-warn',
-      'obese': 'b-risk-high',
-      'na': 'b-info'
-    };
+    var clsMap = { 'severe-thin': 'b-risk-high', 'thin': 'b-warn', 'normal': 'b-ok', 'overweight-risk': 'b-warn', 'overweight': 'b-warn', 'obese': 'b-risk-high', 'na': 'b-info' };
     return { label: cat.label, cls: clsMap[cat.key] || cat.cls, key: cat.key, z: who.z };
   }
   return bmiInfoRaw(r.bmi);
@@ -2103,7 +2445,6 @@ function bmiInfo(s){
 /* ==================== ناوبری ==================== */
 var navStack = ['dashboard'];
 var canPush = location.protocol !== 'file:';
-
 function pushView(view){
   var last = navStack[navStack.length-1];
   if(last === view) return;
@@ -2124,6 +2465,7 @@ function _show(view){
   if(view==='notes') renderNotes();
   if(view==='settings'){ renderSettingsInfo(); loadCloudUI(); renderTrashList(); renderWhoSettings(); }
   if(view==='reports') renderReportCategories();
+  if(view==='events') renderEvents();
 }
 function show(view){ pushView(view); _show(view); }
 function goBack(){
@@ -2170,7 +2512,7 @@ function enterApp(){
   renderInfographic(); renderStudents(); renderTrainings(); renderAmbassadors();
   renderNotes(); renderSettingsInfo(); renderSignatureSettings(); renderWhoSettings();
   populateStudentSelects();
-  renderReportCategories(); updateNotifBadge();
+  renderReportCategories(); renderEvents(); updateNotifBadge();
   buildLetterOptions(); renderInteractiveCharts(); renderTrashList();
   navStack = ['dashboard'];
   if(canPush){ try{ history.replaceState({view:'dashboard'}, '', location.pathname + location.search); }catch(err){} }
@@ -2230,19 +2572,15 @@ function resetProfile(){
 var _accessKey = String.fromCharCode(57,56,55,54,53);
 var _enteredPin = '';
 var _pinLocked = false;
-
 function showPinScreen(){
-  _enteredPin = '';
-  _pinLocked = false;
-  updatePinDisplay();
+  _enteredPin = ''; _pinLocked = false; updatePinDisplay();
   var err = $('#pinError'); if(err) err.textContent = '';
   var sp = $('#splash'); if(sp) sp.style.display = 'none';
   var ps = $('#pinScreen'); if(ps) ps.classList.add('visible');
 }
 function backToSplash(){
   var ps = $('#pinScreen'); if(ps) ps.classList.remove('visible');
-  _enteredPin = '';
-  _pinLocked = false;
+  _enteredPin = ''; _pinLocked = false;
   if(editingProfileMode){
     editingProfileMode = false;
     var cb=$('#splashCancelBtn'); if(cb) cb.style.display='none';
@@ -2269,9 +2607,7 @@ function handlePinKey(key){
       _pinLocked = true;
       setTimeout(function(){
         var ps = $('#pinScreen'); if(ps) ps.classList.remove('visible');
-        _pinLocked = false;
-        _enteredPin = '';
-        enterApp();
+        _pinLocked = false; _enteredPin = ''; enterApp();
       }, 150);
     } else {
       if(err) err.textContent = 'رمز نادرست است';
@@ -2281,9 +2617,7 @@ function handlePinKey(key){
   }
 }
 function attachPinHandlers(){
-  $$('#pinPad button').forEach(function(b){
-    b.addEventListener('click', function(){ handlePinKey(b.dataset.key); });
-  });
+  $$('#pinPad button').forEach(function(b){ b.addEventListener('click', function(){ handlePinKey(b.dataset.key); }); });
   document.addEventListener('keydown', function(e){
     var ps = $('#pinScreen');
     if(!ps || !ps.classList.contains('visible')) return;
@@ -2298,12 +2632,13 @@ function resetInactivityTimer(){
   if(!ap || !ap.classList.contains('visible')) return;
   _inactivityTimer = setTimeout(lockApp, INACTIVITY_MS);
 }
+
+/* bug 6 fix - close modals before showing PIN */
 function lockApp(){
   var ap = $('#app');
   if(!ap || !ap.classList.contains('visible')) return;
-  _enteredPin = '';
-  _pinLocked = false;
-  updatePinDisplay();
+  $$('.modal.open').forEach(function(m){ closeModal(m.id); });
+  _enteredPin = ''; _pinLocked = false; updatePinDisplay();
   var err = $('#pinError'); if(err) err.textContent = '';
   ap.classList.remove('visible');
   var sp = $('#splash'); if(sp) sp.style.display = 'none';
@@ -2545,17 +2880,11 @@ function renderInteractiveCharts(){
   var total = db.students.length;
   if(!total){ el.innerHTML='<div class="empty">داده‌ای برای نمودار وجود ندارد.</div>'; return; }
   var bmiCounts = { 'severe-thin':0,'thin':0,'normal':0,'overweight-risk':0,'overweight':0,'obese':0,'none':0 };
-  db.students.forEach(function(s){
-    var info = bmiInfo(s);
-    if(bmiCounts[info.key] == null) bmiCounts[info.key] = 0;
-    bmiCounts[info.key]++;
-  });
+  db.students.forEach(function(s){ var info = bmiInfo(s); if(bmiCounts[info.key] == null) bmiCounts[info.key] = 0; bmiCounts[info.key]++; });
   var scr = {vision:0, hearing:0, dental:0, skin:0, normal:0};
   db.students.forEach(function(s){
-    var r = lastRecord(s);
-    if(!r) return;
-    if(r.vision==='ارجاع') scr.vision++;
-    else scr.normal++;
+    var r = lastRecord(s); if(!r) return;
+    if(r.vision==='ارجاع') scr.vision++; else scr.normal++;
     if(r.hearing==='ارجاع') scr.hearing++;
     if(r.dental==='ارجاع') scr.dental++;
     if(r.skin==='مشکوک') scr.skin++;
@@ -2584,8 +2913,7 @@ function buildPieChartSVG(data){
   var total = data.reduce(function(a,b){ return a + b.value; }, 0);
   var W = 220, H = 220, cx = 110, cy = 110, R = 80, IR = 45;
   if(total === 0){ return '<div class="empty" style="padding:20px">داده‌ای نیست</div>'; }
-  var angle = -Math.PI/2;
-  var paths = '';
+  var angle = -Math.PI/2; var paths = '';
   data.forEach(function(d){
     if(d.value === 0) return;
     var slice = (d.value/total) * Math.PI * 2;
@@ -2609,8 +2937,7 @@ function buildPieChartSVG(data){
   return '<div style="text-align:center"><svg viewBox="0 0 '+W+' '+H+'" style="width:100%;max-width:220px;height:auto">'+paths+'</svg></div>'+legend;
 }
 function buildBarChartSVG(data){
-  var maxV = 1;
-  data.forEach(function(d){ if(d.value > maxV) maxV = d.value; });
+  var maxV = 1; data.forEach(function(d){ if(d.value > maxV) maxV = d.value; });
   var W = 260, H = 200, P = 30, barW = 34;
   var barSpace = (W - 2*P) / data.length;
   var html = '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto">';
@@ -2630,21 +2957,16 @@ function buildBarChartSVG(data){
 }
 function filterByBMI(key){
   var el = $('#filterBMI'); if(el){ el.value = key || ''; }
-  show('students');
-  setTimeout(function(){ renderStudents(); }, 100);
+  show('students'); setTimeout(function(){ renderStudents(); }, 100);
   toast('فیلتر BMI اعمال شد');
 }
-/* ✅ رفع باگ ۱: هدایت به نامه ارجاع گروهی */
 function filterByScreening(type){
   var map = { vision:'vision', hearing:'hearing', dental:'dental' };
   var referralType = map[type];
   if(!referralType) return;
-  /* ریست انتخاب‌های قبلی */
   groupReferralSelections.selectedIds.clear();
   groupReferralSelections.manualAddedIds.clear();
-  /* ست کردن نوع ارجاع متناسب */
   groupReferralSelections.referralType = referralType;
-  /* هدایت به تب گزارش‌ها */
   show('reports');
   setTimeout(function(){ selectReportCat('groupReferral'); }, 150);
   var labels = { vision:'بینایی‌سنجی', hearing:'شنوایی‌سنجی', dental:'دندانپزشکی' };
@@ -2812,19 +3134,10 @@ function toggleSelectAll(checked){
   else list.forEach(function(s){ selectedStudentIds.delete(s.id); });
   renderStudents();
 }
-function selectAllVisibleStudents(){
-  var list = getFilteredStudents();
-  list.forEach(function(s){ selectedStudentIds.add(s.id); });
-  renderStudents();
-}
-function clearStudentSelection(){
-  selectedStudentIds.clear();
-  var cb=$('#selectAllCheckbox'); if(cb) cb.checked=false;
-  renderStudents();
-}
+function selectAllVisibleStudents(){ var list = getFilteredStudents(); list.forEach(function(s){ selectedStudentIds.add(s.id); }); renderStudents(); }
+function clearStudentSelection(){ selectedStudentIds.clear(); var cb=$('#selectAllCheckbox'); if(cb) cb.checked=false; renderStudents(); }
 function updateBulkToolbar(){
-  var tb=$('#bulkToolbar'); var cnt=$('#bulkCount');
-  if(!tb || !cnt) return;
+  var tb=$('#bulkToolbar'); var cnt=$('#bulkCount'); if(!tb || !cnt) return;
   var n = selectedStudentIds.size;
   if(n > 0){ tb.classList.add('visible'); cnt.textContent = fa(n); }
   else { tb.classList.remove('visible'); }
@@ -2858,11 +3171,8 @@ function bulkPrintHealthCards(){
         '<div class="hc-row"><b>وزن:</b> '+(last.weight?fa(last.weight)+' kg':'—')+'</div>'+
         '<div class="hc-row"><b>تاریخ:</b> '+faDate(last.ts)+'</div>'+
         '<div class="hc-row"><b>بینایی:</b> '+(esc(last.vision)||'—')+' • <b>شنوایی:</b> '+(esc(last.hearing)||'—')+' • <b>دندان:</b> '+(esc(last.dental)||'—')+'</div>':'')+
-      '<div class="hc-sig">'+
-        '<div>'+(profile.signatureImg?'<img src="'+profile.signatureImg+'" style="max-height:40px">':'')+
-        '<div class="hc-sig-line"></div><div>'+esc(profile.signature||profile.assistant||'مراقب سلامت')+'</div>'+signatureBadgeForPrint()+'</div>'+
-      '</div>'+
-    '</div>';
+      '<div class="hc-sig"><div>'+(profile.signatureImg?'<img src="'+profile.signatureImg+'" style="max-height:40px">':'')+
+        '<div class="hc-sig-line"></div><div>'+esc(profile.signature||profile.assistant||'مراقب سلامت')+'</div>'+signatureBadgeForPrint()+'</div></div></div>';
   });
   var w = window.open('','_blank');
   if(!w){ toast('لطفاً پاپ‌آپ را برای این سایت مجاز کنید'); return; }
@@ -2877,8 +3187,7 @@ function bulkPrintHealthCards(){
     'h3{font-size:11px;color:#6a4f1f;margin:6px 0 4px;padding:3px 6px;background:#f4ecd9;border-radius:3px}'+
     '.hc-sig{margin-top:8px;padding-top:6px;border-top:1px dashed #ccc;text-align:center;font-size:10px}'+
     '.hc-sig-line{border-bottom:1px solid #666;height:20px;margin:2px 30px}'+
-    getPrintEconomyCSS()+
-    '</style></head><body>'+cardsHtml+'</body></html>';
+    getPrintEconomyCSS()+'</style></head><body>'+cardsHtml+'</body></html>';
   w.document.write(html); w.document.close();
   setTimeout(function(){ w.print(); }, 500);
 }
@@ -2888,10 +3197,7 @@ function bulkMoveToTrash(){
   if(!confirm('حذف '+fa(n)+' دانش‌آموز؟ (به سطل زباله می‌روند)')) return;
   var ids = Array.from(selectedStudentIds);
   var removed = [];
-  ids.forEach(function(id){
-    var snap = moveStudentToTrash(id);
-    if(snap) removed.push(snap);
-  });
+  ids.forEach(function(id){ var snap = moveStudentToTrash(id); if(snap) removed.push(snap); });
   saveTrash(); saveDB();
   var captured = { ids: ids.slice(), items: removed.slice() };
   lastDeletedStudent = captured;
@@ -3023,23 +3329,11 @@ function printTrainingsPDF(){
   var yearLine = profile.year ? 'سال تحصیلی: '+esc(profile.year) : '';
   var itemsHtml='';
   list.forEach(function(t, i){
-    itemsHtml +=
-      '<div class="training-print-item">'+
-        '<div class="tp-head">'+
-          '<span class="tp-num">'+fa(i+1)+'</span>'+
-          '<span class="tp-title">'+esc(t.title)+'</span>'+
-          (t.topic?'<span class="tp-topic">'+esc(t.topic)+'</span>':'')+
-        '</div>'+
-        '<div class="tp-meta">'+
-          '<span><b>تاریخ:</b> '+faDate(t.ts)+'</span>'+
-          (t.audience?'<span><b>پایه هدف:</b> '+esc(t.audience)+'</span>':'')+
-          (t.duration?'<span><b>مدت:</b> '+esc(t.duration)+'</span>':'')+
-        '</div>'+
-        (t.description?'<div class="tp-desc">'+esc(t.description)+'</div>':'')+
-      '</div>';
+    itemsHtml += '<div class="training-print-item"><div class="tp-head"><span class="tp-num">'+fa(i+1)+'</span><span class="tp-title">'+esc(t.title)+'</span>'+(t.topic?'<span class="tp-topic">'+esc(t.topic)+'</span>':'')+'</div>'+
+      '<div class="tp-meta"><span><b>تاریخ:</b> '+faDate(t.ts)+'</span>'+(t.audience?'<span><b>پایه هدف:</b> '+esc(t.audience)+'</span>':'')+(t.duration?'<span><b>مدت:</b> '+esc(t.duration)+'</span>':'')+'</div>'+
+      (t.description?'<div class="tp-desc">'+esc(t.description)+'</div>':'')+'</div>';
   });
-  var html = '<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="UTF-8">'+
-    '<title>گزارش آموزش‌ها</title><style>'+
+  var html = '<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="UTF-8"><title>گزارش آموزش‌ها</title><style>'+
     '@page{size:A4;margin:14mm}'+
     'body{font-family:Tahoma,sans-serif;direction:rtl;font-size:12px;color:#222;line-height:1.7;margin:0}'+
     '.head{text-align:center;border-bottom:3px double #8a6a2c;padding-bottom:10px;margin-bottom:14px}'+
@@ -3059,8 +3353,7 @@ function printTrainingsPDF(){
     '.sig img{max-height:48px;display:block;margin:0 auto 4px}'+
     '.sig .stamp{border:1px dashed #999;min-height:60px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#888;font-size:10px;padding:4px;margin-bottom:4px}'+
     '@media print{body{padding:0}.training-print-item{break-inside:avoid;page-break-inside:avoid}}'+
-    getPrintEconomyCSS()+
-    '</style></head><body>';
+    getPrintEconomyCSS()+'</style></head><body>';
   html += '<div class="head"><h1>📚 گزارش آموزش‌های بهداشتی</h1>';
   html += '<div class="sub">'+schoolLine+(yearLine?' — '+yearLine:'')+'</div></div>';
   html += '<div class="info-bar"><span>تعداد کل: <b>'+fa(list.length)+'</b></span>';
@@ -3083,7 +3376,6 @@ function openStudentModal(id){
   var s=getStudent(id); if(!s) return;
   ensureStudentFields(s);
   var records=(s.records||[]).slice().sort(function(a,b){ return b.ts-a.ts; });
-  var last=records[0]||null;
   var followUp=needsFollowUp(s);
   var rl=getStudentRiskLevel(s);
   var html='';
@@ -3111,10 +3403,7 @@ function toggleAmbassador(id){
     s.ambassadorOrder=mx+1;
     if(!s.ambassadorRole) s.ambassadorRole='member';
   } else {
-    s.ambassadorOrder=null;
-    s.viceParentId='';
-    s.headParentId='';
-    s.subgroupOrder=0;
+    s.ambassadorOrder=null; s.viceParentId=''; s.headParentId=''; s.subgroupOrder=0;
     cleanupAmbassadorReferences(id);
   }
   saveDB(); renderStudents(); renderAmbassadors(); renderDashboard(); renderInfographic();
@@ -3138,12 +3427,8 @@ function setAmbassadorRole(id, role){
     var mx=0; db.students.forEach(function(x){ if(x.isAmbassador&&x.id!==id&&(x.ambassadorOrder||0)>mx) mx=x.ambassadorOrder; });
     s.ambassadorOrder=mx+1;
   }
-  if(prevRole==='vice' && role!=='vice'){
-    db.students.forEach(function(x){ if(x.viceParentId===id) x.viceParentId=''; });
-  }
-  if(prevRole==='head' && role!=='head'){
-    db.students.forEach(function(x){ if(x.headParentId===id) x.headParentId=''; });
-  }
+  if(prevRole==='vice' && role!=='vice'){ db.students.forEach(function(x){ if(x.viceParentId===id) x.viceParentId=''; }); }
+  if(prevRole==='head' && role!=='head'){ db.students.forEach(function(x){ if(x.headParentId===id) x.headParentId=''; }); }
   saveDB(); renderAmbassadors(); toast('نقش تغییر کرد');
 }
 function setViceParent(memberId, viceId){
@@ -3158,21 +3443,14 @@ function setViceParent(memberId, viceId){
   if(viceId && prevVice !== viceId){
     s.subgroupOrder = getNextSubgroupOrder(viceId);
     var vice = getStudent(viceId);
-    if(vice && vice.responsibility && !s.responsibility){
-      s.responsibility = vice.responsibility;
-    }
-  } else if(!viceId){
-    s.subgroupOrder = 0;
-  }
+    if(vice && vice.responsibility && !s.responsibility){ s.responsibility = vice.responsibility; }
+  } else if(!viceId){ s.subgroupOrder = 0; }
   saveDB(); renderAmbassadors(); toast(viceId?'زیرگروه مسئول تنظیم شد':'پاک شد');
 }
 function setHeadParent(viceId, headId){
   var v=getStudent(viceId); if(!v) return;
   if(v.ambassadorRole!=='vice'){ toast('فقط برای زیرگروه‌ها می‌توان سرگروه تعیین کرد'); return; }
-  if(headId){
-    var h=getStudent(headId);
-    if(!h || h.ambassadorRole!=='head'){ toast('والد انتخاب‌شده سرگروه نیست'); return; }
-  }
+  if(headId){ var h=getStudent(headId); if(!h || h.ambassadorRole!=='head'){ toast('والد انتخاب‌شده سرگروه نیست'); return; } }
   v.headParentId = headId || '';
   saveDB(); renderAmbassadors(); toast(headId?'سرگروه بالادست تنظیم شد':'پاک شد');
 }
@@ -3186,8 +3464,7 @@ function editResponsibility(id){
   if((s.ambassadorRole||'member') === 'vice'){
     db.students.forEach(function(x){
       if(x.isAmbassador && x.viceParentId === id && (x.ambassadorRole||'member') === 'member'){
-        x.responsibility = newResp;
-        affectedCount++;
+        x.responsibility = newResp; affectedCount++;
       }
     });
   }
@@ -3217,36 +3494,28 @@ function getSubgroupSiblings(s){
 function moveMemberUp(memberId){
   var s=getStudent(memberId); if(!s) return;
   if(s.ambassadorRole!=='member' || !s.viceParentId){ return; }
-  var sib = getSubgroupSiblings(s);
-  var idx = sib.indexOf(s);
+  var sib = getSubgroupSiblings(s); var idx = sib.indexOf(s);
   if(idx <= 0){ toast('بالاترین جایگاه است'); return; }
   var prev = sib[idx-1];
   var tmp = s.subgroupOrder||0;
-  s.subgroupOrder = prev.subgroupOrder||0;
-  prev.subgroupOrder = tmp;
+  s.subgroupOrder = prev.subgroupOrder||0; prev.subgroupOrder = tmp;
   if(s.subgroupOrder === prev.subgroupOrder){
     for(var i=0;i<sib.length;i++){ sib[i].subgroupOrder = i+1; }
-    var tmp2 = s.subgroupOrder;
-    s.subgroupOrder = prev.subgroupOrder;
-    prev.subgroupOrder = tmp2;
+    var tmp2 = s.subgroupOrder; s.subgroupOrder = prev.subgroupOrder; prev.subgroupOrder = tmp2;
   }
   saveDB(); renderAmbassadors(); toast('جابه‌جا شد');
 }
 function moveMemberDown(memberId){
   var s=getStudent(memberId); if(!s) return;
   if(s.ambassadorRole!=='member' || !s.viceParentId){ return; }
-  var sib = getSubgroupSiblings(s);
-  var idx = sib.indexOf(s);
+  var sib = getSubgroupSiblings(s); var idx = sib.indexOf(s);
   if(idx < 0 || idx >= sib.length-1){ toast('پایین‌ترین جایگاه است'); return; }
   var next = sib[idx+1];
   var tmp = s.subgroupOrder||0;
-  s.subgroupOrder = next.subgroupOrder||0;
-  next.subgroupOrder = tmp;
+  s.subgroupOrder = next.subgroupOrder||0; next.subgroupOrder = tmp;
   if(s.subgroupOrder === next.subgroupOrder){
     for(var i=0;i<sib.length;i++){ sib[i].subgroupOrder = i+1; }
-    var tmp2 = s.subgroupOrder;
-    s.subgroupOrder = next.subgroupOrder;
-    next.subgroupOrder = tmp2;
+    var tmp2 = s.subgroupOrder; s.subgroupOrder = next.subgroupOrder; next.subgroupOrder = tmp2;
   }
   saveDB(); renderAmbassadors(); toast('جابه‌جا شد');
 }
@@ -3264,9 +3533,7 @@ function attachAmbassadorDragDrop(){
   rows.forEach(function(tr){
     tr.addEventListener('dragstart', function(e){
       var target = e.target;
-      if(target && (target.tagName === 'SELECT' || target.tagName === 'INPUT' || target.tagName === 'BUTTON' || (target.closest && target.closest('select, input, button, a')))){
-        e.preventDefault(); return;
-      }
+      if(target && (target.tagName === 'SELECT' || target.tagName === 'INPUT' || target.tagName === 'BUTTON' || (target.closest && target.closest('select, input, button, a')))){ e.preventDefault(); return; }
       _dragAmbassadorId = tr.dataset.aid;
       tr.classList.add('dragging');
       try{ e.dataTransfer.setData('text/plain', _dragAmbassadorId); e.dataTransfer.effectAllowed = 'move'; }catch(err){}
@@ -3282,22 +3549,18 @@ function attachAmbassadorDragDrop(){
     tr.addEventListener('dragover', function(e){
       if(!_dragAmbassadorId) return;
       var targetRole = tr.dataset.role;
-      var srcStudent = getStudent(_dragAmbassadorId);
-      if(!srcStudent) return;
+      var srcStudent = getStudent(_dragAmbassadorId); if(!srcStudent) return;
       var srcRole = srcStudent.ambassadorRole||'member';
       if(srcRole==='member' && targetRole==='vice'){ e.preventDefault(); tr.classList.add('drag-over'); }
       else if(srcRole==='vice' && targetRole==='head'){ e.preventDefault(); tr.classList.add('drag-over'); }
     });
     tr.addEventListener('dragleave', function(){ tr.classList.remove('drag-over'); });
     tr.addEventListener('drop', function(e){
-      e.preventDefault();
-      tr.classList.remove('drag-over');
+      e.preventDefault(); tr.classList.remove('drag-over');
       if(!_dragAmbassadorId || _dragAmbassadorId === tr.dataset.aid) return;
-      var srcStudent = getStudent(_dragAmbassadorId);
-      if(!srcStudent) return;
+      var srcStudent = getStudent(_dragAmbassadorId); if(!srcStudent) return;
       var srcRole = srcStudent.ambassadorRole||'member';
-      var targetId = tr.dataset.aid;
-      var targetRole = tr.dataset.role;
+      var targetId = tr.dataset.aid; var targetRole = tr.dataset.role;
       if(srcRole==='member' && targetRole==='vice'){ setViceParent(_dragAmbassadorId, targetId); toast('✓ عضو به زیرگروه متصل شد'); }
       else if(srcRole==='vice' && targetRole==='head'){ setHeadParent(_dragAmbassadorId, targetId); toast('✓ زیرگروه به سرگروه متصل شد'); }
       _dragAmbassadorId = null;
@@ -3313,21 +3576,14 @@ function getAmbassadorStats(){
   var membersWithoutVice = members.filter(function(s){ return !s.viceParentId; });
   var vicesWithHead = vices.filter(function(s){ return !!s.headParentId; });
   var vicesWithoutHead = vices.filter(function(s){ return !s.headParentId; });
-  return {
-    total: all.length, heads: heads.length, vices: vices.length, members: members.length,
-    membersWithVice: membersWithVice.length, membersWithoutVice: membersWithoutVice.length,
-    vicesWithHead: vicesWithHead.length, vicesWithoutHead: vicesWithoutHead.length
-  };
+  return { total: all.length, heads: heads.length, vices: vices.length, members: members.length, membersWithVice: membersWithVice.length, membersWithoutVice: membersWithoutVice.length, vicesWithHead: vicesWithHead.length, vicesWithoutHead: vicesWithoutHead.length };
 }
 function renderAmbassadors(){
   var data = getAmbassadorData();
   var tbody=$('#ambassadorRows'); var cnt=$('#ambassadorsCount');
   if(cnt) cnt.textContent=fa(data.all.length);
   if(!tbody) return;
-  if(!data.all.length){
-    tbody.innerHTML='<tr class="no-hover"><td colspan="6"><div class="empty">سفیری انتخاب نشده.</div></td></tr>';
-    return;
-  }
+  if(!data.all.length){ tbody.innerHTML='<tr class="no-hover"><td colspan="6"><div class="empty">سفیری انتخاب نشده.</div></td></tr>'; return; }
   function renderRoleSelect(s){
     var role=s.ambassadorRole||'member';
     return '<select class="role-select '+role+'" onchange="setAmbassadorRole(\''+s.id+'\',this.value)">'+
@@ -3449,15 +3705,10 @@ function printAmbassadorsPDF(){
   if(!data.all.length){ toast('سفیری وجود ندارد'); return; }
   var stats = getAmbassadorStats();
   var headerSub=[]; if(profile.school) headerSub.push(esc(profile.school)); if(profile.year) headerSub.push('سال '+esc(profile.year));
-  var statsBoxHtml = '<div class="stats-box">'+
-    '<b>📊 آمار کلی سفیران:</b> '+
-    '<span class="stat-chip">کل: '+fa(stats.total)+'</span>'+
-    '<span class="stat-chip">🎯 سرگروه: '+fa(stats.heads)+'</span>'+
-    '<span class="stat-chip">🥈 زیرگروه: '+fa(stats.vices)+'</span>'+
-    '<span class="stat-chip">👤 اعضا: '+fa(stats.members)+'</span>'+
-    '<span class="stat-chip">↳ عضو با زیرگروه: '+fa(stats.membersWithVice)+'</span>'+
-    '<span class="stat-chip">⚠️ بدون زیرگروه: '+fa(stats.membersWithoutVice)+'</span>'+
-  '</div>';
+  var statsBoxHtml = '<div class="stats-box"><b>📊 آمار کلی سفیران:</b> '+
+    '<span class="stat-chip">کل: '+fa(stats.total)+'</span><span class="stat-chip">🎯 سرگروه: '+fa(stats.heads)+'</span>'+
+    '<span class="stat-chip">🥈 زیرگروه: '+fa(stats.vices)+'</span><span class="stat-chip">👤 اعضا: '+fa(stats.members)+'</span>'+
+    '<span class="stat-chip">↳ عضو با زیرگروه: '+fa(stats.membersWithVice)+'</span><span class="stat-chip">⚠️ بدون زیرگروه: '+fa(stats.membersWithoutVice)+'</span></div>';
   var html='<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="UTF-8"><title>سفیران</title><style>@page{size:A4;margin:14mm}'+
     'body{font-family:Tahoma,sans-serif;direction:rtl;font-size:12.5px;line-height:1.7}'+
     '.head{text-align:center;border-bottom:3px double #8a6a2c;padding-bottom:12px;margin-bottom:16px}'+
@@ -3477,10 +3728,7 @@ function printAmbassadorsPDF(){
     'tr.subgroup-summary-line td{background:#e5f6ee!important;color:#1f5a38;font-weight:700;font-size:11.5px;padding:6px 14px;border-right:3px solid #2e7a4f}'+
     'tr.overall-summary-line td{background:#8a6a2c!important;color:#fff;font-weight:800;font-size:11.5px;padding:8px 14px;text-align:center}'+
     'tr.overall-summary-line .stat-chip{display:inline-block;background:rgba(255,255,255,.2);padding:1px 8px;border-radius:8px;font-size:10.5px;margin:1px 3px}'+
-    'tr{break-inside:avoid;page-break-inside:avoid}'+
-    '.footer-note{margin-top:12px;padding-top:10px;border-top:1px dashed #999}'+
-    getPrintEconomyCSS()+
-    '</style></head><body>';
+    'tr{break-inside:avoid;page-break-inside:avoid}'+getPrintEconomyCSS()+'</style></head><body>';
   html+='<div class="head"><h1>فهرست سفیران سلامت مدرسه</h1>'+(headerSub.length?'<div style="font-size:12px;color:#666">'+headerSub.join(' — ')+'</div>':'')+'</div>';
   html+=statsBoxHtml;
   if(data.heads.length){
@@ -3496,9 +3744,7 @@ function printAmbassadorsPDF(){
           if(oa !== ob) return oa - ob;
           return normalizePersian(a.name).localeCompare(normalizePersian(b.name),'fa');
         });
-        myMembers.forEach(function(m){
-          html+='<tr class="member-line"><td>↳↳ '+esc(m.name)+'</td><td>'+esc(m.grade)+'</td><td>عضو</td><td>'+(esc(m.responsibility)||'—')+'</td></tr>';
-        });
+        myMembers.forEach(function(m){ html+='<tr class="member-line"><td>↳↳ '+esc(m.name)+'</td><td>'+esc(m.grade)+'</td><td>عضو</td><td>'+(esc(m.responsibility)||'—')+'</td></tr>'; });
         html+='<tr class="subgroup-summary-line"><td colspan="4">📊 آمار زیرگروه «'+esc(v.name)+'» — تعداد اعضا: <b>'+fa(myMembers.length)+'</b> نفر</td></tr>';
       });
     });
@@ -3528,27 +3774,20 @@ function printAmbassadorsPDF(){
     html+='</tbody></table>';
   }
   html+='<table style="margin-top:14px"><tbody><tr class="overall-summary-line"><td>📊 <b>آمار کلی سفیران سلامت:</b> '+
-    '<span class="stat-chip">کل: '+fa(stats.total)+'</span> '+
-    '<span class="stat-chip">🎯 سرگروه: '+fa(stats.heads)+'</span> '+
-    '<span class="stat-chip">🥈 زیرگروه: '+fa(stats.vices)+'</span> '+
-    '<span class="stat-chip">👤 اعضا: '+fa(stats.members)+'</span> '+
-    '<span class="stat-chip">↳ عضو با زیرگروه: '+fa(stats.membersWithVice)+'</span> '+
-    '<span class="stat-chip">⚠️ بدون زیرگروه: '+fa(stats.membersWithoutVice)+'</span>'+
+    '<span class="stat-chip">کل: '+fa(stats.total)+'</span> <span class="stat-chip">🎯 سرگروه: '+fa(stats.heads)+'</span> '+
+    '<span class="stat-chip">🥈 زیرگروه: '+fa(stats.vices)+'</span> <span class="stat-chip">👤 اعضا: '+fa(stats.members)+'</span> '+
+    '<span class="stat-chip">↳ عضو با زیرگروه: '+fa(stats.membersWithVice)+'</span> <span class="stat-chip">⚠️ بدون زیرگروه: '+fa(stats.membersWithoutVice)+'</span>'+
     '</td></tr></tbody></table>';
-  html+=managerStampFooter();
-  html+=creatorFooterFa();
-  html+='</body></html>';
+  html+=managerStampFooter(); html+=creatorFooterFa(); html+='</body></html>';
   var w=window.open('','_blank'); if(!w){ toast('لطفاً پاپ‌آپ را برای این سایت مجاز کنید'); return; }
   w.document.write(html); w.document.close();
   setTimeout(function(){ w.print(); },400);
 }
-
-/* ==================== کارت سفیر ==================== */
 function buildAmbassadorCardHTML(s){
   var role = s.ambassadorRole||'member';
   var roleName = ROLE_MAP[role];
   var roleIcon = role==='head'?'🎯':role==='vice'?'🥈':'👤';
-  var apptText = 'بدین‌وسیله <b>'+esc(s.name)+'</b> از پایه <b>'+esc(s.grade)+'</b> به‌عنوان <b>'+roleName+' سلامت</b> مدرسه منصوب می‌گردد. امید است با همکاری ایشان، گام‌های مؤثری در ارتقای سلامت دانش‌آموزان برداشته شود.';
+  var apptText = 'بدین‌وسیله <b>'+esc(s.name)+'</b> از پایه <b>'+esc(s.grade)+'</b> به‌عنوان <b>'+roleName+' سلامت</b> مدرسه منصوب می‌گردد.';
   return '<div class="amb-card">'+
     '<div class="amb-card-head">'+
       '<div class="amb-card-school">'+esc(profile.school||'مدرسه')+'</div>'+
@@ -3566,12 +3805,8 @@ function buildAmbassadorCardHTML(s){
     '</div>'+
     '<div class="amb-card-text">'+apptText+'</div>'+
     '<div class="amb-card-sign">'+
-      '<div class="amb-sig">'+
-        (profile.signatureImg?'<img src="'+profile.signatureImg+'" style="max-height:5mm;display:block;margin:0 auto 0.5mm">':'')+
-        '<div class="amb-sig-line"></div>'+
-        '<div class="amb-sig-label">'+esc(profile.signature||profile.assistant||'مراقب سلامت')+'</div>'+
-        signatureBadgeMini()+
-      '</div>'+
+      '<div class="amb-sig">'+(profile.signatureImg?'<img src="'+profile.signatureImg+'" style="max-height:5mm;display:block;margin:0 auto 0.5mm">':'')+
+        '<div class="amb-sig-line"></div><div class="amb-sig-label">'+esc(profile.signature||profile.assistant||'مراقب سلامت')+'</div>'+signatureBadgeMini()+'</div>'+
       '<div class="amb-sig"><div class="amb-sig-box">مهر مدرسه</div><div class="amb-sig-label">'+esc(profile.manager||'مدیر مدرسه')+'</div></div>'+
     '</div>'+
   '</div>';
@@ -3607,8 +3842,7 @@ function printAmbassadorCards(){
   var cardsHtml = '';
   list.forEach(function(s){ cardsHtml += buildAmbassadorCardHTML(s); });
   var html = '<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="UTF-8"><title>کارت‌های سفیران سلامت</title><style>'+
-    ambassadorCardPrintCSS()+getPrintEconomyCSS()+
-    '</style></head><body><div class="page-wrap"><div class="amb-cards-grid">'+cardsHtml+'</div></div></body></html>';
+    ambassadorCardPrintCSS()+getPrintEconomyCSS()+'</style></head><body><div class="page-wrap"><div class="amb-cards-grid">'+cardsHtml+'</div></div></body></html>';
   var w=window.open('','_blank'); if(!w){ toast('لطفاً پاپ‌آپ را برای این سایت مجاز کنید'); return; }
   w.document.write(html); w.document.close();
   setTimeout(function(){ w.print(); },500);
@@ -3618,10 +3852,7 @@ function printAmbassadorCard(id){
   ensureStudentFields(s);
   if(!s.isAmbassador){ toast('این دانش‌آموز سفیر نیست'); return; }
   var html = '<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="UTF-8"><title>کارت سفیر</title><style>'+
-    ambassadorCardPrintCSS()+
-    '@media print{.amb-cards-grid{grid-template-columns:1fr 1fr}}'+
-    getPrintEconomyCSS()+
-    '</style></head><body><div class="page-wrap"><div class="amb-cards-grid">'+buildAmbassadorCardHTML(s)+'</div></div></body></html>';
+    ambassadorCardPrintCSS()+'@media print{.amb-cards-grid{grid-template-columns:1fr 1fr}}'+getPrintEconomyCSS()+'</style></head><body><div class="page-wrap"><div class="amb-cards-grid">'+buildAmbassadorCardHTML(s)+'</div></div></body></html>';
   var w=window.open('','_blank'); if(!w){ toast('لطفاً پاپ‌آپ را برای این سایت مجاز کنید'); return; }
   w.document.write(html); w.document.close();
   setTimeout(function(){ w.print(); },500);
@@ -3639,10 +3870,7 @@ function attachStudentForm(){
         if(suggested){
           by.placeholder = 'مثلاً ' + fa(suggested);
           var hint = $('#birthHint');
-          if(hint){
-            hint.style.display = 'block';
-            hint.innerHTML = '💡 برای پایه <b>' + esc(this.value) + '</b> انتظار می‌رود سال تولد حدود <b>' + fa(suggested) + '</b> باشد.';
-          }
+          if(hint){ hint.style.display = 'block'; hint.innerHTML = '💡 برای پایه <b>' + esc(this.value) + '</b> انتظار می‌رود سال تولد حدود <b>' + fa(suggested) + '</b> باشد.'; }
         }
       }
     });
@@ -3660,10 +3888,7 @@ function attachStudentForm(){
           if(j){
             f.birthYear.value = j.year; f.birthMonth.value = j.month; f.birthDay.value = j.day;
             var hint = $('#birthHint');
-            if(hint){
-              hint.style.display = 'block';
-              hint.innerHTML = '✅ تاریخ تولد از کد ملی استخراج شد: <b>' + fa(j.year) + '/' + fa(String(j.month).padStart(2,'0')) + '/' + fa(String(j.day).padStart(2,'0')) + '</b> — لطفاً تأیید کنید.';
-            }
+            if(hint){ hint.style.display = 'block'; hint.innerHTML = '✅ تاریخ تولد از کد ملی استخراج شد: <b>' + fa(j.year) + '/' + fa(String(j.month).padStart(2,'0')) + '/' + fa(String(j.day).padStart(2,'0')) + '</b>'; }
           }
         }
       }
@@ -3730,14 +3955,12 @@ function buildGrowthChartHTML(studentId){
   var hRecords=records.filter(function(r){ return r.height; });
   var wRecords=records.filter(function(r){ return r.weight; });
   hRecords.forEach(function(r){
-    var origIdx=records.indexOf(r);
-    var x=xPos(origIdx);
+    var origIdx=records.indexOf(r); var x=xPos(origIdx);
     pathH+=(pathH?' L ':'M ')+x+' '+yH(r.height);
     pointsH+='<circle cx="'+x+'" cy="'+yH(r.height)+'" r="3" fill="#8a6a2c"/>';
   });
   wRecords.forEach(function(r){
-    var origIdx=records.indexOf(r);
-    var x=xPos(origIdx);
+    var origIdx=records.indexOf(r); var x=xPos(origIdx);
     pathW+=(pathW?' L ':'M ')+x+' '+yW(r.weight);
     pointsW+='<circle cx="'+x+'" cy="'+yW(r.weight)+'" r="3" fill="#d4a017"/>';
   });
@@ -3766,10 +3989,9 @@ function buildGrowthChartHTML(studentId){
       if(cat.key === 'normal') html+='<div class="alert-success" style="margin-top:10px">✅ Z-score: '+fa(whoEval.z.toFixed(2))+' — دسته‌بندی: <b>'+cat.label+'</b></div>';
       else if(cat.key === 'thin' || cat.key === 'severe-thin') html+='<div class="alert-box" style="margin-top:10px">⚠️ Z-score: '+fa(whoEval.z.toFixed(2))+' — دسته‌بندی: <b>'+cat.label+'</b></div>';
       else html+='<div class="alert-warn" style="margin-top:10px">⚠️ Z-score: '+fa(whoEval.z.toFixed(2))+' — دسته‌بندی: <b>'+cat.label+'</b></div>';
-      html+='<div style="margin-top:6px;font-size:.78rem;color:var(--muted)">'+
-        'مرجع: L='+fa(whoEval.ref.L.toFixed(4))+' — M='+fa(whoEval.ref.M.toFixed(2))+' — S='+fa(whoEval.ref.S.toFixed(5))+' — سن دقیق: '+fa(whoEval.ageMonths.toFixed(2))+' ماه</div>';
+      html+='<div style="margin-top:6px;font-size:.78rem;color:var(--muted)">مرجع: L='+fa(whoEval.ref.L.toFixed(4))+' — M='+fa(whoEval.ref.M.toFixed(2))+' — S='+fa(whoEval.ref.S.toFixed(5))+' — سن: '+fa(whoEval.ageMonths.toFixed(2))+' ماه</div>';
     } else if(!whoLMS.boys.length && !whoLMS.girls.length){
-      html+='<div class="alert-warn" style="margin-top:10px">⚠️ جدول WHO بارگذاری نشده است. برای فعال‌سازی Z-score، به تنظیمات → WHO بروید.</div>';
+      html+='<div class="alert-warn" style="margin-top:10px">⚠️ جدول WHO بارگذاری نشده است.</div>';
     }
   }
   return html;
@@ -3833,7 +4055,7 @@ function renderProfile(id){
   if(info.z != null) html+='<span class="chip">Z: '+fa(info.z.toFixed(2))+'</span>';
   if(tchip) html+=tchip;
   html+='</div></div>';
-  if(!s.birthJDN) html+='<div class="alert-warn">⚠️ <b>تاریخ تولد ثبت نشده است.</b> برای محاسبه دقیق صدک WHO BMI-for-Age، لطفاً با دکمه «ویرایش» تاریخ تولد را وارد کنید.</div>';
+  if(!s.birthJDN) html+='<div class="alert-warn">⚠️ <b>تاریخ تولد ثبت نشده است.</b></div>';
   html+=buildWeightAlertHTML(s);
   html+='<div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">';
   html+='<button class="btn '+(s.isAmbassador?'danger':'gold')+' sm" onclick="toggleAmbassador(\''+s.id+'\');renderProfile(\''+s.id+'\')">'+(s.isAmbassador?'حذف از سفیران':'★ انتخاب سفیر')+'</button>';
@@ -3902,7 +4124,7 @@ function renderProfile(id){
   html+='<div class="field"><label>یادداشت</label><textarea name="notes"></textarea></div>';
   html+='<div style="display:flex;gap:8px;flex-wrap:wrap"><button type="submit" class="btn primary">ثبت</button>';
   html+='<button type="button" class="btn ghost" id="recordCancelBtn" onclick="resetRecordForm()" style="display:none">انصراف</button></div>';
-  html+='<p class="hint" style="margin-top:6px">💡 می‌توانید هر آیتم را جداگانه ثبت کنید و بعداً با ✏️ روی ردیف تاریخچه، موارد خالی را تکمیل کنید.</p>';
+  html+='<p class="hint" style="margin-top:6px">💡 می‌توانید هر آیتم را جداگانه ثبت کنید.</p>';
   html+='</form></div>';
   html+='<div class="card"><h2>📋 تاریخچه غربالگری</h2>';
   if(records.length){
@@ -4091,7 +4313,7 @@ function deleteRecord(sid, rid){
 }
 function deleteStudent(id){
   var s=getStudent(id); if(!s) return;
-  if(!confirm('حذف «'+s.name+'»؟ (به سطل زباله می‌رود و تا ۳۰ روز قابل بازگردانی است)')) return;
+  if(!confirm('حذف «'+s.name+'»؟ (به سطل زباله می‌رود)')) return;
   var snapshot = moveStudentToTrash(id);
   saveTrash(); saveDB();
   var captured = { ids: [id], items: snapshot ? [snapshot] : [] };
@@ -4336,8 +4558,7 @@ function printProfileSelective(sid){
     '.alert-success{background:#e5f6ee;border:1px solid #b8e0cc;color:#1f5a38;padding:8px 10px;border-radius:6px;margin:6px 0;font-size:11.5px;font-weight:700}'+
     '.alert-warn{background:#fdf3e2;border:1px solid #e8c98a;color:#7a5a08;padding:8px 10px;border-radius:6px;margin:6px 0;font-size:11.5px;font-weight:700}'+
     '.empty{text-align:center;color:#999;padding:16px;font-size:11px}'+
-    getPrintEconomyCSS()+
-    '</style></head><body>';
+    getPrintEconomyCSS()+'</style></head><body>';
   html+='<div class="head"><h1>پروفایل سلامت دانش‌آموز</h1>'+(headerSub.length?'<div style="font-size:12px;color:#666">'+headerSub.join(' — ')+'</div>':'')+'</div>';
   html+=body;
   html+=managerStampFooter();
@@ -4355,8 +4576,7 @@ function printHealthCard(sid){
   var html='<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="UTF-8"><title>کارت سلامت</title><style>@page{size:A4;margin:14mm}body{font-family:Tahoma,sans-serif;direction:rtl;font-size:13px;line-height:1.9}'+
     '.head{text-align:center;border-bottom:3px double #8a6a2c;padding-bottom:10px;margin-bottom:16px}.head h1{color:#8a6a2c}h2{background:#f4ecd9;color:#6a4f1f;font-size:13px;padding:6px 10px;margin:12px 0 8px;border-right:4px solid #8a6a2c}'+
     '.row{display:flex;gap:8px;padding:3px 0}.row b{color:#555;min-width:130px}table{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:6px}th{background:#f4ecd9;text-align:right;padding:6px;border:1px solid #e8dfcb}td{padding:5px 6px;border:1px solid #e8dfcb}'+
-    getPrintEconomyCSS()+
-    '</style></head><body>';
+    getPrintEconomyCSS()+'</style></head><body>';
   html+='<div class="head"><h1>کارت سلامت دانش‌آموز</h1>'+(profile.school?'<div>'+esc(profile.school)+'</div>':'')+'</div>';
   html+='<div class="row"><b>نام:</b><span>'+esc(s.name)+'</span></div>';
   html+='<div class="row"><b>پایه:</b><span>'+esc(s.grade)+'</span></div>';
@@ -4383,18 +4603,12 @@ function printHealthCard(sid){
 /* ==================== چاپ سریع ==================== */
 function quickPrint(){
   var studentView = document.getElementById('view-student');
-  if(studentView && studentView.classList.contains('active') && currentStudentId){
-    printProfileSelective(currentStudentId);
-    return;
-  }
+  if(studentView && studentView.classList.contains('active') && currentStudentId){ printProfileSelective(currentStudentId); return; }
   var current=null;
   $$('#tabsNav button').forEach(function(b){ if(b.classList.contains('active')) current=b.dataset.view; });
   if(!current){ toast('تبی انتخاب نشده'); return; }
   var activeView = document.getElementById('view-'+current);
-  if(!activeView || !activeView.innerHTML.trim()){
-    toast('این صفحه محتوایی برای چاپ ندارد');
-    return;
-  }
+  if(!activeView || !activeView.innerHTML.trim()){ toast('این صفحه محتوایی برای چاپ ندارد'); return; }
   if(economyPrint){
     document.body.classList.add('economy-print');
     var cleanup = function(){ document.body.classList.remove('economy-print'); window.removeEventListener('afterprint', cleanup); };
@@ -4406,8 +4620,7 @@ function quickPrint(){
 
 /* ==================== انتخاب دانش‌آموزان ==================== */
 function populateStudentSelects(){
-  var sel=document.getElementById('diseaseStudent');
-  if(!sel) return;
+  var sel=document.getElementById('diseaseStudent'); if(!sel) return;
   var list=db.students.slice().sort(compareStudents);
   var v=sel.value;
   var h='<option value="">— انتخاب —</option>';
@@ -4435,15 +4648,10 @@ var REPORT_CATS = [
   { key:'ambassador', icon:'★', title:'سفیران', desc:'قابل سورت بر پایه و جزئیات' },
   { key:'referrals', icon:'📄', title:'نامه‌های ارجاع', desc:'لیست ارجاع‌ها' }
 ];
-/* ✅ رفع باگ ۲: اعتبارسنجی currentReportCat */
 function renderReportCategories(){
   if(currentReportCat){
     var isValid = REPORT_CATS.some(function(c){ return c.key === currentReportCat; });
-    if(!isValid){
-      currentReportCat = null;
-      var card = $('#reportResultCard');
-      if(card) card.style.display = 'none';
-    }
+    if(!isValid){ currentReportCat = null; var card = $('#reportResultCard'); if(card) card.style.display = 'none'; }
   }
   var el=$('#reportCatGrid'); if(!el) return;
   var html='';
@@ -4479,14 +4687,11 @@ function selectReportCat(key){
   html+='</tbody></table></div>';
   content.innerHTML=html;
 }
-
-/* گزارش سفیران — با سورت */
 function buildAmbassadorReportHTML(){
   var list = db.students.filter(function(s){ return s.isAmbassador; });
   if(!list.length) return '<div class="empty">سفیری ثبت نشده.</div>';
   list.forEach(function(s){ ensureStudentFields(s); });
-  var sortKey = ambassadorReportSort.key;
-  var dir = ambassadorReportSort.dir;
+  var sortKey = ambassadorReportSort.key; var dir = ambassadorReportSort.dir;
   var sorted = list.slice().sort(function(a,b){
     var va, vb;
     if(sortKey === 'grade'){ va = GRADE_ORDER[a.grade]||99; vb = GRADE_ORDER[b.grade]||99; }
@@ -4514,19 +4719,12 @@ function buildAmbassadorReportHTML(){
     var roleLabel = ROLE_MAP[role];
     var roleCls = role==='head'?'b-head':role==='vice'?'b-vice':'b-member';
     var detail = s.responsibility ? esc(s.responsibility) : '—';
-    if(role==='vice' && s.headParentId){
-      var h = getStudent(s.headParentId);
-      if(h) detail += ' <span class="hint">(زیرگروه '+esc(h.name)+')</span>';
-    } else if(role==='member' && s.viceParentId){
-      var v = getStudent(s.viceParentId);
-      if(v) detail += ' <span class="hint">(عضو زیرگروه '+esc(v.name)+')</span>';
-    }
+    if(role==='vice' && s.headParentId){ var h = getStudent(s.headParentId); if(h) detail += ' <span class="hint">(زیرگروه '+esc(h.name)+')</span>'; }
+    else if(role==='member' && s.viceParentId){ var v = getStudent(s.viceParentId); if(v) detail += ' <span class="hint">(عضو زیرگروه '+esc(v.name)+')</span>'; }
     html+='<tr class="no-hover" onclick="openProfile(\''+s.id+'\')" style="cursor:pointer">';
-    html+='<td>'+esc(s.name)+'</td>';
-    html+='<td>'+esc(s.grade)+'</td>';
+    html+='<td>'+esc(s.name)+'</td><td>'+esc(s.grade)+'</td>';
     html+='<td><span class="badge '+roleCls+'">'+roleLabel+'</span></td>';
-    html+='<td>'+detail+'</td>';
-    html+='</tr>';
+    html+='<td>'+detail+'</td></tr>';
   });
   html+='</tbody></table></div>';
   html+='<div class="note-box" style="margin-top:10px">📌 تعداد کل: <b>'+fa(sorted.length)+'</b> سفیر</div>';
@@ -4538,27 +4736,20 @@ function sortAmbassadorReport(key){
   var content=$('#reportResultContent'); if(!content) return;
   content.innerHTML=buildAmbassadorReportHTML();
 }
-
 function buildNoBirthReportHTML(){
   var missing = db.students.filter(function(s){ return !s.birthJDN; });
   if(!missing.length) return '<div class="alert-success">✓ همه دانش‌آموزان دارای تاریخ تولد هستند.</div>';
   missing.sort(compareStudents);
-  var html='<div class="alert-warn">⚠️ '+fa(missing.length)+' دانش‌آموز بدون تاریخ تولد. برای محاسبه WHO، لطفاً تاریخ تولد آن‌ها را تکمیل کنید.</div>';
+  var html='<div class="alert-warn">⚠️ '+fa(missing.length)+' دانش‌آموز بدون تاریخ تولد.</div>';
   html+='<div class="table-wrap"><table><thead><tr><th>#</th><th>نام</th><th>پایه</th><th>کد ملی</th></tr></thead><tbody>';
-  missing.forEach(function(s,i){
-    html+='<tr class="no-hover" onclick="openEditStudent(\''+s.id+'\')" style="cursor:pointer"><td>'+fa(i+1)+'</td><td>'+esc(s.name)+'</td><td>'+esc(s.grade)+'</td><td>'+(s.nationalId?fa(s.nationalId):'—')+'</td></tr>';
-  });
+  missing.forEach(function(s,i){ html+='<tr class="no-hover" onclick="openEditStudent(\''+s.id+'\')" style="cursor:pointer"><td>'+fa(i+1)+'</td><td>'+esc(s.name)+'</td><td>'+esc(s.grade)+'</td><td>'+(s.nationalId?fa(s.nationalId):'—')+'</td></tr>'; });
   html+='</tbody></table></div>';
   html+='<p class="hint" style="margin-top:10px">🖱️ روی هر ردیف کلیک کنید تا فرم ویرایش باز شود.</p>';
   return html;
 }
 function buildRiskReportHTML(){
   var groups={high:[],mid:[],low:[]};
-  db.students.forEach(function(s){
-    ensureStudentFields(s);
-    var rl=getStudentRiskLevel(s);
-    groups[rl.key].push({s:s,rl:rl});
-  });
+  db.students.forEach(function(s){ ensureStudentFields(s); var rl=getStudentRiskLevel(s); groups[rl.key].push({s:s,rl:rl}); });
   var html='';
   function section(title, icon, arr){
     if(!arr.length) return '';
@@ -4659,7 +4850,7 @@ function buildIncidentsGeneralReportHTML(){
   });
   if(!rows.length) return '<div class="empty">موردی ثبت نشده.</div>';
   rows.sort(function(a,b){ return b.ts-a.ts; });
-  var html='<div style="margin-bottom:10px"><b>تعداد کل:</b> '+fa(rows.length)+' مورد — چیدمان فشرده (چند مورد در یک برگه A4)</div>';
+  var html='<div style="margin-bottom:10px"><b>تعداد کل:</b> '+fa(rows.length)+' مورد — چیدمان فشرده</div>';
   html+='<div class="inc-cards-grid">';
   rows.forEach(function(r){
     var stCls = r.incident.status==='resolved'?'resolved':'ongoing';
@@ -4669,8 +4860,7 @@ function buildIncidentsGeneralReportHTML(){
       '<div class="ic-row"><b>دانش‌آموز:</b> '+esc(r.student.name)+' — <b>پایه:</b> '+esc(r.student.grade)+'</div>'+
       (r.incident.description?'<div class="ic-row"><b>شرح:</b> '+esc(r.incident.description)+'</div>':'')+
       (r.incident.action?'<div class="ic-row"><b>اقدام:</b> '+esc(r.incident.action)+'</div>':'')+
-      '<div class="ic-row"><span class="ic-status '+stCls+'">'+stTxt+'</span></div>'+
-    '</div>';
+      '<div class="ic-row"><span class="ic-status '+stCls+'">'+stTxt+'</span></div></div>';
   });
   html+='</div>';
   return html;
@@ -4679,11 +4869,7 @@ function buildPatternReportHTML(){
   var alerts=detectPatterns();
   if(!alerts.length) return '<div class="alert-success">هیچ الگوی مشکوکی در ۳۰ روز گذشته یافت نشد.</div>';
   var html='<div class="alert-box">⚠️ الگوهای شناسایی‌شده:</div>';
-  alerts.forEach(function(a){
-    html+='<div class="incident-item" style="border-right-color:var(--bad)">';
-    html+='<b>پایه '+esc(a.grade)+'</b> — '+fa(a.count)+' مورد «'+esc(a.type)+'» در ۳۰ روز گذشته';
-    html+='</div>';
-  });
+  alerts.forEach(function(a){ html+='<div class="incident-item" style="border-right-color:var(--bad)"><b>پایه '+esc(a.grade)+'</b> — '+fa(a.count)+' مورد «'+esc(a.type)+'» در ۳۰ روز گذشته</div>'; });
   return html;
 }
 function buildMinistryFormHTML(){
@@ -4870,11 +5056,8 @@ function printConsent(){
   var students=getConsentStudents(scope);
   if(!students.length){ toast('دانش‌آموزی نیست'); return; }
   var w=window.open('','_blank'); if(!w){ toast('لطفاً پاپ‌آپ را برای این سایت مجاز کنید'); return; }
-  var html='<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="UTF-8"><title>رضایت‌نامه</title><style>'+
-    consentCardPrintCSS()+getPrintEconomyCSS()+
-    '</style></head><body>'+buildConsentHTML(subj,desc,body,dt,tm,students,showName)+'</body></html>';
-  w.document.write(html);
-  w.document.close();
+  var html='<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="UTF-8"><title>رضایت‌نامه</title><style>'+consentCardPrintCSS()+getPrintEconomyCSS()+'</style></head><body>'+buildConsentHTML(subj,desc,body,dt,tm,students,showName)+'</body></html>';
+  w.document.write(html); w.document.close();
   setTimeout(function(){ w.print(); },500);
 }
 
@@ -4904,7 +5087,7 @@ var REFERRAL_TYPES = {
     textTemplate: function(s, info){
       var bmiTxt = info && info.bmi != null ? fa(info.bmi) : '—';
       var zTxt = info && info.z != null ? fa(info.z.toFixed(2)) : '—';
-      return 'بدین‌وسیله به اطلاع می‌رساند دانش‌آموز <b>'+esc(s.name)+'</b> از پایه <b>'+esc(s.grade)+'</b> با BMI = <b>'+bmiTxt+'</b> و Z-score = <b>'+zTxt+'</b>، بر اساس استاندارد WHO 2007 در گروه <b>«در معرض اضافه وزن»</b> قرار می‌گیرد. توصیه می‌شود ایشان به کارشناس تغذیه ارجاع داده شود تا با اصلاح عادات غذایی و افزایش فعالیت بدنی، از پیشرفت به سمت اضافه وزن پیشگیری گردد.';
+      return 'بدین‌وسیله به اطلاع می‌رساند دانش‌آموز <b>'+esc(s.name)+'</b> از پایه <b>'+esc(s.grade)+'</b> با BMI = <b>'+bmiTxt+'</b> و Z-score = <b>'+zTxt+'</b>، بر اساس استاندارد WHO 2007 در گروه <b>«در معرض اضافه وزن»</b> قرار می‌گیرد. توصیه می‌شود ایشان به کارشناس تغذیه ارجاع داده شود.';
     }
   },
   'nutrition-overweight': {
@@ -4913,7 +5096,7 @@ var REFERRAL_TYPES = {
     textTemplate: function(s, info){
       var bmiTxt = info && info.bmi != null ? fa(info.bmi) : '—';
       var zTxt = info && info.z != null ? fa(info.z.toFixed(2)) : '—';
-      return 'بدین‌وسیله به اطلاع می‌رساند دانش‌آموز <b>'+esc(s.name)+'</b> از پایه <b>'+esc(s.grade)+'</b> با BMI = <b>'+bmiTxt+'</b> و Z-score = <b>'+zTxt+'</b>، بر اساس استاندارد WHO 2007 در گروه <b>«اضافه وزن»</b> قرار می‌گیرد. با توجه به پیامدهای اضافه وزن بر سلامت، ارجاع ایشان به کارشناس تغذیه جهت تنظیم برنامه غذایی و توصیه‌های لازم ضروری است.';
+      return 'بدین‌وسیله به اطلاع می‌رساند دانش‌آموز <b>'+esc(s.name)+'</b> از پایه <b>'+esc(s.grade)+'</b> با BMI = <b>'+bmiTxt+'</b> و Z-score = <b>'+zTxt+'</b>، بر اساس استاندارد WHO 2007 در گروه <b>«اضافه وزن»</b> قرار می‌گیرد. با توجه به پیامدهای اضافه وزن بر سلامت، ارجاع ایشان به کارشناس تغذیه ضروری است.';
     }
   },
   'nutrition-obese': {
@@ -4922,7 +5105,7 @@ var REFERRAL_TYPES = {
     textTemplate: function(s, info){
       var bmiTxt = info && info.bmi != null ? fa(info.bmi) : '—';
       var zTxt = info && info.z != null ? fa(info.z.toFixed(2)) : '—';
-      return 'بدین‌وسیله به اطلاع می‌رساند دانش‌آموز <b>'+esc(s.name)+'</b> از پایه <b>'+esc(s.grade)+'</b> با BMI = <b>'+bmiTxt+'</b> و Z-score = <b>'+zTxt+'</b>، بر اساس استاندارد WHO 2007 در گروه <b>«چاقی»</b> قرار می‌گیرد. با توجه به خطرات جدی چاقی برای سلامت جسمی و روانی، ارجاع فوری ایشان به کارشناس تغذیه و پزشک متخصص ضروری می‌باشد.';
+      return 'بدین‌وسیله به اطلاع می‌رساند دانش‌آموز <b>'+esc(s.name)+'</b> از پایه <b>'+esc(s.grade)+'</b> با BMI = <b>'+bmiTxt+'</b> و Z-score = <b>'+zTxt+'</b>، بر اساس استاندارد WHO 2007 در گروه <b>«چاقی»</b> قرار می‌گیرد. ارجاع فوری ایشان به کارشناس تغذیه و پزشک متخصص ضروری می‌باشد.';
     }
   },
   'vision': {
@@ -4971,15 +5154,10 @@ function getEligibleStudentsForReferral(typeKey){
         var r = last;
         detail = 'BMI: ' + (r && r.bmi != null ? fa(r.bmi) : '—') + (info.z != null ? ' | Z: ' + fa(info.z.toFixed(2)) : '') + ' | دسته: ' + info.label;
       }
-    } else if(rt.matchKey === 'vision'){
-      if(last && last.vision === 'ارجاع'){ eligible = true; detail = 'غربال: ' + faDateShort(last.ts); }
-    } else if(rt.matchKey === 'hearing'){
-      if(last && last.hearing === 'ارجاع'){ eligible = true; detail = 'غربال: ' + faDateShort(last.ts); }
-    } else if(rt.matchKey === 'dental'){
-      if(last && last.dental === 'ارجاع'){ eligible = true; detail = 'غربال: ' + faDateShort(last.ts); }
-    } else if(rt.matchKey === 'skin'){
-      if(last && last.skin === 'مشکوک'){ eligible = true; detail = 'غربال: ' + faDateShort(last.ts); }
-    }
+    } else if(rt.matchKey === 'vision'){ if(last && last.vision === 'ارجاع'){ eligible = true; detail = 'غربال: ' + faDateShort(last.ts); } }
+    else if(rt.matchKey === 'hearing'){ if(last && last.hearing === 'ارجاع'){ eligible = true; detail = 'غربال: ' + faDateShort(last.ts); } }
+    else if(rt.matchKey === 'dental'){ if(last && last.dental === 'ارجاع'){ eligible = true; detail = 'غربال: ' + faDateShort(last.ts); } }
+    else if(rt.matchKey === 'skin'){ if(last && last.skin === 'مشکوک'){ eligible = true; detail = 'غربال: ' + faDateShort(last.ts); } }
     if(eligible) result.push({ s: s, detail: detail, info: info });
   });
   return result;
@@ -4999,20 +5177,15 @@ function buildGroupReferralPanelHTML(){
 }
 function attachGroupReferralHandlers(){ onGroupReferralTypeChange(); }
 function onGroupReferralTypeChange(){
-  var sel = $('#groupReferralType');
-  if(!sel) return;
+  var sel = $('#groupReferralType'); if(!sel) return;
   var prev = groupReferralSelections.referralType;
   var next = sel.value;
-  if(prev !== next){
-    groupReferralSelections.selectedIds.clear();
-    groupReferralSelections.manualAddedIds.clear();
-  }
+  if(prev !== next){ groupReferralSelections.selectedIds.clear(); groupReferralSelections.manualAddedIds.clear(); }
   groupReferralSelections.referralType = next;
   renderGroupReferralPanel();
 }
 function renderGroupReferralPanel(){
-  var el = $('#groupReferralBody');
-  if(!el) return;
+  var el = $('#groupReferralBody'); if(!el) return;
   var typeKey = groupReferralSelections.referralType;
   var rt = REFERRAL_TYPES[typeKey];
   if(!rt){ el.innerHTML = '<div class="empty">نوع ارجاع یافت نشد.</div>'; return; }
@@ -5026,17 +5199,15 @@ function renderGroupReferralPanel(){
   html += '</div>';
   html += '<div class="table-wrap"><table><thead><tr><th style="width:36px">✓</th><th>نام</th><th>پایه</th><th>جزئیات</th></tr></thead><tbody>';
   if(!eligible.length){
-    html += '<tr class="no-hover"><td colspan="4"><div class="empty">هیچ دانش‌آموزی واجد شرایط این ارجاع نیست. می‌توانید با دکمه «افزودن دستی» اضافه کنید.</div></td></tr>';
+    html += '<tr class="no-hover"><td colspan="4"><div class="empty">هیچ دانش‌آموزی واجد شرایط این ارجاع نیست.</div></td></tr>';
   } else {
     eligible.forEach(function(item){
       var s = item.s;
       var checked = groupReferralSelections.selectedIds.has(s.id);
       html += '<tr class="no-hover">';
       html += '<td><input type="checkbox" class="student-checkbox" '+(checked?'checked':'')+' onchange="toggleGroupReferralSelect(\''+s.id+'\',this.checked)"></td>';
-      html += '<td>'+esc(s.name)+'</td>';
-      html += '<td>'+esc(s.grade)+'</td>';
-      html += '<td style="font-size:.78rem;color:var(--muted)">'+esc(item.detail)+'</td>';
-      html += '</tr>';
+      html += '<td>'+esc(s.name)+'</td><td>'+esc(s.grade)+'</td>';
+      html += '<td style="font-size:.78rem;color:var(--muted)">'+esc(item.detail)+'</td></tr>';
     });
   }
   html += '</tbody></table></div>';
@@ -5045,15 +5216,12 @@ function renderGroupReferralPanel(){
     html += '<div style="margin-top:10px"><b style="font-size:.84rem;color:var(--primary-d)">➕ دانش‌آموزان افزودن‌شده دستی:</b></div>';
     html += '<div class="table-wrap" style="margin-top:6px"><table><thead><tr><th style="width:36px">✓</th><th>نام</th><th>پایه</th><th style="width:70px">عملیات</th></tr></thead><tbody>';
     manualIds.forEach(function(id){
-      var s = getStudent(id);
-      if(!s) return;
+      var s = getStudent(id); if(!s) return;
       var checked = groupReferralSelections.selectedIds.has(id);
       html += '<tr class="no-hover">';
       html += '<td><input type="checkbox" class="student-checkbox" '+(checked?'checked':'')+' onchange="toggleGroupReferralSelect(\''+id+'\',this.checked)"></td>';
-      html += '<td>'+esc(s.name)+'</td>';
-      html += '<td>'+esc(s.grade)+'</td>';
-      html += '<td><button class="btn icon danger" onclick="removeManualReferral(\''+id+'\')">×</button></td>';
-      html += '</tr>';
+      html += '<td>'+esc(s.name)+'</td><td>'+esc(s.grade)+'</td>';
+      html += '<td><button class="btn icon danger" onclick="removeManualReferral(\''+id+'\')">×</button></td></tr>';
     });
     html += '</tbody></table></div>';
   }
@@ -5094,8 +5262,7 @@ function openManualAddReferralModal(){
   openModal('manualAddReferralModal');
 }
 function renderManualAddList(){
-  var el = $('#manualAddList');
-  if(!el) return;
+  var el = $('#manualAddList'); if(!el) return;
   var q = ($('#manualAddSearch') && $('#manualAddSearch').value || '').trim();
   var list = db.students.slice().sort(compareStudents);
   if(q) list = list.filter(function(s){ return fuzzyMatch(s.name + ' ' + s.grade, q); });
@@ -5123,8 +5290,7 @@ function onManualReferralToggle(id, checked){
 }
 var _debouncedManualAddList = debounce(renderManualAddList, 200);
 function buildReferralCardHTML(s, typeKey){
-  var rt = REFERRAL_TYPES[typeKey];
-  if(!rt) return '';
+  var rt = REFERRAL_TYPES[typeKey]; if(!rt) return '';
   var info = bmiInfo(s);
   var lastRec = lastRecord(s);
   var bmiVal = lastRec && lastRec.bmi != null ? lastRec.bmi : null;
@@ -5149,8 +5315,7 @@ function buildReferralCardHTML(s, typeKey){
       '<div class="rc-sig-item">'+
         (profile.signatureImg?'<img src="'+profile.signatureImg+'" style="max-height:5mm;display:block;margin:0 auto 0.5mm">':'')+
         '<div class="rc-sig-line"></div>'+
-        '<div class="rc-sig-label">'+esc(profile.signature||profile.assistant||'مراقب سلامت')+'</div>'+
-        signatureBadgeMini()+
+        '<div class="rc-sig-label">'+esc(profile.signature||profile.assistant||'مراقب سلامت')+'</div>'+signatureBadgeMini()+
       '</div>'+
       '<div class="rc-sig-item"><div class="rc-sig-box">مهر مدرسه</div><div class="rc-sig-label">'+esc(profile.manager||'مدیر مدرسه')+'</div></div>'+
     '</div>'+
@@ -5166,7 +5331,7 @@ function groupReferralPreview(){
   students.forEach(function(s){ cardsHtml += buildReferralCardHTML(s, typeKey); });
   var el = $('#groupReferralPreview');
   if(el){
-    el.innerHTML = '<div class="alert-info">'+fa(students.length)+' نامه آماده شد — پیش‌نمایش در چیدمان ۲×۲ (۴ نامه در A4):</div>'+
+    el.innerHTML = '<div class="alert-info">'+fa(students.length)+' نامه آماده شد — پیش‌نمایش در چیدمان ۲×۲:</div>'+
       '<div class="referral-preview-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:3mm;background:#fff;padding:8mm;border-radius:10px;border:1px solid var(--border);max-width:100%;overflow:auto">'+cardsHtml+'</div>';
   }
   toast(fa(students.length)+' نامه آماده شد');
@@ -5203,9 +5368,7 @@ function printGroupReferrals(){
   students.forEach(function(s){ cardsHtml += buildReferralCardHTML(s, typeKey); });
   var w = window.open('','_blank');
   if(!w){ toast('لطفاً پاپ‌آپ را برای این سایت مجاز کنید'); return; }
-  var html = '<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="UTF-8"><title>نامه‌های ارجاع گروهی</title><style>'+
-    buildReferralCardPrintCSS()+getPrintEconomyCSS()+
-    '</style></head><body><div class="referral-cards-grid">'+cardsHtml+'</div></body></html>';
+  var html = '<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="UTF-8"><title>نامه‌های ارجاع گروهی</title><style>'+buildReferralCardPrintCSS()+getPrintEconomyCSS()+'</style></head><body><div class="referral-cards-grid">'+cardsHtml+'</div></body></html>';
   w.document.write(html); w.document.close();
   setTimeout(function(){ w.print(); }, 500);
   toast('🖨️ '+fa(students.length)+' نامه آماده چاپ شد');
@@ -5252,8 +5415,7 @@ function printReportResult(){
     '.consent-card .cc-sign{display:flex;gap:2mm;margin-top:0.8mm;padding-top:0.8mm;border-top:0.3pt dashed #ccc;font-size:6.2pt;flex-shrink:0}'+
     '.consent-card .cc-sig-item{flex:1;text-align:center}.consent-card .cc-sig-line{border-bottom:0.5pt solid #666;height:5mm;margin-top:0.8mm}'+
     '.consent-card .cc-sig-box{border:0.5pt dashed #999;height:6.5mm;margin-top:0.8mm;border-radius:1mm;display:flex;align-items:center;justify-content:center;color:#999;font-size:5.5pt}'+
-    getPrintEconomyCSS()+
-    '</style></head><body>');
+    getPrintEconomyCSS()+'</style></head><body>');
   w.document.write('<h1>'+cat.icon+' '+cat.title+'</h1>');
   w.document.write('<div style="text-align:center;color:#666;font-size:11px;margin-bottom:14px">'+(profile.school||'')+(profile.year?' — '+profile.year:'')+'</div>');
   var content=$('#reportResultContent');
@@ -5374,9 +5536,7 @@ function resetCsvImport(){
   if(s1) s1.style.display='block'; if(s2) s2.style.display='none';
   var p=$('#csvPreview'); if(p) p.innerHTML='';
 }
-function attachCsvHandlers(){
-  var f=$('#csvFileInput'); if(f) f.addEventListener('change', handleCsvFile);
-}
+function attachCsvHandlers(){ var f=$('#csvFileInput'); if(f) f.addEventListener('change', handleCsvFile); }
 function handleCsvFile(e){
   var file=e.target.files[0]; if(!file) return;
   if(/\.xlsx?$/i.test(file.name)){ toast('فایل را به CSV تبدیل کنید'); return; }
@@ -5445,8 +5605,7 @@ function buildCsvPreview(){
   });
   var html='<div class="csv-summary">';
   html+='<span class="ok">✅ '+fa(valid)+' آماده</span> • <span class="warn">⚠️ '+fa(empty)+' ناقص</span> • <span class="dup">🔄 '+fa(dup)+' تکراری</span>';
-  html+='<br>';
-  html+='<span class="ok">📅 '+fa(withBirth)+' با تاریخ تولد</span> • <span class="nid">🆔 '+fa(fromNid)+' از کد ملی</span> • <span class="warn">❔ '+fa(noBirth)+' بدون تاریخ</span>';
+  html+='<br><span class="ok">📅 '+fa(withBirth)+' با تاریخ تولد</span> • <span class="nid">🆔 '+fa(fromNid)+' از کد ملی</span> • <span class="warn">❔ '+fa(noBirth)+' بدون تاریخ</span>';
   html+='</div>';
   html+='<div class="csv-preview-wrap"><table><thead><tr><th>#</th><th>نام</th><th>پایه</th><th>تاریخ تولد</th><th>منبع</th><th>جنسیت</th></tr></thead><tbody>';
   prev.forEach(function(r,i){
@@ -5458,7 +5617,7 @@ function buildCsvPreview(){
   });
   html+='</tbody></table></div>';
   if(noBirth>0){
-    html+='<div class="alert-warn" style="margin-top:8px">⚠️ '+fa(noBirth)+' دانش‌آموز بدون تاریخ تولد. برای محاسبه WHO، لطفاً تاریخ تولد آن‌ها را دستی در پروفایل تکمیل کنید.</div>';
+    html+='<div class="alert-warn" style="margin-top:8px">⚠️ '+fa(noBirth)+' دانش‌آموز بدون تاریخ تولد.</div>';
   }
   p.innerHTML=html;
   var b=$('#csvImportBtn'); if(b) b.disabled=valid===0;
@@ -5530,8 +5689,8 @@ function renderSignatureSettings(){
   }
   var st=$('#sigStatusBox');
   if(st){
-    if(hasSignature()){ st.innerHTML='<div class="alert-success">✓ <b>امضای مراقب سلامت ثبت شده است.</b> در همه بخش‌های چاپ، نشانگر «ثبت شده» نمایش داده می‌شود.</div>'; }
-    else { st.innerHTML='<div class="alert-warn">⚠️ <b>امضای مراقب سلامت ثبت نشده است.</b> در همه بخش‌های چاپ، نشانگر «ثبت نشده» نمایش داده می‌شود.</div>'; }
+    if(hasSignature()){ st.innerHTML='<div class="alert-success">✓ <b>امضای مراقب سلامت ثبت شده است.</b></div>'; }
+    else { st.innerHTML='<div class="alert-warn">⚠️ <b>امضای مراقب سلامت ثبت نشده است.</b></div>'; }
   }
 }
 function attachSignatureHandlers(){
@@ -5546,55 +5705,10 @@ function attachSignatureHandlers(){
     r.readAsDataURL(f);
   });
 }
-function saveSignature(){
-  profile.signature=$('#sigName').value.trim();
-  if(sigFileData) profile.signatureImg=sigFileData;
-  saveProfile(); toast('ذخیره شد'); renderSignatureSettings();
-}
-function clearSignature(){
-  if(!confirm('امضا حذف شود؟')) return;
-  profile.signature=''; profile.signatureImg=''; sigFileData=null;
-  saveProfile(); renderSignatureSettings(); toast('حذف شد');
-}
+function saveSignature(){ profile.signature=$('#sigName').value.trim(); if(sigFileData) profile.signatureImg=sigFileData; saveProfile(); toast('ذخیره شد'); renderSignatureSettings(); }
+function clearSignature(){ if(!confirm('امضا حذف شود؟')) return; profile.signature=''; profile.signatureImg=''; sigFileData=null; saveProfile(); renderSignatureSettings(); toast('حذف شد'); }
 
-/* ==================== پشتیبان ==================== */
-function getBackups(){ try{ var r=localStorage.getItem(BACKUPS_KEY); if(!r) return []; var a=JSON.parse(r); return Array.isArray(a)?a:[]; }catch(e){ return []; } }
-function saveBackups(arr){ try{ localStorage.setItem(BACKUPS_KEY,JSON.stringify(arr)); }catch(e){} }
-function makeBackupData(){ return {ts:Date.now(),db:JSON.parse(JSON.stringify(db)),profile:JSON.parse(JSON.stringify(profile)),diseases:JSON.parse(JSON.stringify(diseases)),notes:JSON.parse(JSON.stringify(notes)),trainings:JSON.parse(JSON.stringify(trainings)),trash:JSON.parse(JSON.stringify(trash))}; }
-function manualBackup(){
-  var b=getBackups(); b.unshift(makeBackupData());
-  while(b.length>4) b.pop();
-  saveBackups(b); renderAutoBackupStatus(); toast('پشتیبان ساخته شد');
-}
-function checkAutoBackup(){
-  var b=getBackups(); var l=b[0]; var w=7*86400000;
-  if(!l||Date.now()-l.ts>w) manualBackup();
-  renderAutoBackupStatus();
-}
-function renderAutoBackupStatus(){
-  var st=$('#autoBackupStatus'); var h=$('#backupHistory');
-  if(!st||!h) return;
-  var b=getBackups();
-  if(!b.length){ st.innerHTML='<p class="hint">—</p>'; h.innerHTML=''; return; }
-  st.innerHTML='<p style="font-size:.84rem">آخرین: <b>'+faDate(b[0].ts)+'</b></p>';
-  var html='';
-  b.forEach(function(x,i){ html+='<li><span>نسخه '+fa(i+1)+'</span><span>'+faDate(x.ts)+' — '+fa(x.db.students.length)+' دانش‌آموز</span></li>'; });
-  h.innerHTML=html;
-}
-function restoreFromBackup(){
-  var b=getBackups(); if(!b.length){ toast('پشتیبانی نیست'); return; }
-  var idx=prompt('کدام نسخه؟ (۱ تا '+b.length+')','1');
-  if(!idx) return;
-  var n=parseInt(idx); if(isNaN(n)||n<1||n>b.length){ toast('نامعتبر'); return; }
-  var bak=b[n-1];
-  if(!confirm('بازیابی شود؟')) return;
-  db=bak.db; profile=bak.profile; diseases=bak.diseases||[]; notes=bak.notes||[]; trainings=bak.trainings||[]; trash=bak.trash||[];
-  if(typeof profile.genderMode !== 'string') profile.genderMode = '';
-  db.students.forEach(function(s){ ensureStudentFields(s); });
-  lastReferralHTMLByStudent={}; exportSelections={};
-  saveDB(); saveProfile(); saveDiseases(); saveNotes(); saveTrainings(); saveTrash();
-  location.reload();
-}
+/* ==================== فایل و CSV ==================== */
 function exportData(){
   var blob=new Blob([JSON.stringify(makeBackupData(),null,2)],{type:'application/json'});
   var url=URL.createObjectURL(blob);
@@ -5613,6 +5727,10 @@ function importData(ev){
       db=imported.db; if(imported.profile) profile=imported.profile;
       if(typeof profile.genderMode !== 'string') profile.genderMode = '';
       diseases=imported.diseases||[]; notes=imported.notes||[]; trainings=imported.trainings||[]; trash=imported.trash||[];
+      eventsData = getIncomingEvents(imported.events);
+      normalizeEventsData();
+      migrateEventsDates();
+      saveEvents();
       db.students.forEach(function(s){ ensureStudentFields(s); });
       lastReferralHTMLByStudent={}; exportSelections={};
       saveDB(); saveProfile(); saveDiseases(); saveNotes(); saveTrainings(); saveTrash();
@@ -5624,8 +5742,10 @@ function importData(ev){
 function clearAll(){
   if(!confirm('همه داده‌ها پاک شود؟')) return;
   db={students:[]}; diseases=[]; notes=[]; trainings=[]; trash=[];
+  eventsData = getDefaultEventsData(); normalizeEventsData();
   lastReferralHTMLByStudent={}; exportSelections={};
   saveDB(); saveDiseases(); saveNotes(); saveTrainings(); saveTrash();
+  if(!saveEvents()) return;
   location.reload();
 }
 function exportStudentsCSV(){
@@ -5671,8 +5791,7 @@ function loadDemo(){
     var ageAtScreening = null;
     if(birthJDN){ var a = calcAge(birthJDN); if(a) ageAtScreening = +(a.years + a.months/12).toFixed(2); }
     return {
-      id:uid(),name:name,grade:grade,history:'',
-      gender:gender||'',birthJDN:birthJDN||0,
+      id:uid(),name:name,grade:grade,history:'',gender:gender||'',birthJDN:birthJDN||0,
       nationalId:'', birthSource: birthJDN?'manual':'none',
       specialNotes:'',medications:[],doctorReports:[],
       responsibility:'',ambassadorRole:'member',ambassadorOrder:null,
@@ -5706,8 +5825,7 @@ function initPWA(){
           .then(function(reg){
             _swRegistration = reg;
             reg.addEventListener('updatefound', function(){
-              var newWorker = reg.installing;
-              if(!newWorker) return;
+              var newWorker = reg.installing; if(!newWorker) return;
               newWorker.addEventListener('statechange', function(){
                 if(newWorker.state === 'installed' && navigator.serviceWorker.controller){
                   if(confirm('🔄 نسخه جدیدی از برنامه موجود است. هم‌اکنون بارگذاری شود؟')){
@@ -5734,18 +5852,15 @@ function initPWA(){
   window.addEventListener('beforeinstallprompt', function(e){
     e.preventDefault();
     deferredPrompt = e;
-    var b = $('#installBtn');
-    if(b) b.style.display = 'flex';
+    var b = $('#installBtn'); if(b) b.style.display = 'flex';
   });
   window.addEventListener('appinstalled', function(){
     deferredPrompt = null;
-    var b = $('#installBtn');
-    if(b) b.style.display = 'none';
+    var b = $('#installBtn'); if(b) b.style.display = 'none';
     toast('🎉 برنامه با موفقیت نصب شد');
   });
   if(window.matchMedia && window.matchMedia('(display-mode: standalone)').matches){
-    var b = $('#installBtn');
-    if(b) b.style.display = 'none';
+    var b = $('#installBtn'); if(b) b.style.display = 'none';
   }
 }
 function installPWA(){
@@ -5775,8 +5890,7 @@ function openBulkModal(){
       var tr=inp.closest('tr');
       var h=parseFloat(persianToEnglishDigits(tr.querySelector('.bulk-h').value));
       var w=parseFloat(persianToEnglishDigits(tr.querySelector('.bulk-w').value));
-      var b=calcBMI(h,w);
-      var c=tr.querySelector('.bulk-bmi');
+      var b=calcBMI(h,w); var c=tr.querySelector('.bulk-bmi');
       c.textContent=b==null?'—':fa(b);
     });
   });
@@ -5841,7 +5955,6 @@ function attachAllHandlers(){
     saveProfile();
     showPinScreen();
   });
-  /* ✅ رفع باگ ۳: هندلر تکراری حذف شد — label خودکار radio را چک می‌کند و change را فعال می‌کند */
   $$('#genderToggle .gender-opt').forEach(function(lbl){
     var r = lbl.querySelector('input[type="radio"]');
     if(r) r.addEventListener('change', function(){ updateGenderOptStyles(); });
@@ -5881,6 +5994,8 @@ function attachAllHandlers(){
   document.addEventListener('input', function(e){
     if(e.target && e.target.id === 'manualAddSearch'){ _debouncedManualAddList(); }
   });
+  var evSearch = $('#eventsSearch');
+  if(evSearch){ evSearch.addEventListener('input', function(){ renderEvents(); }); }
   var ep = $('#economyPrint');
   if(ep){
     ep.checked = economyPrint;
@@ -5922,6 +6037,7 @@ function attachAllHandlers(){
   renderWhoSettings();
   populateStudentSelects();
   renderReportCategories();
+  renderEvents();
   updateNotifBadge();
   buildLetterOptions();
   renderTrashList();
@@ -5932,4 +6048,4 @@ function attachAllHandlers(){
 })();
 </script>
 </body>
-  </html>
+                                          </html>
