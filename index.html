@@ -1036,8 +1036,8 @@ tr.dragging{opacity:.4}
     <p>ساختار سه‌سطحی: سرگروه ← زیرگروه ← اعضا. اعضا را با Drag & Drop روی زیرگروه، و زیرگروه را روی سرگروه رها کنید. با دکمه‌های ↑ ↓ می‌توانید جایگاه اعضا را در زیرگروه جابه‌جا کنید. مسئولیت هر زیرگروه به‌صورت خودکار به همه اعضای آن منتقل می‌شود.</p>
   </div>
   <div class="help-section" id="help-2"><h4>📈 ۲. گزارش‌ها و رضایت‌نامه</h4>
-    <p>گزارش‌ها شامل گزارش جامع مدرسه، پرخطرها، ماهانه، بیماری واگیر، حوادث، الگو، رضایت‌نامه، نامه ارجاع گروهی و لیست‌های تفصیلی است.</p>
-    <p><b>گزارش جامع:</b> شامل آمار کلی، فرم وزارت، سابقه پزشکی، آموزش‌ها و حوادث. می‌توانید با چک‌باکس‌های بالای گزارش، انتخاب کنید کدام بخش‌ها در خروجی چاپ حاضر باشند. انتخاب‌ها در حافظه ذخیره می‌شود.</p>
+    <p>گزارش‌ها شامل گزارش جامع مدرسه، سابقه پزشکی و داروها، پرخطرها، ماهانه، بیماری واگیر، حوادث، الگو، رضایت‌نامه، نامه ارجاع گروهی و لیست‌های تفصیلی است.</p>
+    <p><b>گزارش جامع:</b> شامل آمار مدرسه، آمار کلی، سابقه پزشکی، آموزش‌ها و حوادث. می‌توانید با چک‌باکس‌های بالای گزارش، انتخاب کنید کدام بخش‌ها در خروجی چاپ حاضر باشند و با دکمه‌های ↑↓ ترتیب آن‌ها را تغییر دهید. انتخاب‌ها و ترتیب در حافظه ذخیره می‌شود.</p>
     <p><b>رضایت‌نامه:</b> ۸ فرم در یک برگه A4. چاپ در سه حالت: همه، بر اساس پایه، یا انتخاب مجزا. در صورت تمایل می‌توانید نام دانش‌آموز را روی فرم نمایش دهید یا برای حفظ محرمانگی، فرم را بدون نام چاپ کنید.</p>
   </div>
   <div class="help-section" id="help-3"><h4>👤 ۳. پروفایل و WHO</h4>
@@ -1176,13 +1176,15 @@ var APP_VERSION = '1.1.4';
 var SEEN_VERSION_KEY = 'moragheb_seen_version';
 var CHANGELOG = {
   '1.1.4': [
-    '📊 ادغام گزارش «آمار کلی» و «فرم وزارت» به یک گزارش جامع',
+    '📊 ادغام گزارش‌های «آمار کلی» و «فرم وزارت» (اکنون با نام «آمار مدرسه») در گزارش جامع مدرسه',
     '💊 افزودن سابقه پزشکی و داروهای مصرفی دانش‌آموزان به گزارش جامع',
     '📚 افزودن فهرست آموزش‌ها و فعالیت‌های بهداشتی به گزارش جامع',
     '🏥 افزودن گزارش کلی حوادث مدرسه به گزارش جامع',
     '☑️ امکان انتخاب بخش‌های گزارش برای خروجی (چاپ/PDF)',
-    '💾 ذخیره انتخاب بخش‌ها در حافظه (بین نشست‌ها)',
-    '🎨 رفع باگ چاپ CSS (نمایش صحیح رنگ‌ها در گزارش جامع)',
+    '↕️ امکان ترتیب دلخواه بخش‌ها با دکمه‌های ↑↓',
+    '💾 ذخیره انتخاب و ترتیب بخش‌ها در حافظه (بین نشست‌ها)',
+    '📄 سربرگ یکپارچه در چاپ گزارش جامع',
+    '📋 افزودن گزارش مستقل «سابقه پزشکی و داروها»',
     '🔢 تغییر شماره نسخه به ۱.۱.۴'
   ],
   '1.1.3': [
@@ -1798,6 +1800,7 @@ var DB_KEY='moragheb_db_v14', PROFILE_KEY='moragheb_profile_v14', THEME_KEY='mor
 var BACKUPS_KEY='moragheb_backups_v14', DISEASES_KEY='moragheb_diseases_v14', NOTES_KEY='moragheb_notes_v14';
 var CLOUD_KEY='moragheb_cloud_v14', TRAININGS_KEY='moragheb_trainings_v14', TRASH_KEY='moragheb_trash_v14';
 var ECONOMY_KEY='moragheb_economyprint_v14', EVENTS_KEY='moragheb_events_v14', OVERVIEW_SECTIONS_KEY='moragheb_overview_sections_v14';
+var OVERVIEW_ORDER_KEY='moragheb_overview_order_v14';
 var OLD_DB_KEY='moragheb_db_v13', OLD_PROFILE_KEY='moragheb_profile_v13', OLD_THEME_KEY='moragheb_theme_v13';
 var OLD_BACKUPS_KEY='moragheb_backups_v13', OLD_DISEASES_KEY='moragheb_diseases_v13', OLD_NOTES_KEY='moragheb_notes_v13';
 var OLD_CLOUD_KEY='moragheb_cloud_v13', OLD_TRAININGS_KEY='moragheb_trainings_v13';
@@ -1822,11 +1825,19 @@ var lastDeletedStudent = null;
 var ambassadorReportSort = { key:'grade', dir:1 };
 
 var overviewSections = {
-  stats: true,
   ministry: true,
+  stats: true,
   medical: true,
   trainings: true,
   incidents: true
+};
+var overviewSectionsOrder = ['ministry', 'stats', 'medical', 'trainings', 'incidents'];
+var OVERVIEW_SECTIONS_META = {
+  ministry: { icon: '🏛️', label: 'آمار مدرسه', title: 'آمار مدرسه' },
+  stats: { icon: '📊', label: 'آمار کلی', title: 'آمار کلی مدرسه' },
+  medical: { icon: '💊', label: 'سابقه پزشکی و داروها', title: 'سابقه پزشکی و داروهای مصرفی' },
+  trainings: { icon: '📚', label: 'آموزش‌ها', title: 'آموزش‌ها و فعالیت‌های بهداشتی' },
+  incidents: { icon: '🏥', label: 'حوادث مدرسه', title: 'گزارش کلی حوادث مدرسه' }
 };
 
 var groupReferralSelections = {
@@ -1853,6 +1864,40 @@ function loadOverviewSections(){
 }
 function saveOverviewSections(){
   try{ localStorage.setItem(OVERVIEW_SECTIONS_KEY, JSON.stringify(overviewSections)); }catch(e){}
+}
+function loadOverviewOrder(){
+  try{
+    var r = localStorage.getItem(OVERVIEW_ORDER_KEY);
+    if(!r) return;
+    var loaded = JSON.parse(r);
+    if(!Array.isArray(loaded) || loaded.length !== 5) return;
+    var validKeys = ['ministry','stats','medical','trainings','incidents'];
+    var allValid = loaded.every(function(k){ return validKeys.indexOf(k) >= 0; });
+    var allPresent = validKeys.every(function(k){ return loaded.indexOf(k) >= 0; });
+    if(allValid && allPresent) overviewSectionsOrder = loaded.slice();
+  }catch(e){ /* keep defaults */ }
+}
+function saveOverviewOrder(){
+  try{ localStorage.setItem(OVERVIEW_ORDER_KEY, JSON.stringify(overviewSectionsOrder)); }catch(e){}
+}
+function rerenderOverviewPreservingScroll(){
+  var content = $('#reportResultContent');
+  if(!content) return;
+  var main = document.querySelector('main');
+  var scrollY = main ? main.scrollTop : 0;
+  content.innerHTML = buildOverviewReportHTML();
+  if(main) main.scrollTop = scrollY;
+}
+function moveOverviewSection(key, direction){
+  var idx = overviewSectionsOrder.indexOf(key);
+  if(idx < 0) return;
+  var newIdx = idx + direction;
+  if(newIdx < 0 || newIdx >= overviewSectionsOrder.length) return;
+  var tmp = overviewSectionsOrder[idx];
+  overviewSectionsOrder[idx] = overviewSectionsOrder[newIdx];
+  overviewSectionsOrder[newIdx] = tmp;
+  saveOverviewOrder();
+  rerenderOverviewPreservingScroll();
 }
 
 /* ==================== مناسبت‌ها (Events) ==================== */
@@ -2199,7 +2244,7 @@ function cleanupOldStorageKeys(){
     var validKeys = {};
     [DB_KEY, PROFILE_KEY, THEME_KEY, BACKUPS_KEY, DISEASES_KEY, NOTES_KEY,
      CLOUD_KEY, TRAININGS_KEY, TRASH_KEY, WHO_BOYS_KEY, WHO_GIRLS_KEY,
-     SEEN_VERSION_KEY, ECONOMY_KEY, EVENTS_KEY, OVERVIEW_SECTIONS_KEY].forEach(function(k){ validKeys[k] = true; });
+     SEEN_VERSION_KEY, ECONOMY_KEY, EVENTS_KEY, OVERVIEW_SECTIONS_KEY, OVERVIEW_ORDER_KEY].forEach(function(k){ validKeys[k] = true; });
     var toRemove = [];
     for(var i = 0; i < localStorage.length; i++){
       var k = localStorage.key(i);
@@ -2238,6 +2283,7 @@ function loadAll(){
   loadWhoLMS();
   loadEvents();
   loadOverviewSections();
+  loadOverviewOrder();
   purgeOldTrash();
 }
 function saveDB(){ try{ localStorage.setItem(DB_KEY,JSON.stringify(db)); invalidateHistoryCache(); _zScoreCache.clear(); scheduleAutoCloud(); }catch(e){ toast('خطای ذخیره'); } }
@@ -4654,7 +4700,8 @@ function populateStudentSelects(){
 
 /* ==================== گزارش‌ها ==================== */
 var REPORT_CATS = [
-  { key:'overview', icon:'📊', title:'گزارش جامع مدرسه', desc:'آمار، فرم وزارت، سابقه پزشکی، آموزش‌ها و حوادث' },
+  { key:'overview', icon:'📊', title:'گزارش جامع مدرسه', desc:'آمار مدرسه، آمار کلی، سابقه پزشکی، آموزش‌ها و حوادث' },
+  { key:'medicalRecords', icon:'💊', title:'سابقه پزشکی و داروها', desc:'دانش‌آموزان دارای سابقه یا دارو' },
   { key:'risk', icon:'🚦', title:'دانش‌آموزان پرخطر', desc:'طبقه‌بندی بر اساس ریسک' },
   { key:'monthly', icon:'📅', title:'گزارش ماهانه', desc:'انتخاب ماه و سال' },
   { key:'disease', icon:'💊', title:'بیماری واگیر', desc:'ثبت و پیگیری' },
@@ -4671,17 +4718,10 @@ var REPORT_CATS = [
   { key:'referrals', icon:'📄', title:'نامه‌های ارجاع', desc:'لیست ارجاع‌ها' }
 ];
 
-/* Toggle overview section - با حفظ موقعیت اسکرول و ذخیره در حافظه */
 function toggleOverviewSection(key, checked){
   overviewSections[key] = !!checked;
   saveOverviewSections();
-  var content = $('#reportResultContent');
-  if(content){
-    var main = document.querySelector('main');
-    var scrollY = main ? main.scrollTop : 0;
-    content.innerHTML = buildOverviewReportHTML();
-    if(main) main.scrollTop = scrollY;
-  }
+  rerenderOverviewPreservingScroll();
 }
 function anyOverviewSectionSelected(){
   return !!(overviewSections.stats || overviewSections.ministry || overviewSections.medical || overviewSections.trainings || overviewSections.incidents);
@@ -4709,6 +4749,7 @@ function selectReportCat(key){
   var title=$('#reportResultTitle'); if(title) title.innerHTML=cat.icon+' '+cat.title;
   var content=$('#reportResultContent'); if(!content) return;
   if(key==='overview'){ content.innerHTML=buildOverviewReportHTML(); return; }
+  if(key==='medicalRecords'){ content.innerHTML=buildMedicalSectionContent(); return; }
   if(key==='risk'){ content.innerHTML=buildRiskReportHTML(); return; }
   if(key==='monthly'){ content.innerHTML=buildMonthlyFormHTML(); return; }
   if(key==='disease'){ content.innerHTML=buildDiseasePanelHTML(); attachDiseaseReportForm(); renderDiseases(); return; }
@@ -4863,9 +4904,6 @@ function buildMinistrySectionContent(){
     if(s.birthJDN) wb++;
   });
   var html='<div class="consent-preview">';
-  html+='<div style="text-align:center;margin-bottom:16px"><b style="font-size:1.1rem;color:#6a4f1f">بسمه تعالی</b><br>';
-  html+='<b>فرم آماری سلامت دانش‌آموزان</b><br>';
-  html+='<span style="font-size:.85rem">'+(profile.school?esc(profile.school):'')+(profile.year?' — سال تحصیلی '+esc(profile.year):'')+'</span></div>';
   html+='<table style="width:100%;border-collapse:collapse;font-size:.9rem">';
   html+='<tr><td style="border:1px solid #ccc;padding:8px;width:60%">تعداد کل دانش‌آموزان</td><td style="border:1px solid #ccc;padding:8px">'+fa(total)+'</td></tr>';
   html+='<tr><td style="border:1px solid #ccc;padding:8px">با تاریخ تولد کامل</td><td style="border:1px solid #ccc;padding:8px">'+fa(wb)+' از '+fa(total)+'</td></tr>';
@@ -4875,7 +4913,7 @@ function buildMinistrySectionContent(){
   html+='<tr><td style="border:1px solid #ccc;padding:8px">ارجاع دندانپزشکی</td><td style="border:1px solid #ccc;padding:8px">'+fa(rd)+'</td></tr>';
   html+='<tr><td style="border:1px solid #ccc;padding:8px">سفیران سلامت</td><td style="border:1px solid #ccc;padding:8px">'+fa(amb)+'</td></tr>';
   html+='</table>';
-  html+='<div style="margin-top:12px;display:flex;justify-content:space-between"><span>مراقب سلامت: '+esc(profile.assistant||'')+'</span><span>مدیر: '+esc(profile.manager||'')+'</span></div>';
+  html+='<div style="margin-top:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px"><span>مراقب سلامت: '+esc(profile.assistant||'')+'</span><span>مدیر: '+esc(profile.manager||'')+'</span></div>';
   html+='</div>';
   return html;
 }
@@ -4915,7 +4953,6 @@ function buildTrainingsSectionContent(){
   html += '<div class="note-box" style="margin-top:10px">📌 تعداد کل آموزش‌ها: <b>'+fa(sorted.length)+'</b></div>';
   return html;
 }
-/* NEW: با آمار متناظر با گزارش کلی حوادث */
 function buildIncidentsSectionContent(){
   var rows=[];
   db.students.forEach(function(s){
@@ -4947,12 +4984,23 @@ function buildOverviewReportHTML(){
   var html = '';
   html += '<div class="alert-info" style="margin-bottom:12px">';
   html += '<b>📋 انتخاب بخش‌های گزارش برای خروجی (چاپ/PDF):</b>';
-  html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-top:10px">';
-  html += '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:7px 9px;background:var(--card);border-radius:6px;border:1px solid var(--border);font-weight:400"><input type="checkbox" style="width:auto" '+(overviewSections.stats?'checked':'')+' onchange="toggleOverviewSection(\'stats\',this.checked)"> <span>📊 آمار کلی</span></label>';
-  html += '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:7px 9px;background:var(--card);border-radius:6px;border:1px solid var(--border);font-weight:400"><input type="checkbox" style="width:auto" '+(overviewSections.ministry?'checked':'')+' onchange="toggleOverviewSection(\'ministry\',this.checked)"> <span>🏛️ فرم وزارت</span></label>';
-  html += '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:7px 9px;background:var(--card);border-radius:6px;border:1px solid var(--border);font-weight:400"><input type="checkbox" style="width:auto" '+(overviewSections.medical?'checked':'')+' onchange="toggleOverviewSection(\'medical\',this.checked)"> <span>💊 سابقه پزشکی و داروها</span></label>';
-  html += '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:7px 9px;background:var(--card);border-radius:6px;border:1px solid var(--border);font-weight:400"><input type="checkbox" style="width:auto" '+(overviewSections.trainings?'checked':'')+' onchange="toggleOverviewSection(\'trainings\',this.checked)"> <span>📚 آموزش‌ها</span></label>';
-  html += '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:7px 9px;background:var(--card);border-radius:6px;border:1px solid var(--border);font-weight:400"><input type="checkbox" style="width:auto" '+(overviewSections.incidents?'checked':'')+' onchange="toggleOverviewSection(\'incidents\',this.checked)"> <span>🏥 حوادث مدرسه</span></label>';
+  html += '<p class="hint" style="margin:4px 0 8px 0;font-weight:400">با دکمه‌های ↑↓ ترتیب نمایش بخش‌ها را تغییر دهید. انتخاب و ترتیب در حافظه ذخیره می‌شود.</p>';
+  html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px">';
+  overviewSectionsOrder.forEach(function(key, idx){
+    var meta = OVERVIEW_SECTIONS_META[key];
+    if(!meta) return;
+    var isChecked = !!overviewSections[key];
+    var isFirst = idx === 0;
+    var isLast = idx === overviewSectionsOrder.length - 1;
+    html += '<div style="display:flex;align-items:center;gap:4px;padding:5px 7px;background:var(--card);border-radius:6px;border:1px solid var(--border)">';
+    html += '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;flex:1;font-weight:400;font-size:.8rem;min-width:0">';
+    html += '<input type="checkbox" style="width:auto;flex-shrink:0" ' + (isChecked ? 'checked' : '') + ' onchange="toggleOverviewSection(\'' + key + '\',this.checked)">';
+    html += '<span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + meta.icon + ' ' + esc(meta.label) + '</span>';
+    html += '</label>';
+    html += '<button type="button" aria-label="انتقال به بالا" title="انتقال به بالا" onclick="moveOverviewSection(\'' + key + '\',-1)" ' + (isFirst ? 'disabled' : '') + ' style="border:1px solid var(--border);background:var(--card);border-radius:5px;padding:4px 8px;font-size:.75rem;color:var(--primary);cursor:' + (isFirst ? 'not-allowed' : 'pointer') + ';font-family:inherit;opacity:' + (isFirst ? '.4' : '1') + ';flex-shrink:0;min-width:28px;min-height:28px;display:inline-flex;align-items:center;justify-content:center">↑</button>';
+    html += '<button type="button" aria-label="انتقال به پایین" title="انتقال به پایین" onclick="moveOverviewSection(\'' + key + '\',1)" ' + (isLast ? 'disabled' : '') + ' style="border:1px solid var(--border);background:var(--card);border-radius:5px;padding:4px 8px;font-size:.75rem;color:var(--primary);cursor:' + (isLast ? 'not-allowed' : 'pointer') + ';font-family:inherit;opacity:' + (isLast ? '.4' : '1') + ';flex-shrink:0;min-width:28px;min-height:28px;display:inline-flex;align-items:center;justify-content:center">↓</button>';
+    html += '</div>';
+  });
   html += '</div></div>';
 
   if(!total && !trainings.length){
@@ -4963,36 +5011,19 @@ function buildOverviewReportHTML(){
     return html + '<div class="empty">هیچ بخشی انتخاب نشده است. برای مشاهده گزارش، حداقل یک بخش را تیک بزنید.</div>';
   }
 
-  if(overviewSections.stats){
+  overviewSectionsOrder.forEach(function(key){
+    if(!overviewSections[key]) return;
+    var meta = OVERVIEW_SECTIONS_META[key];
+    if(!meta) return;
     html += '<div class="overview-section">';
-    html += '<h2 style="background:var(--table-head);color:var(--primary-d);padding:8px 12px;border-right:4px solid var(--primary);border-radius:6px;margin:14px 0 10px;font-size:.92rem">📊 آمار کلی مدرسه</h2>';
-    html += buildOverviewStatsContent();
+    html += '<h2 style="background:var(--table-head);color:var(--primary-d);padding:8px 12px;border-right:4px solid var(--primary);border-radius:6px;margin:14px 0 10px;font-size:.92rem">' + meta.icon + ' ' + esc(meta.title) + '</h2>';
+    if(key==='stats') html += buildOverviewStatsContent();
+    else if(key==='ministry') html += buildMinistrySectionContent();
+    else if(key==='medical') html += buildMedicalSectionContent();
+    else if(key==='trainings') html += buildTrainingsSectionContent();
+    else if(key==='incidents') html += buildIncidentsSectionContent();
     html += '</div>';
-  }
-  if(overviewSections.ministry){
-    html += '<div class="overview-section">';
-    html += '<h2 style="background:var(--table-head);color:var(--primary-d);padding:8px 12px;border-right:4px solid var(--primary);border-radius:6px;margin:14px 0 10px;font-size:.92rem">🏛️ فرم آماری وزارت (قابل ارائه به مقام بالاتر)</h2>';
-    html += buildMinistrySectionContent();
-    html += '</div>';
-  }
-  if(overviewSections.medical){
-    html += '<div class="overview-section">';
-    html += '<h2 style="background:var(--table-head);color:var(--primary-d);padding:8px 12px;border-right:4px solid var(--primary);border-radius:6px;margin:14px 0 10px;font-size:.92rem">💊 سابقه پزشکی و داروهای مصرفی</h2>';
-    html += buildMedicalSectionContent();
-    html += '</div>';
-  }
-  if(overviewSections.trainings){
-    html += '<div class="overview-section">';
-    html += '<h2 style="background:var(--table-head);color:var(--primary-d);padding:8px 12px;border-right:4px solid var(--primary);border-radius:6px;margin:14px 0 10px;font-size:.92rem">📚 آموزش‌ها و فعالیت‌های بهداشتی</h2>';
-    html += buildTrainingsSectionContent();
-    html += '</div>';
-  }
-  if(overviewSections.incidents){
-    html += '<div class="overview-section">';
-    html += '<h2 style="background:var(--table-head);color:var(--primary-d);padding:8px 12px;border-right:4px solid var(--primary);border-radius:6px;margin:14px 0 10px;font-size:.92rem">🏥 گزارش کلی حوادث مدرسه</h2>';
-    html += buildIncidentsSectionContent();
-    html += '</div>';
-  }
+  });
   return html;
 }
 function buildMonthlyFormHTML(){
@@ -5513,18 +5544,17 @@ function buildReportData(key){
   });
   return res;
 }
-function printReportResult(){
-  if(!currentReportCat){ toast('دسته انتخاب نشده'); return; }
-  if(currentReportCat === 'overview' && !anyOverviewSectionSelected()){
-    toast('⚠️ هیچ بخشی برای چاپ انتخاب نشده است — ابتدا حداقل یک بخش را تیک بزنید');
-    return;
-  }
-  var cat=null; REPORT_CATS.forEach(function(c){ if(c.key===currentReportCat) cat=c; });
-  if(!cat) return;
-  var w=window.open('','_blank'); if(!w){ toast('لطفاً پاپ‌آپ را برای این سایت مجاز کنید'); return; }
-  /* :root برای رفع var() در چاپ */
-  w.document.write('<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="UTF-8"><title>'+cat.title+'</title><style>'+
-    ':root{--primary:#8a6a2c;--primary-d:#6a4f1f;--soft:#fbf7ea;--table-head:#f4ecd9;--border:#e8dfcb;--card:#fffdf7;--text:#3a2f1c;--muted:#6b5e4a;--hover:#fbf7ea;--gold:#a87d0a;--ok:#2e7a4f;--warn:#c98a1f;--bad:#c53b3b;--info:#2f7ab8;--input-bg:#fdfbf4}'+
+function buildReportPageHeader(){
+  var schoolLine = profile.school ? esc(profile.school) : 'مدرسه';
+  var yearLine = profile.year ? ' — سال تحصیلی ' + esc(profile.year) : '';
+  return '<div style="text-align:center;padding-bottom:14px;margin-bottom:18px;border-bottom:3px double #8a6a2c">'+
+    '<div style="font-size:16px;font-weight:800;color:#8a6a2c;margin-bottom:12px;letter-spacing:.5px">بسمه تعالی</div>'+
+    '<div style="font-size:22px;font-weight:800;color:#5a3f10;margin-bottom:12px;line-height:1.35">فرم آماری سلامت دانش‌آموزان</div>'+
+    '<div style="font-size:14px;color:#333;line-height:1.7;font-weight:600">'+schoolLine+yearLine+'</div>'+
+    '</div>';
+}
+function buildReportBaseCSS(){
+  return ':root{--primary:#8a6a2c;--primary-d:#6a4f1f;--soft:#fbf7ea;--table-head:#f4ecd9;--border:#e8dfcb;--card:#fffdf7;--text:#3a2f1c;--muted:#6b5e4a;--hover:#fbf7ea;--gold:#a87d0a;--ok:#2e7a4f;--warn:#c98a1f;--bad:#c53b3b;--info:#2f7ab8;--input-bg:#fdfbf4}'+
     '@page{size:A4;margin:10mm}body{font-family:Tahoma,sans-serif;direction:rtl;font-size:11.5px;line-height:1.6;color:#222}table{width:100%;border-collapse:collapse}th{background:#f4ecd9;text-align:right;padding:6px;border:1px solid #ccc}td{padding:5px 6px;border:1px solid #ccc}h1{color:#8a6a2c;text-align:center;font-size:16px}h2{background:#f4ecd9;padding:7px 10px;margin:14px 0 8px;border-right:4px solid #8a6a2c;break-after:avoid;page-break-after:avoid}h3{font-size:.95rem;color:#6a4f1f;margin:10px 0 8px;break-after:avoid;page-break-after:avoid}.info-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed #ccc}tr{break-inside:avoid;page-break-inside:avoid}'+
     '.overview-section{margin-bottom:14px}'+
     '.consent-preview{background:#fff;border:1.5px solid #999;border-radius:6px;padding:14px;line-height:1.9;font-size:11.5px}'+
@@ -5535,16 +5565,20 @@ function printReportResult(){
     '.bar-row .val{width:30px;text-align:left;font-weight:700;color:#6a4f1f}'+
     '.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}'+
     '.note-box{background:#f9f9f9;border-right:3px solid #8a6a2c;padding:7px 10px;border-radius:4px;font-size:10.5px;margin-top:8px}'+
-    '.empty{text-align:center;color:#999;padding:16px;font-size:11px}'+
-    '.inc-cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:2.5mm}'+
+    '.empty{text-align:center;color:#999;padding:16px;font-size:11px}';
+}
+function buildReportIncidentsCSS(){
+  return '.inc-cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:2.5mm}'+
     '.inc-card{border:0.5pt solid #ccc;border-right:2pt solid #c98a1f;border-radius:1.5mm;padding:2mm 2.5mm;break-inside:avoid;page-break-inside:avoid;font-size:7.5pt;line-height:1.45;background:#fffdf7;color:#222}'+
     '.inc-card .ic-head{display:flex;justify-content:space-between;align-items:center;border-bottom:0.3pt dashed #ccc;padding-bottom:0.8mm;margin-bottom:1mm;gap:2mm}'+
     '.inc-card .ic-num{font-weight:800;color:#8a6a2c;font-size:8.5pt}'+
     '.inc-card .ic-date{font-size:6.8pt;color:#888;white-space:nowrap}'+
     '.inc-card .ic-row{margin-bottom:0.4mm}.inc-card .ic-row b{color:#6a4f1f}'+
     '.inc-card .ic-status{display:inline-block;padding:0 1.5mm;border-radius:1mm;font-size:6.5pt;font-weight:700}'+
-    '.inc-card .ic-status.resolved{background:#e5f6ee;color:#1f5a38}.inc-card .ic-status.ongoing{background:#fdf3e2;color:#8a5a08}'+
-    '.consent-cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:2.5mm}'+
+    '.inc-card .ic-status.resolved{background:#e5f6ee;color:#1f5a38}.inc-card .ic-status.ongoing{background:#fdf3e2;color:#8a5a08}';
+}
+function buildReportConsentCSS(){
+  return '.consent-cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:2.5mm}'+
     '.consent-card{border:0.6pt solid #999;border-radius:1.5mm;padding:2mm 2.5mm;height:68mm;box-sizing:border-box;display:flex;flex-direction:column;font-size:7pt;line-height:1.4;background:#fff;break-inside:avoid;page-break-inside:avoid;overflow:hidden}'+
     '.consent-card .cc-head{text-align:center;border-bottom:0.6pt solid #8a6a2c;padding-bottom:0.8mm;margin-bottom:1mm;flex-shrink:0}'+
     '.consent-card .cc-title{font-weight:800;font-size:8.5pt;color:#6a4f1f}'+
@@ -5555,10 +5589,32 @@ function printReportResult(){
     '.consent-card .cc-desc{margin-top:0.5mm;padding:0.6mm 1mm;background:#fdfbf4;border-radius:1mm;font-size:6.5pt;color:#444;border-right:2pt solid #d4a017}'+
     '.consent-card .cc-sign{display:flex;gap:2mm;margin-top:0.8mm;padding-top:0.8mm;border-top:0.3pt dashed #ccc;font-size:6.2pt;flex-shrink:0}'+
     '.consent-card .cc-sig-item{flex:1;text-align:center}.consent-card .cc-sig-line{border-bottom:0.5pt solid #666;height:5mm;margin-top:0.8mm}'+
-    '.consent-card .cc-sig-box{border:0.5pt dashed #999;height:6.5mm;margin-top:0.8mm;border-radius:1mm;display:flex;align-items:center;justify-content:center;color:#999;font-size:5.5pt}'+
-    getPrintEconomyCSS()+'</style></head><body>');
-  w.document.write('<h1>'+cat.icon+' '+cat.title+'</h1>');
-  w.document.write('<div style="text-align:center;color:#666;font-size:11px;margin-bottom:14px">'+(profile.school||'')+(profile.year?' — '+profile.year:'')+'</div>');
+    '.consent-card .cc-sig-box{border:0.5pt dashed #999;height:6.5mm;margin-top:0.8mm;border-radius:1mm;display:flex;align-items:center;justify-content:center;color:#999;font-size:5.5pt}';
+}
+function printReportResult(){
+  if(!currentReportCat){ toast('دسته انتخاب نشده'); return; }
+  if(currentReportCat === 'overview' && !anyOverviewSectionSelected()){
+    toast('⚠️ هیچ بخشی برای چاپ انتخاب نشده است — ابتدا حداقل یک بخش را تیک بزنید');
+    return;
+  }
+  var cat=null; REPORT_CATS.forEach(function(c){ if(c.key===currentReportCat) cat=c; });
+  if(!cat) return;
+  var reportCSS = buildReportBaseCSS();
+  if(currentReportCat === 'overview' || currentReportCat === 'incidentsGeneral'){
+    reportCSS += buildReportIncidentsCSS();
+  }
+  if(currentReportCat === 'consent'){
+    reportCSS += buildReportConsentCSS();
+  }
+  reportCSS += getPrintEconomyCSS();
+  var w=window.open('','_blank'); if(!w){ toast('لطفاً پاپ‌آپ را برای این سایت مجاز کنید'); return; }
+  w.document.write('<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="UTF-8"><title>'+cat.title+'</title><style>'+reportCSS+'</style></head><body>');
+  if(currentReportCat === 'overview'){
+    w.document.write(buildReportPageHeader());
+  } else {
+    w.document.write('<h1>'+cat.icon+' '+cat.title+'</h1>');
+    w.document.write('<div style="text-align:center;color:#666;font-size:11px;margin-bottom:14px">'+(profile.school||'')+(profile.year?' — '+profile.year:'')+'</div>');
+  }
   var content=$('#reportResultContent');
   if(content){
     var clone=content.cloneNode(true);
@@ -6189,4 +6245,4 @@ function attachAllHandlers(){
 })();
 </script>
 </body>
-          </html>
+                </html>
