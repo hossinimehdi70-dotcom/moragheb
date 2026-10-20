@@ -1,4 +1,4 @@
-l<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fa" dir="rtl" data-theme="cream">
 <head>
 <meta charset="UTF-8">
@@ -533,12 +533,12 @@ tr.dragging{opacity:.4}
   <nav class="tabs" id="tabsNav">
     <button data-view="dashboard" class="active">داشبورد</button>
     <button data-view="students">دانش‌آموزان</button>
-    <button data-view="trainings">آموزش‌ها و فعالیت‌های بهداشتی</button>
-    <button data-view="ambassadors">سفیران</button>
-    <button data-view="notes">یادداشت</button>
     <button data-view="add">ثبت</button>
-    <button data-view="reports">گزارش‌ها</button>
+    <button data-view="ambassadors">سفیران</button>
+    <button data-view="trainings">آموزش‌ها و فعالیت‌های بهداشتی</button>
     <button data-view="events">مناسبت‌ها</button>
+    <button data-view="notes">یادداشت</button>
+    <button data-view="reports">گزارش‌ها</button>
     <button data-view="settings">تنظیمات</button>
   </nav>
 
@@ -1035,7 +1035,7 @@ tr.dragging{opacity:.4}
     <p>ساختار سه‌سطحی: سرگروه ← زیرگروه ← اعضا. اعضا را با Drag & Drop روی زیرگروه، و زیرگروه را روی سرگروه رها کنید. با دکمه‌های ↑ ↓ می‌توانید جایگاه اعضا را در زیرگروه جابه‌جا کنید. مسئولیت هر زیرگروه به‌صورت خودکار به همه اعضای آن منتقل می‌شود.</p>
   </div>
   <div class="help-section" id="help-2"><h4>📈 ۲. گزارش‌ها و رضایت‌نامه</h4>
-    <p>گزارش‌ها شامل گزارش جامع مدرسه، سابقه پزشکی و داروها، پرخطرها، ماهانه، بیماری واگیر، حوادث، الگو، رضایت‌نامه، نامه ارجاع گروهی و لیست‌های تفصیلی است.</p>
+    <p>گزارش‌ها شامل گزارش جامع مدرسه، سابقه پزشکی و داروها، پرخطرها، بیماری واگیر، حوادث، الگو، رضایت‌نامه، نامه ارجاع گروهی و لیست‌های تفصیلی است.</p>
     <p><b>گزارش جامع:</b> شامل آمار مدرسه، آمار کلی، سابقه پزشکی، آموزش‌ها و حوادث. می‌توانید با چک‌باکس‌های بالای گزارش، انتخاب کنید کدام بخش‌ها در خروجی چاپ حاضر باشند و با دکمه‌های ↑↓ ترتیب آن‌ها را تغییر دهید. انتخاب‌ها و ترتیب در حافظه ذخیره می‌شود.</p>
     <p><b>رضایت‌نامه:</b> ۸ فرم در یک برگه A4. چاپ در سه حالت: همه، بر اساس پایه، یا انتخاب مجزا. در صورت تمایل می‌توانید نام دانش‌آموز را روی فرم نمایش دهید یا برای حفظ محرمانگی، فرم را بدون نام چاپ کنید.</p>
   </div>
@@ -1988,7 +1988,7 @@ function migrateEventsDates(){
   removeFromMonth('m12', '۴ - روز جهانی سل');
   addToMonth('m1', '۴ - روز جهانی سل');
   eventsData._schemaVersion = EVENTS_SCHEMA_VERSION;
-  return true;
+  return changed;
 }
 
 function saveEvents(){
@@ -4146,8 +4146,8 @@ function renderProfile(id){
     html+='<button class="btn transfer-in sm" onclick="setTransferStatus(\''+s.id+'\',\'in\')">↘️ آمده</button></div>';
   }
   html+='</div>';
-  if(s.history) html+='<div class="card"><h2>📌 سابقه پزشکی</h2><p style="font-size:.86rem">'+esc(s.history)+'</p></div>';
   html+='<div class="card"><h2>💊 شرح‌حال و داروها</h2>';
+  if(s.history) html+='<div class="field"><label>📌 سابقه پزشکی</label><p style="font-size:.86rem;background:var(--soft);padding:9px 11px;border-radius:6px;border-right:3px solid var(--primary);margin-top:2px;line-height:1.7">'+esc(s.history)+'</p></div>';
   html+='<div class="field"><label>📝 توضیحات خاص</label><textarea id="specialNotesInput">'+esc(s.specialNotes||'')+'</textarea>';
   html+='<button class="btn primary sm" onclick="saveSpecialNotes(\''+s.id+'\')" style="margin-top:6px">ذخیره</button></div>';
   html+='<hr style="border:0;border-top:1px dashed var(--border);margin:12px 0">';
@@ -4700,16 +4700,13 @@ function populateStudentSelects(){
 /* ==================== گزارش‌ها ==================== */
 var REPORT_CATS = [
   { key:'overview', icon:'📊', title:'گزارش جامع مدرسه', desc:'آمار مدرسه، آمار کلی، سابقه پزشکی، آموزش‌ها و حوادث' },
-  { key:'medicalRecords', icon:'💊', title:'سابقه پزشکی و داروها', desc:'دانش‌آموزان دارای سابقه یا دارو' },
+  { key:'medicalRecords', icon:'💊', title:'سابقه پزشکی و داروها', desc:'دانش‌آموزان دارای سابقه، شرح حال یا دارو' },
   { key:'risk', icon:'🚦', title:'دانش‌آموزان پرخطر', desc:'طبقه‌بندی بر اساس ریسک' },
-  { key:'monthly', icon:'📅', title:'گزارش ماهانه', desc:'انتخاب ماه و سال' },
   { key:'disease', icon:'💊', title:'بیماری واگیر', desc:'ثبت و پیگیری' },
   { key:'incidentsGeneral', icon:'📋', title:'گزارش کلی حوادث', desc:'همه حوادث (چند در یک برگه)' },
   { key:'pattern', icon:'⚠️', title:'تشخیص الگو', desc:'هشدار حوادث مشابه' },
   { key:'consent', icon:'📝', title:'رضایت‌نامه گروهی', desc:'۸ در یک برگه A4' },
   { key:'groupReferral', icon:'📄', title:'نامه ارجاع گروهی', desc:'چاپ ۴ نامه در یک A4' },
-  { key:'cold', icon:'🤧', title:'سرماخوردگی', desc:'حوادث سرماخوردگی' },
-  { key:'flu', icon:'🤒', title:'آنفلوانزا', desc:'حوادث آنفلوانزا' },
   { key:'noscreen', icon:'⏰', title:'بدون غربالگری', desc:'غربال نشده' },
   { key:'nobirth', icon:'📅', title:'بدون تاریخ تولد', desc:'نیازمند تکمیل داده' },
   { key:'transfer', icon:'🔀', title:'منتقل‌شده‌ها', desc:'رفته یا آمده' },
@@ -4750,7 +4747,6 @@ function selectReportCat(key){
   if(key==='overview'){ content.innerHTML=buildOverviewReportHTML(); return; }
   if(key==='medicalRecords'){ content.innerHTML=buildMedicalSectionContent(); return; }
   if(key==='risk'){ content.innerHTML=buildRiskReportHTML(); return; }
-  if(key==='monthly'){ content.innerHTML=buildMonthlyFormHTML(); return; }
   if(key==='disease'){ content.innerHTML=buildDiseasePanelHTML(); attachDiseaseReportForm(); renderDiseases(); return; }
   if(key==='incidentsGeneral'){ content.innerHTML=buildIncidentsGeneralReportHTML(); return; }
   if(key==='pattern'){ content.innerHTML=buildPatternReportHTML(); return; }
@@ -4920,11 +4916,12 @@ function buildMedicalSectionContent(){
   var students = db.students.filter(function(s){
     ensureStudentFields(s);
     var hasHistory = s.history && s.history.trim();
+    var hasNotes = s.specialNotes && s.specialNotes.trim();
     var hasMeds = s.medications && s.medications.length > 0;
-    return hasHistory || hasMeds;
+    return hasHistory || hasNotes || hasMeds;
   }).sort(compareStudents);
-  if(!students.length) return '<div class="empty">هیچ دانش‌آموزی دارای سابقه پزشکی یا دارو ثبت نکرده است.</div>';
-  var html = '<div class="table-wrap"><table><thead><tr><th>#</th><th>نام</th><th>پایه</th><th>سابقه پزشکی</th><th>داروهای مصرفی</th></tr></thead><tbody>';
+  if(!students.length) return '<div class="empty">هیچ دانش‌آموزی دارای سابقه پزشکی، توضیحات خاص یا دارو ثبت نکرده است.</div>';
+  var html = '<div class="table-wrap"><table><thead><tr><th>#</th><th>نام</th><th>پایه</th><th>سابقه پزشکی</th><th>توضیحات خاص (شرح حال)</th><th>داروهای مصرفی</th></tr></thead><tbody>';
   students.forEach(function(s, i){
     var meds = (s.medications||[]).map(function(m){
       var t = m.name || '';
@@ -4932,10 +4929,10 @@ function buildMedicalSectionContent(){
       if(m.notes) t += ' — '+m.notes;
       return t;
     }).join('، ') || '—';
-    html += '<tr class="no-hover"><td>'+fa(i+1)+'</td><td>'+esc(s.name)+'</td><td>'+esc(s.grade)+'</td><td>'+(s.history?esc(s.history):'—')+'</td><td>'+esc(meds)+'</td></tr>';
+    html += '<tr class="no-hover"><td>'+fa(i+1)+'</td><td>'+esc(s.name)+'</td><td>'+esc(s.grade)+'</td><td>'+(s.history?esc(s.history):'—')+'</td><td>'+(s.specialNotes?esc(s.specialNotes):'—')+'</td><td>'+esc(meds)+'</td></tr>';
   });
   html += '</tbody></table></div>';
-  html += '<div class="note-box" style="margin-top:10px">📌 تعداد: <b>'+fa(students.length)+'</b> دانش‌آموز دارای سابقه پزشکی / دارو</div>';
+  html += '<div class="note-box" style="margin-top:10px">📌 تعداد: <b>'+fa(students.length)+'</b> دانش‌آموز دارای سابقه پزشکی / شرح حال / دارو</div>';
   return html;
 }
 function buildTrainingsSectionContent(){
@@ -5024,13 +5021,6 @@ function buildOverviewReportHTML(){
     html += '</div>';
   });
   return html;
-}
-function buildMonthlyFormHTML(){
-  return '<div class="grid2" style="max-width:520px"><div class="field"><label>ماه</label><select id="monthlyMonth"><option value="1">فروردین</option><option value="2">اردیبهشت</option><option value="3">خرداد</option><option value="4">تیر</option><option value="5">مرداد</option><option value="6">شهریور</option><option value="7">مهر</option><option value="8">آبان</option><option value="9">آذر</option><option value="10">دی</option><option value="11">بهمن</option><option value="12">اسفند</option></select></div>'+
-    '<div class="field"><label>سال</label><input class="input" id="monthlyYear" type="number" value="1403"></div></div>'+
-    '<div style="display:flex;gap:8px;margin-bottom:12px"><button class="btn primary sm" onclick="buildMonthlyReport()">تولید</button>'+
-    '<button class="btn ghost sm" onclick="printMonthlyReport()">چاپ</button></div>'+
-    '<div id="monthlyReport"></div>';
 }
 function buildDiseasePanelHTML(){
   return '<div id="diseaseFormPanel"><form id="diseaseForm" style="display:grid;grid-template-columns:1.2fr 1fr 1fr auto;gap:8px;margin-bottom:12px;align-items:end">'+
@@ -5535,8 +5525,6 @@ function buildReportData(key){
     ensureStudentFields(s);
     var r=lastRecord(s);
     if(key==='noscreen' && !r) res.push({name:s.name,grade:s.grade,detail:'<span class="badge b-warn">بدون غربال</span>'});
-    else if(key==='cold') (s.incidents||[]).forEach(function(inc){ if(inc.type==='سرماخوردگی') res.push({name:s.name,grade:s.grade,detail:faDateShort(inc.ts)}); });
-    else if(key==='flu') (s.incidents||[]).forEach(function(inc){ if(inc.type==='آنفلوانزا') res.push({name:s.name,grade:s.grade,detail:faDateShort(inc.ts)}); });
     else if(key==='transfer' && s.transferStatus) res.push({name:s.name,grade:s.grade,detail:(s.transferStatus==='out'?'↗️ رفته':'↘️ آمده')});
     else if(key==='ambassador' && s.isAmbassador) res.push({name:s.name,grade:s.grade,detail:ROLE_MAP[s.ambassadorRole||'member']+(s.responsibility?' — '+s.responsibility:'')});
     else if(key==='referrals' && s.referrals.length) res.push({name:s.name,grade:s.grade,detail:fa(s.referrals.length)+' ارجاع'});
@@ -5633,40 +5621,6 @@ function closeReportResult(){
   currentReportCat=null;
   var c=$('#reportResultCard'); if(c) c.style.display='none';
   renderReportCategories();
-}
-
-/* ==================== ماهانه ==================== */
-function buildMonthlyReport(){
-  var monthIdx=+$('#monthlyMonth').value;
-  var year=+persianToEnglishDigits($('#monthlyYear').value);
-  var box=$('#monthlyReport'); if(!box) return;
-  var monthNames=['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
-  var startG=j2g(year,monthIdx,1);
-  var endG=monthIdx===12 ? j2g(year+1,1,1) : j2g(year,monthIdx+1,1);
-  if(!startG||!endG){ box.innerHTML='<div class="empty">تاریخ نامعتبر</div>'; return; }
-  var startMs=new Date(startG[0],startG[1]-1,startG[2]).getTime();
-  var endMs=new Date(endG[0],endG[1]-1,endG[2]).getTime();
-  var screenings=[];
-  db.students.forEach(function(s){ (s.records||[]).forEach(function(r){ if(r.ts>=startMs&&r.ts<endMs) screenings.push({student:s,record:r}); }); });
-  var total=db.students.length;
-  var pct=total?((screenings.length/total)*100).toFixed(0):0;
-  box.innerHTML='<div style="background:var(--soft);padding:14px;border-radius:10px;border:1px solid var(--border)">'+
-    '<h3 style="text-align:center;color:var(--primary-d);margin-bottom:12px">گزارش '+monthNames[monthIdx-1]+' '+fa(year)+'</h3>'+
-    '<div class="info-row"><span>کل دانش‌آموزان</span><b>'+fa(total)+'</b></div>'+
-    '<div class="info-row"><span>غربالگری در این ماه</span><b>'+fa(screenings.length)+'</b></div>'+
-    '<div class="info-row"><span>درصد پوشش</span><b>'+fa(pct)+'٪</b></div></div>';
-}
-function printMonthlyReport(){
-  var box=$('#monthlyReport'); if(!box||!box.innerHTML.trim()){ toast('ابتدا تولید کنید'); return; }
-  var w=window.open('','_blank'); if(!w){ toast('لطفاً پاپ‌آپ را برای این سایت مجاز کنید'); return; }
-  w.document.write('<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="UTF-8"><title>گزارش ماهانه</title><style>@page{size:A4;margin:14mm}body{font-family:Tahoma,sans-serif;direction:rtl;font-size:13px}.info-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed #ccc}'+getPrintEconomyCSS()+'</style></head><body>');
-  w.document.write('<div style="text-align:center;margin-bottom:14px"><b style="color:#6a4f1f">'+(profile.school||'')+'</b></div>');
-  w.document.write(box.innerHTML);
-  w.document.write(managerStampFooter());
-  w.document.write(creatorFooterFa());
-  w.document.write('</body></html>');
-  w.document.close();
-  setTimeout(function(){ w.print(); },400);
 }
 
 /* ==================== بیماری واگیر ==================== */
@@ -6244,4 +6198,4 @@ function attachAllHandlers(){
 })();
 </script>
 </body>
-  </html>
+        </html>
