@@ -1002,6 +1002,21 @@ tr.dragging{opacity:.4}
   </div>
 </div></div>
 
+<div class="modal" id="importChoiceModal"><div class="modal-card" style="max-width:520px">
+  <button class="modal-close" onclick="closeModal('importChoiceModal')">✕</button>
+  <h3 style="justify-content:center">📥 بازیابی از فایل JSON</h3>
+  <p style="text-align:center;font-size:.88rem;line-height:1.9">فایل معتبر است. نحوه بازیابی را انتخاب کنید:</p>
+  <div class="alert-info" style="margin-top:6px;font-size:.8rem;line-height:1.9">
+    <b>🔄 جایگزینی کامل:</b> همه داده‌های فعلی حذف و با محتوای فایل جایگزین می‌شوند.<br><br>
+    <b>🔀 ادغام هوشمند:</b> دانش‌آموزان بر اساس <b>کد ملی</b> (تطبیق قطعی) یا <b>نام+پایه</b> (فقط وقتی منحصربه‌فرد باشد) ادغام می‌شوند. اگر تطبیق با اطمینان ممکن نباشد (مثلاً دو دانش‌آموز هم‌نام بدون کد ملی)، رکورد <b>جداگانه اضافه</b> می‌شود تا هیچ داده‌ای از دست نرود. ارجاعات سلسله‌مراتب سفیران به‌صورت خودکار اصلاح می‌شوند.
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;justify-content:center">
+    <button class="btn danger" onclick="confirmImportReplace()">🔄 جایگزینی کامل</button>
+    <button class="btn primary" onclick="confirmImportMerge()">🔀 ادغام هوشمند</button>
+    <button class="btn ghost" onclick="closeModal('importChoiceModal')">انصراف</button>
+  </div>
+</div></div>
+
 <div class="modal" id="whatsNewModal">
   <div class="modal-card">
     <button class="modal-close" onclick="closeModal('whatsNewModal')">✕</button>
@@ -1155,6 +1170,59 @@ function persianToEnglishDigits(str){
     .replace(/[٠-٩]/g, function(d){ return '٠١٢٣٤٥٦٧٨٩'.indexOf(d); });
 }
 
+/* ==================== پاکسازی خودکار کلیپ‌بورد ==================== */
+var _clipboardClearTimer = null;
+var _clipboardLastText = '';
+function scheduleClipboardClear(text, durationMs){
+  if(_clipboardClearTimer){ clearTimeout(_clipboardClearTimer); _clipboardClearTimer = null; }
+  _clipboardLastText = String(text || '');
+  _clipboardClearTimer = setTimeout(function(){
+    _clipboardClearTimer = null;
+    try{
+      if(navigator.clipboard && navigator.clipboard.readText && navigator.clipboard.writeText){
+        navigator.clipboard.readText().then(function(cur){
+          if(cur && cur === _clipboardLastText){
+            navigator.clipboard.writeText('').then(function(){
+              toast('🔒 متن حساس از کلیپ‌بورد پاک شد');
+            }, function(){ /* write blocked — skip silently */ });
+          }
+        }, function(){ /* read blocked — skip silently (browser policy) */ });
+      }
+    }catch(e){ /* skip silently */ }
+    _clipboardLastText = '';
+  }, durationMs || 60000);
+}
+
+/* ==================== Cache نمودارها ==================== */
+var _chartCache = {
+  infographic: '',
+  interactive: '',
+  growth: {}
+};
+function _invalidateChartCache(){
+  _chartCache.infographic = '';
+  _chartCache.interactive = '';
+  _chartCache.growth = {};
+}
+function _hashString(str){
+  var h = 5381, i = 0, len = str.length;
+  for(; i < len; i++){ h = ((h * 33) ^ str.charCodeAt(i)) >>> 0; }
+  return h.toString(36);
+}
+function _recordsSig(recs){
+  return (recs||[]).map(function(r){
+    return (r.id||'')+'|'+(r.ts||0)+'|'+(r.height||'')+'|'+(r.weight||'')+'|'+(r.bmi||'')+'|'+(r.vision||'')+'|'+(r.hearing||'')+'|'+(r.dental||'')+'|'+(r.skin||'');
+  }).join(';');
+}
+function _dbChartSig(){
+  var parts = [db.students.length, whoLMS.boys.length, whoLMS.girls.length, profile.genderMode||''];
+  db.students.forEach(function(s){
+    parts.push(s.id, s.isAmbassador?1:0, s.birthJDN||0, s.gender||'');
+    parts.push(_recordsSig(s.records));
+  });
+  return _hashString(parts.join('#'));
+}
+
 /* ==================== مودال تأیید اختصاصی ==================== */
 var _confirmCallback = null;
 function showConfirm(title, message, onConfirm){
@@ -1237,13 +1305,18 @@ function loadWhoLMS(){
 }
 function saveWhoLMS(gender, data){
   var key = gender === 'm' ? WHO_BOYS_KEY : WHO_GIRLS_KEY;
-  try{ localStorage.setItem(key, JSON.stringify(data)); _zScoreCache.clear(); }catch(e){ toast('خطا در ذخیره‌سازی جدول'); }
+  try{
+    localStorage.setItem(key, JSON.stringify(data));
+    _zScoreCache.clear();
+    _invalidateChartCache();
+  }catch(e){ toast('خطا در ذخیره‌سازی جدول'); }
 }
 function clearWhoTable(){
   if(!confirm('آیا از حذف جدول WHO مطمئن هستید؟ ارزیابی‌های جدید غیرفعال می‌شوند.')) return;
   try{ localStorage.removeItem(WHO_BOYS_KEY); localStorage.removeItem(WHO_GIRLS_KEY); }catch(e){}
   whoLMS = { boys: [], girls: [] };
   _zScoreCache.clear();
+  _invalidateChartCache();
   renderWhoSettings();
   toast('جدول WHO حذف شد');
 }
@@ -1822,6 +1895,7 @@ var editingProfileMode = false;
 var selectedStudentIds = new Set();
 var lastDeletedStudent = null;
 var ambassadorReportSort = { key:'grade', dir:1 };
+var _pendingImportData = null;
 
 var overviewSections = {
   ministry: true,
@@ -2234,6 +2308,7 @@ function restoreFromBackup(){
   saveEvents();
   db.students.forEach(function(s){ ensureStudentFields(s); });
   lastReferralHTMLByStudent={}; exportSelections={};
+  _invalidateChartCache();
   saveDB(); saveProfile(); saveDiseases(); saveNotes(); saveTrainings(); saveTrash();
   location.reload();
 }
@@ -2397,6 +2472,8 @@ function cloudDownload(){
       migrateEventsDates();
       saveEvents();
       db.students.forEach(function(s){ ensureStudentFields(s); });
+      lastReferralHTMLByStudent={}; exportSelections={};
+      _invalidateChartCache();
       saveDB(); saveProfile(); saveDiseases(); saveNotes(); saveTrainings(); saveTrash();
       location.reload();
     })
@@ -2458,6 +2535,7 @@ function closeModal(id){
   m.classList.remove('open');
   if(id === 'confirmModal'){ _confirmCallback = null; }
   if(id === 'eventModal'){ _eventEditing = null; }
+  if(id === 'importChoiceModal'){ _pendingImportData = null; }
   if(id==='csvImportModal') resetCsvImport();
   if(id==='manualAddReferralModal'){
     setTimeout(function(){ if(typeof renderGroupReferralPanel==='function') renderGroupReferralPanel(); }, 50);
@@ -2897,11 +2975,15 @@ function renderPatternAlerts(){
   el.innerHTML=html;
 }
 
-/* ==================== اینفوگرافیک ==================== */
+/* ==================== اینفوگرافیک (با Cache) ==================== */
 function renderInfographic(){
   var el=$('#infographic'); if(!el) return;
+  var sig = 'inf:' + _dbChartSig();
+  if(_chartCache.infographic === sig && el.innerHTML.trim()){
+    return;
+  }
   var total=db.students.length;
-  if(!total){ el.innerHTML='<div class="empty">داده‌ای برای نمایش نیست.</div>'; return; }
+  if(!total){ el.innerHTML='<div class="empty">داده‌ای برای نمایش نیست.</div>'; _chartCache.infographic = sig; return; }
   var screened=0, amb=0, highRisk=0, midRisk=0;
   var visionRef=0, hearingRef=0, dentalRef=0, normalWeight=0;
   var withBirth=0, withoutBirth=0;
@@ -2940,13 +3022,18 @@ function renderInfographic(){
   html+=card(dentalRef, 'ارجاع دندان', pct(dentalRef), '--c-info', dentalRef>0?'warn':'info');
   html+=card(highRisk, 'پرخطر', pct(highRisk), '--c-bad', highRisk>0?'bad':'ok');
   el.innerHTML=html;
+  _chartCache.infographic = sig;
 }
 
-/* ==================== نمودارهای تعاملی ==================== */
+/* ==================== نمودارهای تعاملی (با Cache) ==================== */
 function renderInteractiveCharts(){
   var el=$('#interactiveCharts'); if(!el) return;
+  var sig = 'int:' + _dbChartSig();
+  if(_chartCache.interactive === sig && el.innerHTML.trim()){
+    return;
+  }
   var total = db.students.length;
-  if(!total){ el.innerHTML='<div class="empty">داده‌ای برای نمودار وجود ندارد.</div>'; return; }
+  if(!total){ el.innerHTML='<div class="empty">داده‌ای برای نمودار وجود ندارد.</div>'; _chartCache.interactive = sig; return; }
   var bmiCounts = { 'severe-thin':0,'thin':0,'normal':0,'overweight-risk':0,'overweight':0,'obese':0,'none':0 };
   db.students.forEach(function(s){ var info = bmiInfo(s); if(bmiCounts[info.key] == null) bmiCounts[info.key] = 0; bmiCounts[info.key]++; });
   var scr = {vision:0, hearing:0, dental:0, skin:0, normal:0};
@@ -2976,6 +3063,7 @@ function renderInteractiveCharts(){
   html+='<div class="chart-card"><h3>🥧 توزیع BMI (۶ دسته WHO)</h3>'+buildPieChartSVG(bmiData)+'</div>';
   html+='<div class="chart-card"><h3>📊 نتایج غربالگری (ارجاع)</h3>'+buildBarChartSVG(scrData)+'</div>';
   el.innerHTML=html;
+  _chartCache.interactive = sig;
 }
 function buildPieChartSVG(data){
   var total = data.reduce(function(a,b){ return a + b.value; }, 0);
@@ -4008,11 +4096,14 @@ function openProfile(id){
 }
 function buildGrowthChartHTML(studentId){
   var s=getStudent(studentId); if(!s) return '';
+  var sig = 'gr:' + studentId + '||' + (s.birthJDN||0) + '||' + (s.gender||'') + '||' + (profile.genderMode||'') + '||' + whoLMS.boys.length + '||' + whoLMS.girls.length + '||' + _recordsSig(s.records);
+  var cached = _chartCache.growth[studentId];
+  if(cached && cached.sig === sig) return cached.html;
   var records=(s.records||[]).slice().sort(function(a,b){ return a.ts-b.ts; }).filter(function(r){ return r.height||r.weight; });
-  if(records.length<2) return '<div class="empty">برای نمودار به حداقل ۲ نوبت نیاز است.</div>';
+  if(records.length<2){ var emptyHtml='<div class="empty">برای نمودار به حداقل ۲ نوبت نیاز است.</div>'; _chartCache.growth[studentId] = { sig: sig, html: emptyHtml }; return emptyHtml; }
   var hV=records.filter(function(r){ return r.height; }).map(function(r){ return r.height; });
   var wV=records.filter(function(r){ return r.weight; }).map(function(r){ return r.weight; });
-  if(!hV.length && !wV.length) return '<div class="empty">داده کافی نیست.</div>';
+  if(!hV.length && !wV.length){ var emptyHtml2='<div class="empty">داده کافی نیست.</div>'; _chartCache.growth[studentId] = { sig: sig, html: emptyHtml2 }; return emptyHtml2; }
   var W=520, H=220, P=36;
   var minH=hV.length?Math.min.apply(null,hV)-5:0, maxH=hV.length?Math.max.apply(null,hV)+5:1;
   var minW=wV.length?Math.min.apply(null,wV)-3:0, maxW=wV.length?Math.max.apply(null,wV)+3:1;
@@ -4062,6 +4153,7 @@ function buildGrowthChartHTML(studentId){
       html+='<div class="alert-warn" style="margin-top:10px">⚠️ جدول WHO بارگذاری نشده است.</div>';
     }
   }
+  _chartCache.growth[studentId] = { sig: sig, html: html };
   return html;
 }
 function buildWeightHeightRatioHTML(studentId){
@@ -4542,8 +4634,13 @@ function buildParentMessage(sid){
 function copyParentMessage(){
   var b=$('#msgOutputProfile');
   if(!b||!b.textContent.trim()){ toast('ابتدا تولید کنید'); return; }
-  if(navigator.clipboard) navigator.clipboard.writeText(b.textContent).then(function(){ toast('کپی شد'); },function(){ toast('خطا'); });
-  else toast('امکان کپی نیست');
+  var text = b.textContent;
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(text).then(function(){
+      toast('کپی شد — تلاش برای پاکسازی خودکار پس از ۶۰ ثانیه (در صورت مجوز مرورگر)');
+      scheduleClipboardClear(text, 60000);
+    }, function(){ toast('خطا در کپی'); });
+  } else toast('امکان کپی نیست');
 }
 
 /* ==================== خروجی پروفایل ==================== */
@@ -5865,6 +5962,152 @@ function exportData(){
   var a=document.createElement('a'); a.href=url; a.download='moragheb-'+new Date().toISOString().slice(0,10)+'.json'; a.click();
   URL.revokeObjectURL(url); toast('دانلود شد');
 }
+
+/* ==================== ادغام هوشمند در بازیابی JSON ==================== */
+function _normKey(name){ return String(name||'').trim().toLowerCase().replace(/\s+/g,' '); }
+function _isValidNationalId(nid){
+  var s = String(nid||'').trim();
+  return s.length === 10 && /^\d{10}$/.test(s);
+}
+function _studentMatchKey(s){
+  if(!s) return '';
+  if(_isValidNationalId(s.nationalId)) return 'nid:' + String(s.nationalId).trim();
+  return 'ng:' + _normKey(s.name) + '|' + String(s.grade||'').trim();
+}
+function _mergeArraysById(cur, imp){
+  var list = (cur||[]).slice();
+  var seen = {};
+  list.forEach(function(x){ if(x && x.id) seen[x.id] = true; });
+  (imp||[]).forEach(function(x){ if(x && x.id && !seen[x.id]){ list.push(x); seen[x.id] = true; } });
+  return list;
+}
+function _mergeArraysByKey(cur, imp, keyFn){
+  var list = (cur||[]).slice();
+  var seen = {};
+  list.forEach(function(x){ seen[keyFn(x)] = true; });
+  (imp||[]).forEach(function(x){ var k = keyFn(x); if(!seen[k]){ list.push(x); seen[k] = true; } });
+  return list;
+}
+function mergeImportedData(imported){
+  var report = {
+    studentsAdded: 0,
+    studentsMerged: 0,
+    studentsAmbiguous: 0,
+    notesAdded: 0,
+    trainingsAdded: 0,
+    diseasesAdded: 0,
+    trashAdded: 0,
+    ambassadorLinksFixed: 0
+  };
+  
+  // Build current index; detect ambiguities
+  var curByKey = {};
+  var curAmbiguousKeys = {};
+  db.students.forEach(function(s){
+    ensureStudentFields(s);
+    var key = _studentMatchKey(s);
+    if(!key) return;
+    if(curByKey[key]){
+      curAmbiguousKeys[key] = true;
+    } else {
+      curByKey[key] = s;
+    }
+  });
+  Object.keys(curAmbiguousKeys).forEach(function(k){ delete curByKey[k]; });
+  
+  // id map from importedId -> finalId (for remapping ambassador refs)
+  var idMap = {};
+  var importedSeenKeys = {};
+  var importedStudents = (imported.db && imported.db.students) || [];
+  
+  importedStudents.forEach(function(imp){
+    if(!imp || typeof imp !== 'object') return;
+    if(!imp.id) imp.id = uid();
+    ensureStudentFields(imp);
+    
+    var key = _studentMatchKey(imp);
+    var isNidKey = key.indexOf('nid:') === 0;
+    var wasSeenInImported = !!importedSeenKeys[key];
+    importedSeenKeys[key] = true;
+    
+    var cur = key ? curByKey[key] : null;
+    var isAmbiguousInCurrent = !!(key && curAmbiguousKeys[key]);
+    
+    var shouldMerge = false;
+    var addedDueToAmbiguity = false;
+    
+    if(isNidKey){
+      // National ID: always safe if matched in current
+      if(cur) shouldMerge = true;
+    } else {
+      // Name+grade: only merge when unique in current AND not repeated in file
+      if(cur && !wasSeenInImported){
+        shouldMerge = true;
+      } else if(cur || isAmbiguousInCurrent || wasSeenInImported){
+        addedDueToAmbiguity = true;
+      }
+    }
+    
+    if(shouldMerge){
+      idMap[imp.id] = cur.id;
+      if(!cur.history && imp.history) cur.history = imp.history;
+      if(!cur.specialNotes && imp.specialNotes) cur.specialNotes = imp.specialNotes;
+      if(!cur.nationalId && imp.nationalId) cur.nationalId = imp.nationalId;
+      if(!cur.birthJDN && imp.birthJDN){ cur.birthJDN = imp.birthJDN; cur.birthSource = imp.birthSource || 'manual'; }
+      if(!cur.gender && imp.gender) cur.gender = imp.gender;
+      if(!cur.responsibility && imp.responsibility) cur.responsibility = imp.responsibility;
+      cur.records = _mergeArraysById(cur.records, imp.records);
+      cur.incidents = _mergeArraysById(cur.incidents, imp.incidents);
+      cur.referrals = _mergeArraysById(cur.referrals, imp.referrals);
+      cur.doctorReports = _mergeArraysById(cur.doctorReports, imp.doctorReports);
+      cur.medications = _mergeArraysByKey(cur.medications, imp.medications, function(m){
+        return (m.name||'').trim().toLowerCase() + '|' + (m.dose||'').trim();
+      });
+      report.studentsMerged++;
+    } else {
+      if(!imp.createdAt) imp.createdAt = Date.now();
+      db.students.push(imp);
+      idMap[imp.id] = imp.id;
+      report.studentsAdded++;
+      if(addedDueToAmbiguity) report.studentsAmbiguous++;
+    }
+  });
+  
+  // Remap ambassador refs; clear dangling references
+  var allIds = new Set();
+  db.students.forEach(function(s){ allIds.add(s.id); });
+  db.students.forEach(function(s){
+    if(s.viceParentId){
+      var mapped = idMap[s.viceParentId];
+      if(mapped && mapped !== s.viceParentId){ s.viceParentId = mapped; report.ambassadorLinksFixed++; }
+      if(s.viceParentId && !allIds.has(s.viceParentId)){ s.viceParentId = ''; report.ambassadorLinksFixed++; }
+    }
+    if(s.headParentId){
+      var mappedH = idMap[s.headParentId];
+      if(mappedH && mappedH !== s.headParentId){ s.headParentId = mappedH; report.ambassadorLinksFixed++; }
+      if(s.headParentId && !allIds.has(s.headParentId)){ s.headParentId = ''; report.ambassadorLinksFixed++; }
+    }
+  });
+  
+  // Merge other collections
+  var prevNotes = notes.length;
+  notes = _mergeArraysById(notes, imported.notes || []);
+  report.notesAdded = notes.length - prevNotes;
+  
+  var prevTrainings = trainings.length;
+  trainings = _mergeArraysById(trainings, imported.trainings || []);
+  report.trainingsAdded = trainings.length - prevTrainings;
+  
+  var prevDiseases = diseases.length;
+  diseases = _mergeArraysById(diseases, imported.diseases || []);
+  report.diseasesAdded = diseases.length - prevDiseases;
+  
+  var prevTrash = trash.length;
+  trash = _mergeArraysById(trash, imported.trash || []);
+  report.trashAdded = trash.length - prevTrash;
+  
+  return report;
+}
 function importData(ev){
   var file=ev.target.files[0]; if(!file) return;
   var r=new FileReader();
@@ -5873,27 +6116,63 @@ function importData(ev){
       var data=JSON.parse(e.target.result);
       var imported=data.db?data:{db:data,profile:profile,diseases:[],notes:[],trainings:[],trash:[]};
       if(!imported.db || !Array.isArray(imported.db.students)) throw new Error('bad');
-      if(!confirm('جایگزین شود؟')) return;
-      db=imported.db; if(imported.profile) profile=imported.profile;
-      if(typeof profile.genderMode !== 'string') profile.genderMode = '';
-      diseases=imported.diseases||[]; notes=imported.notes||[]; trainings=imported.trainings||[]; trash=imported.trash||[];
-      eventsData = getIncomingEvents(imported.events);
-      normalizeEventsData();
-      migrateEventsDates();
-      saveEvents();
-      db.students.forEach(function(s){ ensureStudentFields(s); });
-      lastReferralHTMLByStudent={}; exportSelections={};
-      saveDB(); saveProfile(); saveDiseases(); saveNotes(); saveTrainings(); saveTrash();
-      location.reload();
+      _pendingImportData = imported;
+      openModal('importChoiceModal');
     }catch(err){ toast('فایل نامعتبر'); }
   };
   r.readAsText(file); ev.target.value='';
 }
+function confirmImportReplace(){
+  if(!_pendingImportData){ closeModal('importChoiceModal'); return; }
+  if(!confirm('همه داده‌های فعلی حذف و با محتوای فایل جایگزین شوند؟ این عمل برگشت‌پذیر نیست.')) return;
+  var imported = _pendingImportData;
+  _pendingImportData = null;
+  closeModal('importChoiceModal');
+  db=imported.db; if(imported.profile) profile=imported.profile;
+  if(typeof profile.genderMode !== 'string') profile.genderMode = '';
+  diseases=imported.diseases||[]; notes=imported.notes||[]; trainings=imported.trainings||[]; trash=imported.trash||[];
+  eventsData = getIncomingEvents(imported.events);
+  normalizeEventsData();
+  migrateEventsDates();
+  saveEvents();
+  db.students.forEach(function(s){ ensureStudentFields(s); });
+  lastReferralHTMLByStudent={}; exportSelections={};
+  _invalidateChartCache();
+  saveDB(); saveProfile(); saveDiseases(); saveNotes(); saveTrainings(); saveTrash();
+  location.reload();
+}
+function confirmImportMerge(){
+  if(!_pendingImportData){ closeModal('importChoiceModal'); return; }
+  var imported = _pendingImportData;
+  _pendingImportData = null;
+  closeModal('importChoiceModal');
+  var report;
+  try{ report = mergeImportedData(imported); }
+  catch(e){ console.error(e); toast('خطا در ادغام فایل'); return; }
+  lastReferralHTMLByStudent={}; exportSelections={};
+  _invalidateChartCache();
+  saveDB(); saveProfile(); saveDiseases(); saveNotes(); saveTrainings(); saveTrash();
+  
+  var parts = [];
+  if(report.studentsAdded) parts.push(fa(report.studentsAdded)+' دانش‌آموز جدید');
+  if(report.studentsAmbiguous) parts.push(fa(report.studentsAmbiguous)+' بدون تطبیق قطعی');
+  if(report.studentsMerged) parts.push(fa(report.studentsMerged)+' ادغام‌شده');
+  if(report.ambassadorLinksFixed) parts.push(fa(report.ambassadorLinksFixed)+' پیوند سفیر اصلاح‌شده');
+  if(report.notesAdded) parts.push(fa(report.notesAdded)+' یادداشت');
+  if(report.trainingsAdded) parts.push(fa(report.trainingsAdded)+' آموزش');
+  if(report.diseasesAdded) parts.push(fa(report.diseasesAdded)+' بیماری');
+  if(report.trashAdded) parts.push(fa(report.trashAdded)+' سطل زباله');
+  
+  toast('✅ ادغام شد — ' + (parts.length ? parts.join(' • ') : 'مورد جدیدی اضافه نشد'), 5000);
+  setTimeout(function(){ location.reload(); }, 1200);
+}
+
 function clearAll(){
   if(!confirm('همه داده‌ها پاک شود؟')) return;
   db={students:[]}; diseases=[]; notes=[]; trainings=[]; trash=[];
   eventsData = getDefaultEventsData(); normalizeEventsData();
   lastReferralHTMLByStudent={}; exportSelections={};
+  _invalidateChartCache();
   saveDB(); saveDiseases(); saveNotes(); saveTrainings(); saveTrash();
   if(!saveEvents()) return;
   location.reload();
@@ -5959,6 +6238,7 @@ function loadDemo(){
     mk('مریم نوری','سوم',118,21,15,'f',mkBirth(1395,9,25)),
     mk('حسین اکبری','اول',110,18,20,'m',mkBirth(1397,2,12))
   );
+  _invalidateChartCache();
   saveDB(); renderDashboard(); renderStudents(); renderAmbassadors(); populateStudentSelects();
   buildLetterOptions(); renderInfographic(); renderInteractiveCharts();
   toast('اضافه شد');
@@ -6198,4 +6478,4 @@ function attachAllHandlers(){
 })();
 </script>
 </body>
-        </html>
+                                                                              </html>
