@@ -679,7 +679,7 @@ tr.dragging{opacity:.4}
     <section id="view-ambassadors" class="view">
       <div class="card">
         <h2>سفیران سلامت <span class="badge-count" id="ambassadorsCount">۰</span></h2>
-        <p class="hint" style="margin-bottom:8px">ساختار درختی: زیرگروه‌ها به سرگروه، و اعضا به زیرگروه متصل می‌شوند. <b>Drag & Drop</b> برای اتصال، و دکمه‌های <b>↑ ↓</b> برای جابه‌جایی جایگاه اعضا در زیرگروه. <b>مسئولیت زیرگروه</b> به‌صورت خودکار به همه اعضای آن منتقل می‌شود.</p>
+        <p class="hint" style="margin-bottom:8px">ساختار درختی: زیرگروه‌ها به سرگروه، و اعضا به زیرگروه متصل می‌شوند. <b>Drag & Drop</b> برای اتصال. اعضا در هر زیرگروه به‌طور پیش‌فرض به ترتیب پایه (ششم→اول) نمایش داده می‌شوند. دکمه‌های <b>↑ ↓</b> امکان جابه‌جایی کامل هر عضو با هر پایه‌ای را فراهم می‌کنند. <b>مسئولیت زیرگروه</b> به‌صورت خودکار به همه اعضای آن منتقل می‌شود.</p>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
           <button class="btn primary sm" onclick="printAmbassadorCards()">🎴 چاپ کارت همه سفیران</button>
           <button class="btn gold sm" onclick="printAmbassadorsPDF()">🖨️ خروجی PDF فهرست</button>
@@ -733,10 +733,7 @@ tr.dragging{opacity:.4}
             <div class="field"><label>نام و نام خانوادگی *</label><input class="input" name="name" required></div>
             <div class="field"><label>جنسیت</label><select name="gender"><option value="">انتخاب...</option><option value="m">پسر</option><option value="f">دختر</option></select></div>
           </div>
-          <div class="grid2">
-            <div class="field"><label>کد ملی (۱۰ رقمی)</label><input class="input" name="nationalId" maxlength="10" placeholder="اختیاری — برای بازیابی تاریخ تولد"></div>
-            <div class="field"><label>سابقه پزشکی</label><input class="input" name="history"></div>
-          </div>
+          <div class="field"><label>کد ملی (۱۰ رقمی)</label><input class="input" name="nationalId" maxlength="10" placeholder="اختیاری — برای بازیابی تاریخ تولد"></div>
           <div class="grid2">
             <div class="field"><label>پایه *</label><select name="grade" id="addGrade" required><option value="">انتخاب...</option><option>اول</option><option>دوم</option><option>سوم</option><option>چهارم</option><option>پنجم</option><option>ششم</option></select></div>
             <div class="field"><label>سال تولد (شمسی)</label><input class="input" name="birthYear" type="number" id="addBirthYear" placeholder="مثلاً ۱۳۹۳"></div>
@@ -753,6 +750,7 @@ tr.dragging{opacity:.4}
             <button type="submit" class="btn primary">ذخیره</button>
             <button type="reset" class="btn ghost">پاک کردن</button>
           </div>
+          <p class="hint" style="margin-top:8px">💡 سابقه پزشکی از طریق صفحه پروفایل کامل دانش‌آموز (بخش «💊 شرح‌حال و داروها») قابل ثبت و ویرایش است.</p>
         </form>
       </div>
     </section>
@@ -1047,7 +1045,7 @@ tr.dragging{opacity:.4}
     </div>
   </div>
   <div class="help-section" id="help-1"><h4>★ ۱. سفیران، جابه‌جایی و آمار</h4>
-    <p>ساختار سه‌سطحی: سرگروه ← زیرگروه ← اعضا. اعضا را با Drag & Drop روی زیرگروه، و زیرگروه را روی سرگروه رها کنید. با دکمه‌های ↑ ↓ می‌توانید جایگاه اعضا را در زیرگروه جابه‌جا کنید. مسئولیت هر زیرگروه به‌صورت خودکار به همه اعضای آن منتقل می‌شود.</p>
+    <p>ساختار سه‌سطحی: سرگروه ← زیرگروه ← اعضا. اعضا را با Drag & Drop روی زیرگروه، و زیرگروه را روی سرگروه رها کنید. اعضا در هر زیرگروه به‌طور پیش‌فرض به ترتیب پایه (ششم به اول) نمایش داده می‌شوند. با دکمه‌های ↑ ↓ می‌توانید ترتیب نمایش هر عضو را با اعضای مجاور (بدون توجه به پایه) جابه‌جا کنید. مسئولیت هر زیرگروه به‌صورت خودکار به همه اعضای آن منتقل می‌شود.</p>
   </div>
   <div class="help-section" id="help-2"><h4>📈 ۲. گزارش‌ها و رضایت‌نامه</h4>
     <p>گزارش‌ها شامل گزارش جامع مدرسه، سابقه پزشکی و داروها، پرخطرها، بیماری واگیر، حوادث، الگو، رضایت‌نامه، نامه ارجاع گروهی و لیست‌های تفصیلی است.</p>
@@ -1055,7 +1053,7 @@ tr.dragging{opacity:.4}
     <p><b>رضایت‌نامه:</b> ۸ فرم در یک برگه A4. چاپ در سه حالت: همه، بر اساس پایه، یا انتخاب مجزا. در صورت تمایل می‌توانید نام دانش‌آموز را روی فرم نمایش دهید یا برای حفظ محرمانگی، فرم را بدون نام چاپ کنید.</p>
   </div>
   <div class="help-section" id="help-3"><h4>👤 ۳. پروفایل و WHO</h4>
-    <p>نمودار WHO با استفاده از تاریخ تولد و جنسیت. پس از بارگذاری جدول WHO در تنظیمات → WHO، Z-score و دسته‌بندی رشد به‌صورت خودکار محاسبه و نمایش داده می‌شود.</p>
+    <p>در صفحه پروفایل کامل دانش‌آموز، سابقه پزشکی در ابتدای بخش «💊 شرح‌حال و داروها» قابل ویرایش است. نمودار WHO با استفاده از تاریخ تولد و جنسیت. پس از بارگذاری جدول WHO در تنظیمات → WHO، Z-score و دسته‌بندی رشد به‌صورت خودکار محاسبه و نمایش داده می‌شود.</p>
   </div>
   <div class="help-section" id="help-4"><h4>🩺 ۴. ثبت موردی غربالگری</h4>
     <p>در بخش «ثبت / ویرایش غربالگری» می‌توانید هر آیتم را جدا ثبت کنید. برای تکمیل موارد خالی، روی دکمه ✏️ در ردیف تاریخچه کلیک کنید.</p>
@@ -1827,6 +1825,18 @@ function groupStudentsByGrade(students){
   });
   return groups;
 }
+/* مرتب‌سازی اعضای زیرگروه سفیران: subgroupOrder اولویت اول؛ اگر برابر بود، پایه نزولی؛ سپس نام.
+   این کار باعث می‌شود داده‌های قدیمی (subgroupOrder=0) به‌طور خودکار بر اساس پایه (ششم→اول) مرتب شوند،
+   اما دکمه‌های ↑↓ می‌توانند با تغییر subgroupOrder هر ترتیبی بسازند. */
+function compareSubgroupMembers(a, b){
+  var oa = a.subgroupOrder || 0;
+  var ob = b.subgroupOrder || 0;
+  if(oa !== ob) return oa - ob;
+  var ga = GRADE_ORDER[a.grade] || 0;
+  var gb = GRADE_ORDER[b.grade] || 0;
+  if(ga !== gb) return gb - ga;
+  return normalizePersian(a.name).localeCompare(normalizePersian(b.name), 'fa');
+}
 
 /* ==================== سطح ریسک ==================== */
 function getStudentRiskLevel(s){
@@ -2359,6 +2369,8 @@ function loadAll(){
   loadOverviewSections();
   loadOverviewOrder();
   purgeOldTrash();
+  /* یک‌بار مهاجرت شماره‌گذاری اعضای زیرگروه بر اساس ترتیب پایه (ششم→اول) */
+  if(migrateSubgroupOrders()){ saveDB(); }
 }
 function saveDB(){ try{ localStorage.setItem(DB_KEY,JSON.stringify(db)); invalidateHistoryCache(); _zScoreCache.clear(); scheduleAutoCloud(); }catch(e){ toast('خطای ذخیره'); } }
 function saveProfile(){ try{ localStorage.setItem(PROFILE_KEY,JSON.stringify(profile)); }catch(e){} }
@@ -2374,6 +2386,7 @@ function ensureStudentFields(s){
   if(!s.incidents) s.incidents=[];
   if(!s.referrals) s.referrals=[];
   if(typeof s.specialNotes!=='string') s.specialNotes='';
+  if(typeof s.history!=='string') s.history='';
   if(!s.ambassadorRole) s.ambassadorRole='member';
   if(!s.viceParentId) s.viceParentId='';
   if(!s.headParentId) s.headParentId='';
@@ -2386,6 +2399,40 @@ function ensureStudentFields(s){
   if(!s.birthSource) s.birthSource = s.birthJDN ? 'manual' : 'none';
   if(typeof s.subgroupOrder!=='number') s.subgroupOrder = 0;
   return s;
+}
+
+/* ==================== مهاجرت و نرمال‌سازی ترتیب زیرگروه‌ها ==================== */
+/* یک بار در loadAll اجرا می‌شود تا داده‌های قدیمی (که subgroupOrder=0 هستند)
+   بر اساس ترتیب پایه (ششم→اول) شماره‌گذاری شوند. */
+function migrateSubgroupOrders(){
+  var byVice = {};
+  db.students.forEach(function(s){
+    if(s.isAmbassador && s.viceParentId && (s.ambassadorRole || 'member') === 'member'){
+      if(!byVice[s.viceParentId]) byVice[s.viceParentId] = [];
+      byVice[s.viceParentId].push(s);
+    }
+  });
+  var changed = false;
+  Object.keys(byVice).forEach(function(viceId){
+    var siblings = byVice[viceId].slice().sort(compareSubgroupMembers);
+    for(var i = 0; i < siblings.length; i++){
+      if(siblings[i].subgroupOrder !== i + 1){
+        siblings.forEach(function(s, idx){ s.subgroupOrder = idx + 1; });
+        changed = true;
+        break;
+      }
+    }
+  });
+  return changed;
+}
+
+/* نرمال‌سازی شماره‌گذاری اعضای یک زیرگروه بر اساس ترتیب نمایش فعلی */
+function normalizeSubgroupOrdersFor(viceId){
+  var siblings = db.students.filter(function(x){
+    return x.isAmbassador && x.viceParentId === viceId && (x.ambassadorRole || 'member') === 'member';
+  }).sort(compareSubgroupMembers);
+  siblings.forEach(function(s, i){ s.subgroupOrder = i + 1; });
+  return siblings;
 }
 
 /* ==================== سطل زباله ==================== */
@@ -3061,7 +3108,7 @@ function renderInteractiveCharts(){
   ];
   var html='';
   html+='<div class="chart-card"><h3>🥧 توزیع BMI (۶ دسته WHO)</h3>'+buildPieChartSVG(bmiData)+'</div>';
-  html+='<div class="chart-card"><h3>📊 نتایج غربالگری (ارجاع)</h3>'+buildBarChartSVG(scrData)+'</div>';
+  html+='<div class="chart-card"><h3>📊 نتایج غربالگری (ارجاع)</h4>'+buildBarChartSVG(scrData)+'</div>';
   el.innerHTML=html;
   _chartCache.interactive = sig;
 }
@@ -3597,10 +3644,26 @@ function setViceParent(memberId, viceId){
   var prevVice = s.viceParentId;
   s.viceParentId = viceId || '';
   if(viceId && prevVice !== viceId){
-    s.subgroupOrder = getNextSubgroupOrder(viceId);
+    /* نرمال‌سازی گروه قبلی (در صورت وجود) تا شماره‌گذاری پیوسته بماند */
+    if(prevVice){ normalizeSubgroupOrdersFor(prevVice); }
+    /* درج در گروه جدید بر اساس جایگاه پایه (ششم→اول) و شماره‌گذاری مجدد */
+    var siblings = db.students.filter(function(x){
+      return x.id !== s.id && x.isAmbassador && x.viceParentId === viceId && (x.ambassadorRole || 'member') === 'member';
+    }).sort(compareSubgroupMembers);
+    var memberGrade = GRADE_ORDER[s.grade] || 0;
+    var insertIdx = siblings.length;
+    for(var i = 0; i < siblings.length; i++){
+      var sibGrade = GRADE_ORDER[siblings[i].grade] || 0;
+      if(sibGrade < memberGrade){ insertIdx = i; break; }
+    }
+    siblings.splice(insertIdx, 0, s);
+    siblings.forEach(function(x, idx){ x.subgroupOrder = idx + 1; });
     var vice = getStudent(viceId);
     if(vice && vice.responsibility && !s.responsibility){ s.responsibility = vice.responsibility; }
-  } else if(!viceId){ s.subgroupOrder = 0; }
+  } else if(!viceId){
+    s.subgroupOrder = 0;
+    if(prevVice){ normalizeSubgroupOrdersFor(prevVice); }
+  }
   saveDB(); renderAmbassadors(); toast(viceId?'زیرگروه مسئول تنظیم شد':'پاک شد');
 }
 function setHeadParent(viceId, headId){
@@ -3628,51 +3691,35 @@ function editResponsibility(id){
   if(affectedCount > 0){ toast('مسئولیت برای ' + fa(affectedCount) + ' عضو زیرگروه نیز ثبت شد'); }
   else { toast('ثبت شد'); }
 }
-function getNextSubgroupOrder(viceId){
-  var mx = 0;
-  db.students.forEach(function(x){
-    if(x.isAmbassador && x.viceParentId===viceId && (x.ambassadorRole||'member')==='member'){
-      if((x.subgroupOrder||0) > mx) mx = x.subgroupOrder||0;
-    }
-  });
-  return mx + 1;
-}
 function getSubgroupSiblings(s){
   if(!s.viceParentId) return [];
   return db.students.filter(function(x){
     return x.isAmbassador && x.viceParentId===s.viceParentId && (x.ambassadorRole||'member')==='member';
-  }).sort(function(a,b){
-    var oa = a.subgroupOrder||0, ob = b.subgroupOrder||0;
-    if(oa !== ob) return oa - ob;
-    return normalizePersian(a.name).localeCompare(normalizePersian(b.name),'fa');
-  });
+  }).sort(compareSubgroupMembers);
 }
 function moveMemberUp(memberId){
   var s=getStudent(memberId); if(!s) return;
   if(s.ambassadorRole!=='member' || !s.viceParentId){ return; }
-  var sib = getSubgroupSiblings(s); var idx = sib.indexOf(s);
+  /* ابتدا شماره‌گذاری را نرمال کن تا swap درست انجام شود */
+  var siblings = normalizeSubgroupOrdersFor(s.viceParentId);
+  var idx = siblings.indexOf(s);
   if(idx <= 0){ toast('بالاترین جایگاه است'); return; }
-  var prev = sib[idx-1];
-  var tmp = s.subgroupOrder||0;
-  s.subgroupOrder = prev.subgroupOrder||0; prev.subgroupOrder = tmp;
-  if(s.subgroupOrder === prev.subgroupOrder){
-    for(var i=0;i<sib.length;i++){ sib[i].subgroupOrder = i+1; }
-    var tmp2 = s.subgroupOrder; s.subgroupOrder = prev.subgroupOrder; prev.subgroupOrder = tmp2;
-  }
+  var prev = siblings[idx - 1];
+  var tmp = s.subgroupOrder;
+  s.subgroupOrder = prev.subgroupOrder;
+  prev.subgroupOrder = tmp;
   saveDB(); renderAmbassadors(); toast('جابه‌جا شد');
 }
 function moveMemberDown(memberId){
   var s=getStudent(memberId); if(!s) return;
   if(s.ambassadorRole!=='member' || !s.viceParentId){ return; }
-  var sib = getSubgroupSiblings(s); var idx = sib.indexOf(s);
-  if(idx < 0 || idx >= sib.length-1){ toast('پایین‌ترین جایگاه است'); return; }
-  var next = sib[idx+1];
-  var tmp = s.subgroupOrder||0;
-  s.subgroupOrder = next.subgroupOrder||0; next.subgroupOrder = tmp;
-  if(s.subgroupOrder === next.subgroupOrder){
-    for(var i=0;i<sib.length;i++){ sib[i].subgroupOrder = i+1; }
-    var tmp2 = s.subgroupOrder; s.subgroupOrder = next.subgroupOrder; next.subgroupOrder = tmp2;
-  }
+  var siblings = normalizeSubgroupOrdersFor(s.viceParentId);
+  var idx = siblings.indexOf(s);
+  if(idx < 0 || idx >= siblings.length - 1){ toast('پایین‌ترین جایگاه است'); return; }
+  var next = siblings[idx + 1];
+  var tmp = s.subgroupOrder;
+  s.subgroupOrder = next.subgroupOrder;
+  next.subgroupOrder = tmp;
   saveDB(); renderAmbassadors(); toast('جابه‌جا شد');
 }
 function getAmbassadorData(){
@@ -3790,11 +3837,7 @@ function renderAmbassadors(){
       myVices.forEach(function(v){
         html += '<tr class="vice-row no-hover"><td colspan="6">🥈 زیرگروه: <b>'+esc(v.name)+'</b>'+(v.responsibility?' — '+esc(v.responsibility):'')+'</td></tr>';
         html += rowFor(v, 'no-hover', '&nbsp;&nbsp;&nbsp;&nbsp;');
-        var myMembers = data.members.filter(function(m){ return m.viceParentId===v.id; }).sort(function(a,b){
-          var oa = a.subgroupOrder||0, ob = b.subgroupOrder||0;
-          if(oa !== ob) return oa - ob;
-          return normalizePersian(a.name).localeCompare(normalizePersian(b.name),'fa');
-        });
+        var myMembers = data.members.filter(function(m){ return m.viceParentId===v.id; }).sort(compareSubgroupMembers);
         if(myMembers.length){
           myMembers.forEach(function(m){ html += rowFor(m, 'member-row no-hover', '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↳ ', { showReorder: true }); });
           html += subgroupSummaryRow(v.name, myMembers.length);
@@ -3812,11 +3855,7 @@ function renderAmbassadors(){
     html += '<tr class="group-header no-hover"><td colspan="6">🥈 زیرگروه‌های بدون سرگروه <span class="cnt">'+fa(orphanVices.length)+'</span></td></tr>';
     orphanVices.forEach(function(v){
       html += rowFor(v, 'vice-row no-hover', '');
-      var myMembers = data.members.filter(function(m){ return m.viceParentId===v.id; }).sort(function(a,b){
-        var oa = a.subgroupOrder||0, ob = b.subgroupOrder||0;
-        if(oa !== ob) return oa - ob;
-        return normalizePersian(a.name).localeCompare(normalizePersian(b.name),'fa');
-      });
+      var myMembers = data.members.filter(function(m){ return m.viceParentId===v.id; }).sort(compareSubgroupMembers);
       if(myMembers.length){
         myMembers.forEach(function(m){ html += rowFor(m, 'member-row no-hover', '&nbsp;&nbsp;&nbsp;&nbsp;↳ ', { showReorder: true }); });
         html += subgroupSummaryRow(v.name, myMembers.length);
@@ -3895,11 +3934,7 @@ function printAmbassadorsPDF(){
       var myVices = data.vices.filter(function(v){ return v.headParentId===h.id; });
       myVices.forEach(function(v){
         html+='<tr class="vice-line"><td>↳ '+esc(v.name)+'</td><td>'+esc(v.grade)+'</td><td>زیرگروه</td><td>'+(esc(v.responsibility)||'—')+'</td></tr>';
-        var myMembers = data.members.filter(function(m){ return m.viceParentId===v.id; }).sort(function(a,b){
-          var oa = a.subgroupOrder||0, ob = b.subgroupOrder||0;
-          if(oa !== ob) return oa - ob;
-          return normalizePersian(a.name).localeCompare(normalizePersian(b.name),'fa');
-        });
+        var myMembers = data.members.filter(function(m){ return m.viceParentId===v.id; }).sort(compareSubgroupMembers);
         myMembers.forEach(function(m){ html+='<tr class="member-line"><td>↳↳ '+esc(m.name)+'</td><td>'+esc(m.grade)+'</td><td>عضو</td><td>'+(esc(m.responsibility)||'—')+'</td></tr>'; });
         html+='<tr class="subgroup-summary-line"><td colspan="4">📊 آمار زیرگروه «'+esc(v.name)+'» — تعداد اعضا: <b>'+fa(myMembers.length)+'</b> نفر</td></tr>';
       });
@@ -3913,11 +3948,7 @@ function printAmbassadorsPDF(){
     html+='<table><thead><tr><th>نام</th><th>پایه</th><th>مسئولیت</th></tr></thead><tbody>';
     orphanVices.forEach(function(v){
       html+='<tr class="vice-line"><td><b>'+esc(v.name)+'</b></td><td>'+esc(v.grade)+'</td><td>'+(esc(v.responsibility)||'—')+'</td></tr>';
-      var myMembers=data.members.filter(function(m){ return m.viceParentId===v.id; }).sort(function(a,b){
-        var oa = a.subgroupOrder||0, ob = b.subgroupOrder||0;
-        if(oa !== ob) return oa - ob;
-        return normalizePersian(a.name).localeCompare(normalizePersian(b.name),'fa');
-      });
+      var myMembers=data.members.filter(function(m){ return m.viceParentId===v.id; }).sort(compareSubgroupMembers);
       myMembers.forEach(function(m){ html+='<tr class="member-line"><td>↳ '+esc(m.name)+'</td><td>'+esc(m.grade)+'</td><td>'+(esc(m.responsibility)||'—')+'</td></tr>'; });
       html+='<tr class="subgroup-summary-line"><td colspan="3">📊 آمار زیرگروه «'+esc(v.name)+'» — تعداد اعضا: <b>'+fa(myMembers.length)+'</b> نفر</td></tr>';
     });
@@ -4070,7 +4101,7 @@ function attachStudentForm(){
     var genderVal = f.gender.value || profile.genderMode || '';
     db.students.push({
       id:uid(), name:name, grade:grade,
-      history:f.history.value.trim(),
+      history:'',
       gender:genderVal, birthJDN:birthJDN,
       nationalId: f.nationalId.value.trim(),
       birthSource: birthSource,
@@ -4188,6 +4219,15 @@ function buildWeightAlertHTML(s){
   var increased=alert.diff>0;
   return '<div class="alert-warn">⚠️ <b>هشدار تغییر ناگهانی وزن:</b> وزن از '+fa(alert.from)+' به '+fa(alert.to)+' کیلوگرم ('+(increased?'افزایش':'کاهش')+' '+fa(Math.abs(alert.diff))+' کیلو = '+fa(alert.pct)+'٪).</div>';
 }
+function saveMedicalHistory(id){
+  var s = getStudent(id);
+  if(!s) return;
+  var el = $('#historyInput');
+  if(!el){ toast('فیلد یافت نشد'); return; }
+  s.history = el.value.trim();
+  saveDB();
+  toast('سابقه پزشکی ذخیره شد');
+}
 function renderProfile(id){
   var s=getStudent(id); if(!s){ show('students'); return; }
   ensureStudentFields(s);
@@ -4239,7 +4279,8 @@ function renderProfile(id){
   }
   html+='</div>';
   html+='<div class="card"><h2>💊 شرح‌حال و داروها</h2>';
-  if(s.history) html+='<div class="field"><label>📌 سابقه پزشکی</label><p style="font-size:.86rem;background:var(--soft);padding:9px 11px;border-radius:6px;border-right:3px solid var(--primary);margin-top:2px;line-height:1.7">'+esc(s.history)+'</p></div>';
+  html+='<div class="field"><label>📌 سابقه پزشکی</label><textarea id="historyInput" style="min-height:60px">'+esc(s.history||'')+'</textarea>';
+  html+='<button class="btn primary sm" onclick="saveMedicalHistory(\''+s.id+'\')" style="margin-top:6px">ذخیره</button></div>';
   html+='<div class="field"><label>📝 توضیحات خاص</label><textarea id="specialNotesInput">'+esc(s.specialNotes||'')+'</textarea>';
   html+='<button class="btn primary sm" onclick="saveSpecialNotes(\''+s.id+'\')" style="margin-top:6px">ذخیره</button></div>';
   html+='<hr style="border:0;border-top:1px dashed var(--border);margin:12px 0">';
@@ -4509,7 +4550,6 @@ function openEditStudent(id){
   grades.forEach(function(g){ html+='<option'+(s.grade===g?' selected':'')+'>'+g+'</option>'; });
   html+='</select></div><div class="field"><label>جنسیت</label><select name="gender"><option value="">—</option><option value="m"'+(effectiveGender==='m'?' selected':'')+'>پسر</option><option value="f"'+(effectiveGender==='f'?' selected':'')+'>دختر</option></select></div></div>';
   html+='<div class="field"><label>کد ملی</label><input class="input" name="nationalId" maxlength="10" value="'+esc(s.nationalId||'')+'"></div>';
-  html+='<div class="field"><label>سابقه پزشکی</label><input class="input" name="history" value="'+esc(s.history||'')+'"></div>';
   html+='<div class="field"><label>تاریخ تولد (شمسی)</label><div class="grid3">';
   html+='<input class="input" name="birthYear" type="number" value="'+(jy||'')+'" placeholder="سال">';
   html+='<select class="input" name="birthMonth"><option value="">ماه</option>';
@@ -4520,6 +4560,7 @@ function openEditStudent(id){
   html+='<input class="input" name="birthDay" type="number" value="'+(jd||'')+'" placeholder="روز">';
   html+='</div></div>';
   html+='<div class="alert-info">منبع تاریخ تولد: ' + birthSourceLabel(s.birthSource) + '</div>';
+  html+='<div class="alert-info">💡 سابقه پزشکی از طریق صفحه پروفایل کامل دانش‌آموز (بخش «💊 شرح‌حال و داروها») قابل ویرایش است.</div>';
   html+='<div style="display:flex;gap:8px;margin-top:12px"><button type="submit" class="btn primary">ذخیره</button>';
   html+='<button type="button" class="btn ghost" onclick="closeModal(\'editStudentModal\')">انصراف</button></div></form>';
   $('#editStudentModalContent').innerHTML=html;
@@ -4544,7 +4585,6 @@ function openEditStudent(id){
     e.preventDefault();
     var f=e.target;
     s.name=f.name.value.trim(); s.grade=f.grade.value;
-    s.history=f.history.value.trim();
     var genderNew = f.gender.value;
     s.gender = genderNew || profile.genderMode || '';
     s.nationalId = f.nationalId.value.trim();
@@ -6000,7 +6040,6 @@ function mergeImportedData(imported){
     ambassadorLinksFixed: 0
   };
   
-  // Build current index; detect ambiguities
   var curByKey = {};
   var curAmbiguousKeys = {};
   db.students.forEach(function(s){
@@ -6015,7 +6054,6 @@ function mergeImportedData(imported){
   });
   Object.keys(curAmbiguousKeys).forEach(function(k){ delete curByKey[k]; });
   
-  // id map from importedId -> finalId (for remapping ambassador refs)
   var idMap = {};
   var importedSeenKeys = {};
   var importedStudents = (imported.db && imported.db.students) || [];
@@ -6037,10 +6075,8 @@ function mergeImportedData(imported){
     var addedDueToAmbiguity = false;
     
     if(isNidKey){
-      // National ID: always safe if matched in current
       if(cur) shouldMerge = true;
     } else {
-      // Name+grade: only merge when unique in current AND not repeated in file
       if(cur && !wasSeenInImported){
         shouldMerge = true;
       } else if(cur || isAmbiguousInCurrent || wasSeenInImported){
@@ -6073,7 +6109,6 @@ function mergeImportedData(imported){
     }
   });
   
-  // Remap ambassador refs; clear dangling references
   var allIds = new Set();
   db.students.forEach(function(s){ allIds.add(s.id); });
   db.students.forEach(function(s){
@@ -6089,7 +6124,6 @@ function mergeImportedData(imported){
     }
   });
   
-  // Merge other collections
   var prevNotes = notes.length;
   notes = _mergeArraysById(notes, imported.notes || []);
   report.notesAdded = notes.length - prevNotes;
@@ -6478,4 +6512,4 @@ function attachAllHandlers(){
 })();
 </script>
 </body>
-                                                                              </html>
+                                                                    </html>
