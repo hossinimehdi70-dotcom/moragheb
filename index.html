@@ -404,8 +404,8 @@ tr.dragging{opacity:.4}
 .inc-card .ic-status{display:inline-block;padding:0 1.5mm;border-radius:1mm;font-size:6.5pt;font-weight:700}
 .inc-card .ic-status.resolved{background:#e5f6ee;color:#1f5a38}
 .inc-card .ic-status.ongoing{background:#fdf3e2;color:#8a5a08}
-.amb-cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:3mm;padding:0;max-width:100%;margin:0 auto}
-.amb-card{border:1.5pt solid #8a6a2c;border-radius:3mm;padding:2.5mm;height:87mm;box-sizing:border-box;display:flex;flex-direction:column;background:linear-gradient(180deg,#fffdf7 0%,#fdfbf4 100%);break-inside:avoid;page-break-inside:avoid;overflow:hidden;position:relative}
+.amb-cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:3mm;padding:0;max-width:193mm;margin:0 auto}
+.amb-card{border:1.5pt solid #8a6a2c;border-radius:3mm;padding:2.5mm;height:70mm;box-sizing:border-box;display:flex;flex-direction:column;background:linear-gradient(180deg,#fffdf7 0%,#fdfbf4 100%);break-inside:avoid;page-break-inside:avoid;overflow:hidden;position:relative}
 .amb-card::before{content:"";position:absolute;top:0;right:0;width:100%;height:1.5mm;background:linear-gradient(90deg,#8a6a2c,#d4a017,#8a6a2c)}
 .amb-card-head{text-align:center;border-bottom:1pt solid #d4a017;padding:1mm 0 1.5mm;margin-bottom:2mm;padding-top:1mm}
 .amb-card-school{font-size:8pt;color:#6a4f1f;font-weight:700}
@@ -418,9 +418,6 @@ tr.dragging{opacity:.4}
 .amb-card-info div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .amb-card-text{flex:1;font-size:7.3pt;line-height:1.65;text-align:justify;padding:1.5mm 0;color:#333;overflow:hidden}
 .amb-card-text b{color:#6a4f1f}
-.amb-card-duties{font-size:6.3pt;line-height:1.45;padding:1mm 0;border-top:0.3pt dashed #ccc;margin-top:1mm;flex-shrink:0;color:#333}
-.amb-duties-title{font-weight:800;color:#6a4f1f;margin-bottom:0.4mm;font-size:6.7pt}
-.amb-card-duties div{line-height:1.45}
 .amb-card-sign{display:flex;gap:2.5mm;font-size:6.8pt;margin-top:1mm;padding-top:1mm;border-top:0.3pt dashed #ccc}
 .amb-card-sign .amb-sig{flex:1;text-align:center}
 .amb-card-sign .amb-sig-line{border-bottom:0.5pt solid #666;height:5mm;margin-bottom:0.8mm}
@@ -665,11 +662,14 @@ tr.dragging{opacity:.4}
         <p class="hint" style="margin-bottom:8px">ساختار درختی: زیرگروه‌ها به سرگروه، و اعضا به زیرگروه متصل می‌شوند. <b>Drag & Drop</b> برای اتصال. اعضا در هر زیرگروه به‌طور پیش‌فرض به ترتیب پایه (ششم→اول) نمایش داده می‌شوند. دکمه‌های <b>↑ ↓</b> امکان جابه‌جایی کامل هر عضو با هر پایه‌ای را فراهم می‌کنند. <b>مسئولیت زیرگروه</b> به‌صورت خودکار به همه اعضای آن منتقل می‌شود.</p>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
           <button class="btn primary sm" onclick="printAmbassadorCards()">🎴 چاپ کارت همه سفیران</button>
+          <button class="btn primary sm" onclick="printSelectedAmbassadorCards()">🎴 چاپ کارت‌های انتخاب‌شده</button>
           <button class="btn gold sm" onclick="printAmbassadorsPDF()">🖨️ خروجی PDF فهرست</button>
-          <button class="btn ghost sm" onclick="openAmbassadorCardSelector()">🎴 چاپ انتخابی کارت‌ها</button>
         </div>
         <div class="table-wrap">
-          <table><thead><tr><th>نام</th><th>پایه</th><th>نقش</th><th>مسئولیت</th><th>والد</th><th style="width:110px">عملیات</th></tr></thead>
+          <table><thead><tr>
+            <th style="width:32px"><input type="checkbox" id="selectAllAmbCheckbox" class="student-checkbox" onchange="toggleSelectAllAmbassadors(this.checked)"></th>
+            <th>نام</th><th>پایه</th><th>نقش</th><th>مسئولیت</th><th>والد</th><th style="width:110px">عملیات</th>
+          </tr></thead>
           <tbody id="ambassadorRows"></tbody></table>
         </div>
       </div>
@@ -905,21 +905,6 @@ tr.dragging{opacity:.4}
     <button class="btn primary" onclick="confirmWhoGender('m')">۱ = پسر 🧒</button>
     <button class="btn gold" onclick="confirmWhoGender('f')">۲ = دختر 👧</button>
     <button class="btn ghost" onclick="closeModal('whoGenderModal')">انصراف</button>
-  </div>
-</div></div>
-
-<div class="modal" id="ambassadorCardSelectModal"><div class="modal-card" style="max-width:600px">
-  <button class="modal-close" onclick="closeModal('ambassadorCardSelectModal')">✕</button>
-  <h3>🎴 چاپ انتخابی کارت سفیران سلامت</h3>
-  <p class="hint">سفیران مورد نظر را انتخاب کنید:</p>
-  <div style="display:flex;gap:6px;margin:8px 0;flex-wrap:wrap">
-    <button class="btn ghost sm" onclick="ambassadorCardSelectAll(true)">✓ انتخاب همه</button>
-    <button class="btn ghost sm" onclick="ambassadorCardSelectAll(false)">✕ لغو همه</button>
-  </div>
-  <div id="ambassadorCardSelectList" style="max-height:400px;overflow:auto;background:var(--soft);border:1px solid var(--border);border-radius:8px;padding:8px"></div>
-  <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end;flex-wrap:wrap">
-    <button class="btn primary" onclick="printSelectedAmbassadorCards()">🖨️ چاپ انتخاب‌شده‌ها</button>
-    <button class="btn ghost" onclick="closeModal('ambassadorCardSelectModal')">انصراف</button>
   </div>
 </div></div>
 
@@ -1823,7 +1808,6 @@ function groupStudentsByGrade(students){
   });
   return groups;
 }
-/* مرتب‌سازی اعضای زیرگروه سفیران: subgroupOrder اولویت اول؛ اگر برابر بود، پایه نزولی؛ سپس نام. */
 function compareSubgroupMembers(a, b){
   var oa = a.subgroupOrder || 0;
   var ob = b.subgroupOrder || 0;
@@ -1899,10 +1883,10 @@ var swWarningShown=false;
 var swErrorToastShown=false;
 var editingProfileMode = false;
 var selectedStudentIds = new Set();
+var selectedAmbassadorIds = new Set();
 var lastDeletedStudent = null;
 var ambassadorReportSort = { key:'grade', dir:1 };
 var _pendingImportData = null;
-var ambassadorCardSelection = new Set();
 
 var overviewSections = {
   ministry: true,
@@ -2419,7 +2403,6 @@ function migrateSubgroupOrders(){
   });
   return changed;
 }
-
 function normalizeSubgroupOrdersFor(viceId){
   var siblings = db.students.filter(function(x){
     return x.isAmbassador && x.viceParentId === viceId && (x.ambassadorRole || 'member') === 'member';
@@ -2443,6 +2426,7 @@ function moveStudentToTrash(id){
   db.students = db.students.filter(function(x){ return x.id!==id; });
   cleanupAmbassadorReferences(id);
   if(selectedStudentIds.has(id)) selectedStudentIds.delete(id);
+  if(selectedAmbassadorIds.has(id)) selectedAmbassadorIds.delete(id);
   return snapshot;
 }
 function restoreFromTrashItem(trashId){
@@ -2850,8 +2834,10 @@ function buildLetterOptions(){
   db.students.forEach(function(s){ var L=firstLetterOf(s.name); if(L) letters[L]=true; });
   var optsHtml='<option value="">همه</option>';
   ALPHABET.forEach(function(L){ if(!letters[L]) return; optsHtml+='<option value="'+L+'">'+L+'</option>'; });
-  var sel=$('#filterLetter');
-  if(sel){ var v=sel.value; sel.innerHTML=optsHtml; if(v) sel.value=v; }
+  ['filterLetter'].forEach(function(id){
+    var sel=$('#'+id); if(!sel) return;
+    var v=sel.value; sel.innerHTML=optsHtml; if(v) sel.value=v;
+  });
 }
 
 /* ==================== یادداشت ==================== */
@@ -3572,6 +3558,7 @@ function toggleAmbassador(id){
   } else {
     s.ambassadorOrder=null; s.viceParentId=''; s.headParentId=''; s.subgroupOrder=0;
     cleanupAmbassadorReferences(id);
+    selectedAmbassadorIds.delete(id);
   }
   saveDB(); renderStudents(); renderAmbassadors(); renderDashboard(); renderInfographic();
   toast(s.isAmbassador?'اضافه شد':'حذف شد');
@@ -3742,12 +3729,43 @@ function getAmbassadorStats(){
   var vicesWithoutHead = vices.filter(function(s){ return !s.headParentId; });
   return { total: all.length, heads: heads.length, vices: vices.length, members: members.length, membersWithVice: membersWithVice.length, membersWithoutVice: membersWithoutVice.length, vicesWithHead: vicesWithHead.length, vicesWithoutHead: vicesWithoutHead.length };
 }
+
+/* --- انتخاب سفیران برای چاپ انتخابی --- */
+function toggleAmbassadorSelect(id, checked){
+  if(checked) selectedAmbassadorIds.add(id);
+  else selectedAmbassadorIds.delete(id);
+  var allAmb = db.students.filter(function(s){ return s.isAmbassador; });
+  var allChecked = allAmb.length > 0 && allAmb.every(function(s){ return selectedAmbassadorIds.has(s.id); });
+  var cb = document.getElementById('selectAllAmbCheckbox');
+  if(cb) cb.checked = allChecked;
+}
+function toggleSelectAllAmbassadors(checked){
+  var allAmb = db.students.filter(function(s){ return s.isAmbassador; });
+  if(checked) allAmb.forEach(function(s){ selectedAmbassadorIds.add(s.id); });
+  else allAmb.forEach(function(s){ selectedAmbassadorIds.delete(s.id); });
+  renderAmbassadors();
+}
+function printSelectedAmbassadorCards(){
+  if(selectedAmbassadorIds.size === 0){ toast('سفیری انتخاب نشده'); return; }
+  var list = Array.from(selectedAmbassadorIds).map(function(id){ return getStudent(id); }).filter(function(s){ return s && s.isAmbassador; });
+  if(!list.length){ toast('سفیر معتبری یافت نشد'); return; }
+  var cardsHtml = '';
+  list.forEach(function(s){ cardsHtml += buildAmbassadorCardHTML(s); });
+  var w = window.open('','_blank');
+  if(!w){ toast('لطفاً پاپ‌آپ را برای این سایت مجاز کنید'); return; }
+  var html = '<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="UTF-8"><title>کارت‌های سفیران انتخاب‌شده</title><style>'+
+    ambassadorCardPrintCSS()+getPrintEconomyCSS()+'</style></head><body><div class="page-wrap"><div class="amb-cards-grid">'+cardsHtml+'</div></div></body></html>';
+  w.document.write(html); w.document.close();
+  setTimeout(function(){ w.print(); }, 500);
+  toast('🖨️ ' + fa(list.length) + ' کارت آماده چاپ شد');
+}
+
 function renderAmbassadors(){
   var data = getAmbassadorData();
   var tbody=$('#ambassadorRows'); var cnt=$('#ambassadorsCount');
   if(cnt) cnt.textContent=fa(data.all.length);
   if(!tbody) return;
-  if(!data.all.length){ tbody.innerHTML='<tr class="no-hover"><td colspan="6"><div class="empty">سفیری انتخاب نشده.</div></td></tr>'; return; }
+  if(!data.all.length){ tbody.innerHTML='<tr class="no-hover"><td colspan="7"><div class="empty">سفیری انتخاب نشده.</div></td></tr>'; return; }
   function renderRoleSelect(s){
     var role=s.ambassadorRole||'member';
     return '<select class="role-select '+role+'" onchange="setAmbassadorRole(\''+s.id+'\',this.value)">'+
@@ -3771,7 +3789,9 @@ function renderAmbassadors(){
   function rowFor(s, rowCls, prefix, opts){
     var role = s.ambassadorRole||'member';
     var showReorder = !!(opts && opts.showReorder);
-    var cells='<td>'+(prefix||'')+esc(s.name)+'</td>';
+    var isSel = selectedAmbassadorIds.has(s.id);
+    var cells='<td onclick="event.stopPropagation()"><input type="checkbox" class="student-checkbox" '+(isSel?'checked':'')+' onchange="toggleAmbassadorSelect(\''+s.id+'\',this.checked)"></td>';
+    cells+='<td>'+(prefix||'')+esc(s.name)+'</td>';
     cells+='<td>'+esc(s.grade)+'</td>';
     cells+='<td>'+renderRoleSelect(s)+'</td>';
     cells+='<td><span class="badge b-gold" style="cursor:pointer" onclick="editResponsibility(\''+s.id+'\')">'+(esc(s.responsibility)||'+ افزودن')+'</span></td>';
@@ -3787,33 +3807,33 @@ function renderAmbassadors(){
     return '<tr class="'+rowCls+' draggable-row" draggable="true" data-aid="'+s.id+'" data-role="'+role+'">'+cells+'</tr>';
   }
   function subgroupSummaryRow(viceName, count){
-    return '<tr class="subgroup-summary no-hover"><td colspan="6">📊 آمار زیرگروه «'+esc(viceName)+'» — تعداد اعضا: <b>'+fa(count)+'</b> نفر</td></tr>';
+    return '<tr class="subgroup-summary no-hover"><td colspan="7">📊 آمار زیرگروه «'+esc(viceName)+'» — تعداد اعضا: <b>'+fa(count)+'</b> نفر</td></tr>';
   }
   var html='';
   data.heads.forEach(function(h){
-    html += '<tr class="head-row no-hover"><td colspan="6">🎯 سرگروه: <b>'+esc(h.name)+'</b>'+(h.responsibility?' — '+esc(h.responsibility):'')+'</td></tr>';
+    html += '<tr class="head-row no-hover"><td colspan="7">🎯 سرگروه: <b>'+esc(h.name)+'</b>'+(h.responsibility?' — '+esc(h.responsibility):'')+'</td></tr>';
     html += rowFor(h, 'no-hover', '&nbsp;&nbsp;');
     var myVices = data.vices.filter(function(v){ return v.headParentId===h.id; });
     if(myVices.length){
       myVices.forEach(function(v){
-        html += '<tr class="vice-row no-hover"><td colspan="6">🥈 زیرگروه: <b>'+esc(v.name)+'</b>'+(v.responsibility?' — '+esc(v.responsibility):'')+'</td></tr>';
+        html += '<tr class="vice-row no-hover"><td colspan="7">🥈 زیرگروه: <b>'+esc(v.name)+'</b>'+(v.responsibility?' — '+esc(v.responsibility):'')+'</td></tr>';
         html += rowFor(v, 'no-hover', '&nbsp;&nbsp;&nbsp;&nbsp;');
         var myMembers = data.members.filter(function(m){ return m.viceParentId===v.id; }).sort(compareSubgroupMembers);
         if(myMembers.length){
           myMembers.forEach(function(m){ html += rowFor(m, 'member-row no-hover', '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↳ ', { showReorder: true }); });
           html += subgroupSummaryRow(v.name, myMembers.length);
         } else {
-          html += '<tr class="no-hover member-row"><td colspan="6" style="color:var(--muted);font-size:.74rem">— عضوی برای این زیرگروه —</td></tr>';
+          html += '<tr class="no-hover member-row"><td colspan="7" style="color:var(--muted);font-size:.74rem">— عضوی برای این زیرگروه —</td></tr>';
           html += subgroupSummaryRow(v.name, 0);
         }
       });
     } else {
-      html += '<tr class="no-hover vice-row"><td colspan="6" style="color:var(--muted);font-size:.74rem">— زیرگروهی برای این سرگروه —</td></tr>';
+      html += '<tr class="no-hover vice-row"><td colspan="7" style="color:var(--muted);font-size:.74rem">— زیرگروهی برای این سرگروه —</td></tr>';
     }
   });
   var orphanVices = data.vices.filter(function(v){ return !v.headParentId; });
   if(orphanVices.length){
-    html += '<tr class="group-header no-hover"><td colspan="6">🥈 زیرگروه‌های بدون سرگروه <span class="cnt">'+fa(orphanVices.length)+'</span></td></tr>';
+    html += '<tr class="group-header no-hover"><td colspan="7">🥈 زیرگروه‌های بدون سرگروه <span class="cnt">'+fa(orphanVices.length)+'</span></td></tr>';
     orphanVices.forEach(function(v){
       html += rowFor(v, 'vice-row no-hover', '');
       var myMembers = data.members.filter(function(m){ return m.viceParentId===v.id; }).sort(compareSubgroupMembers);
@@ -3825,11 +3845,11 @@ function renderAmbassadors(){
   }
   var orphanMembers = data.members.filter(function(m){ return !m.viceParentId; });
   if(orphanMembers.length){
-    html += '<tr class="group-header no-hover"><td colspan="6">👤 اعضای بدون زیرگروه <span class="cnt">'+fa(orphanMembers.length)+'</span></td></tr>';
+    html += '<tr class="group-header no-hover"><td colspan="7">👤 اعضای بدون زیرگروه <span class="cnt">'+fa(orphanMembers.length)+'</span></td></tr>';
     orphanMembers.forEach(function(m){ html += rowFor(m, 'member-row no-hover', '&nbsp;&nbsp;• ', { showReorder: false }); });
   }
   var stats = getAmbassadorStats();
-  html += '<tr class="overall-summary no-hover"><td colspan="6">📊 <b>آمار کلی سفیران سلامت:</b> '+
+  html += '<tr class="overall-summary no-hover"><td colspan="7">📊 <b>آمار کلی سفیران سلامت:</b> '+
     '<span class="stat-chip">کل: '+fa(stats.total)+'</span>'+
     '<span class="stat-chip">🎯 سرگروه: '+fa(stats.heads)+'</span>'+
     '<span class="stat-chip">🥈 زیرگروه: '+fa(stats.vices)+'</span>'+
@@ -3839,6 +3859,11 @@ function renderAmbassadors(){
     '</td></tr>';
   tbody.innerHTML=html;
   attachAmbassadorDragDrop();
+  var selectAllCb = document.getElementById('selectAllAmbCheckbox');
+  if(selectAllCb){
+    var allAmb = data.all;
+    selectAllCb.checked = allAmb.length > 0 && allAmb.every(function(s){ return selectedAmbassadorIds.has(s.id); });
+  }
 }
 function managerStampFooter(){
   return '<div style="margin-top:30px;padding-top:12px;border-top:1px dashed #999;display:flex;justify-content:space-between;flex-wrap:wrap;gap:20px">'+
@@ -3952,13 +3977,6 @@ function buildAmbassadorCardHTML(s){
       '</div>'+
     '</div>'+
     '<div class="amb-card-text">'+apptText+'</div>'+
-    '<div class="amb-card-duties">'+
-      '<div class="amb-duties-title">● برخی از شرح وظایف سفیران سلامت:</div>'+
-      '<div>۱- آموزش مفاهیم بهداشتی به سایر دانش‌آموزان</div>'+
-      '<div>۲- تهیه مطالب بهداشتی</div>'+
-      '<div>۳- همکاری با مراقب سلامت در برگزاری مراسم‌ها</div>'+
-      '<div>۴- مشارکت در کلاس‌های آموزشی بهداشت</div>'+
-    '</div>'+
     '<div class="amb-card-sign">'+
       '<div class="amb-sig">'+(profile.signatureImg?'<img src="'+profile.signatureImg+'" style="max-height:5mm;display:block;margin:0 auto 0.5mm">':'')+
         '<div class="amb-sig-line"></div><div class="amb-sig-label">'+esc(profile.signature||profile.assistant||'مراقب سلامت')+'</div>'+signatureBadgeMini()+'</div>'+
@@ -3970,8 +3988,8 @@ function ambassadorCardPrintCSS(){
   return '@page{size:A4;margin:8mm}'+
     'body{font-family:Tahoma,sans-serif;direction:rtl;margin:0;background:#fff;color:#222}'+
     '.page-wrap{padding:0}'+
-    '.amb-cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:3mm;padding:0;max-width:100%;margin:0 auto}'+
-    '.amb-card{border:1.5pt solid #8a6a2c;border-radius:3mm;padding:2.5mm;height:87mm;box-sizing:border-box;display:flex;flex-direction:column;background:linear-gradient(180deg,#fffdf7 0%,#fdfbf4 100%);break-inside:avoid;page-break-inside:avoid;overflow:hidden;position:relative}'+
+    '.amb-cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:3mm;padding:0;max-width:193mm;margin:0 auto}'+
+    '.amb-card{border:1.5pt solid #8a6a2c;border-radius:3mm;padding:2.5mm;height:70mm;box-sizing:border-box;display:flex;flex-direction:column;background:linear-gradient(180deg,#fffdf7 0%,#fdfbf4 100%);break-inside:avoid;page-break-inside:avoid;overflow:hidden;position:relative}'+
     '.amb-card::before{content:"";position:absolute;top:0;right:0;width:100%;height:1.5mm;background:linear-gradient(90deg,#8a6a2c,#d4a017,#8a6a2c)}'+
     '.amb-card-head{text-align:center;border-bottom:1pt solid #d4a017;padding:1mm 0 1.5mm;margin-bottom:2mm;padding-top:1mm}'+
     '.amb-card-school{font-size:8pt;color:#6a4f1f;font-weight:700}'+
@@ -3984,9 +4002,6 @@ function ambassadorCardPrintCSS(){
     '.amb-card-info div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'+
     '.amb-card-text{flex:1;font-size:7.3pt;line-height:1.65;text-align:justify;padding:1.5mm 0;color:#333;overflow:hidden}'+
     '.amb-card-text b{color:#6a4f1f}'+
-    '.amb-card-duties{font-size:6.3pt;line-height:1.45;padding:1mm 0;border-top:0.3pt dashed #ccc;margin-top:1mm;flex-shrink:0;color:#333}'+
-    '.amb-duties-title{font-weight:800;color:#6a4f1f;margin-bottom:0.4mm;font-size:6.7pt}'+
-    '.amb-card-duties div{line-height:1.45}'+
     '.amb-card-sign{display:flex;gap:2.5mm;font-size:6.8pt;margin-top:1mm;padding-top:1mm;border-top:0.3pt dashed #ccc}'+
     '.amb-card-sign .amb-sig{flex:1;text-align:center}'+
     '.amb-card-sign .amb-sig-line{border-bottom:0.5pt solid #666;height:5mm;margin-bottom:0.8mm}'+
@@ -4014,60 +4029,6 @@ function printAmbassadorCard(id){
   var w=window.open('','_blank'); if(!w){ toast('لطفاً پاپ‌آپ را برای این سایت مجاز کنید'); return; }
   w.document.write(html); w.document.close();
   setTimeout(function(){ w.print(); },500);
-}
-
-/* ==================== چاپ انتخابی کارت سفیران ==================== */
-function openAmbassadorCardSelector(){
-  var list = getAmbassadorData().all;
-  if(!list.length){ toast('سفیری وجود ندارد'); return; }
-  ambassadorCardSelection.clear();
-  renderAmbassadorCardSelectorList();
-  openModal('ambassadorCardSelectModal');
-}
-function renderAmbassadorCardSelectorList(){
-  var el = $('#ambassadorCardSelectList'); if(!el) return;
-  var list = getAmbassadorData().all;
-  if(!list.length){ el.innerHTML = '<div class="empty">سفیری وجود ندارد.</div>'; return; }
-  var html = '';
-  list.forEach(function(s){
-    var role = s.ambassadorRole || 'member';
-    var roleLabel = ROLE_MAP[role];
-    var roleCls = role === 'head' ? 'b-head' : role === 'vice' ? 'b-vice' : 'b-member';
-    var checked = ambassadorCardSelection.has(s.id);
-    html += '<label style="display:flex;align-items:center;gap:8px;padding:6px 8px;cursor:pointer;border-radius:6px">';
-    html += '<input type="checkbox" class="amb-card-check" value="'+s.id+'" '+(checked?'checked':'')+' onchange="onAmbassadorCardToggle(\''+s.id+'\',this.checked)">';
-    html += '<span>'+esc(s.name)+' — '+esc(s.grade)+' <span class="badge '+roleCls+'" style="font-size:.66rem">'+roleLabel+'</span></span>';
-    html += '</label>';
-  });
-  el.innerHTML = html;
-}
-function onAmbassadorCardToggle(id, checked){
-  if(checked) ambassadorCardSelection.add(id);
-  else ambassadorCardSelection.delete(id);
-}
-function ambassadorCardSelectAll(v){
-  if(v){
-    getAmbassadorData().all.forEach(function(s){ ambassadorCardSelection.add(s.id); });
-  } else {
-    ambassadorCardSelection.clear();
-  }
-  renderAmbassadorCardSelectorList();
-}
-function printSelectedAmbassadorCards(){
-  if(!ambassadorCardSelection.size){ toast('هیچ سفیری انتخاب نشده'); return; }
-  var ids = Array.from(ambassadorCardSelection);
-  var students = ids.map(function(id){ return getStudent(id); }).filter(function(s){ return s && s.isAmbassador; });
-  if(!students.length){ toast('سفیری یافت نشد'); return; }
-  var cardsHtml = '';
-  students.forEach(function(s){ cardsHtml += buildAmbassadorCardHTML(s); });
-  var w = window.open('','_blank');
-  if(!w){ toast('لطفاً پاپ‌آپ را برای این سایت مجاز کنید'); return; }
-  var html = '<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="UTF-8"><title>کارت‌های سفیران سلامت</title><style>'+
-    ambassadorCardPrintCSS()+getPrintEconomyCSS()+'</style></head><body><div class="page-wrap"><div class="amb-cards-grid">'+cardsHtml+'</div></div></body></html>';
-  w.document.write(html); w.document.close();
-  setTimeout(function(){ w.print(); },500);
-  closeModal('ambassadorCardSelectModal');
-  toast('🖨️ '+fa(students.length)+' کارت آماده چاپ شد');
 }
 
 /* ==================== ثبت دانش‌آموز ==================== */
@@ -6528,4 +6489,4 @@ function attachAllHandlers(){
 })();
 </script>
 </body>
-                                                    </html>
+                                                   </html>
