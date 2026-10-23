@@ -3,7 +3,7 @@
    نسخه ۳.۲.۲ (اصلاح‌شده)
    ============================================================ */
 
-var CACHE_VERSION = 'moragheb-v3.3.5';
+var CACHE_VERSION = 'moragheb-v3.3.6';
 var CACHE_NAME = CACHE_VERSION;
 
 /* فایل‌هایی که حتماً کش می‌شوند
