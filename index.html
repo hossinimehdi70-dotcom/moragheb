@@ -418,6 +418,9 @@ tr.dragging{opacity:.4}
 .amb-card-info div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .amb-card-text{flex:1;font-size:7.3pt;line-height:1.65;text-align:justify;padding:1.5mm 0;color:#333;overflow:hidden}
 .amb-card-text b{color:#6a4f1f}
+.amb-card-duties{font-size:6.3pt;line-height:1.45;padding:1mm 0;border-top:0.3pt dashed #ccc;margin-top:1mm;flex-shrink:0;color:#333}
+.amb-duties-title{font-weight:800;color:#6a4f1f;margin-bottom:0.4mm;font-size:6.7pt}
+.amb-card-duties div{line-height:1.45}
 .amb-card-sign{display:flex;gap:2.5mm;font-size:6.8pt;margin-top:1mm;padding-top:1mm;border-top:0.3pt dashed #ccc}
 .amb-card-sign .amb-sig{flex:1;text-align:center}
 .amb-card-sign .amb-sig-line{border-bottom:0.5pt solid #666;height:5mm;margin-bottom:0.8mm}
@@ -555,26 +558,6 @@ tr.dragging{opacity:.4}
         <h2>📈 اینفوگرافیک وضعیت مدرسه</h2>
         <div class="info-grid" id="infographic"></div>
       </div>
-      <div class="card">
-        <h2>🔍 فیلترها</h2>
-        <div class="grid3" style="margin-bottom:8px">
-          <div>
-            <label class="filter-label">جستجو (هوشمند + اپراتور)</label>
-            <div class="search-wrap">
-              <input id="dashSearch" class="input" placeholder="نام... یا پایه:پنجم">
-              <button class="voice-btn" onclick="voiceSearch('dashSearch',this)" title="جستجوی صوتی">🎤</button>
-            </div>
-            <label class="search-hint-opt"><input type="checkbox" id="dashSearchHistory"> <span>جستجو در تاریخچه</span></label>
-          </div>
-          <div><label class="filter-label">پایه</label><select id="dashFilterGrade"><option value="">همه</option><option>اول</option><option>دوم</option><option>سوم</option><option>چهارم</option><option>پنجم</option><option>ششم</option></select></div>
-          <div><label class="filter-label">حرف</label><select id="dashFilterLetter"><option value="">همه</option></select></div>
-        </div>
-        <div class="grid3">
-          <div><label class="filter-label">وضعیت</label><select id="dashFilterStatus"><option value="">همه</option><option value="follow">نیازمند پیگیری</option><option value="ok">مطلوب</option></select></div>
-          <div><label class="filter-label">سطح ریسک</label><select id="dashFilterRisk"><option value="">همه</option><option value="high">پرخطر</option><option value="mid">تحت نظر</option><option value="low">عادی</option></select></div>
-          <div><label class="filter-label">—</label><button class="btn ghost sm" onclick="resetDashFilters()" style="width:100%">پاک کردن</button></div>
-        </div>
-      </div>
       <div class="card"><h2>دانش‌آموزان نیازمند پیگیری</h2><div id="followups"></div></div>
     </section>
 
@@ -683,6 +666,7 @@ tr.dragging{opacity:.4}
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
           <button class="btn primary sm" onclick="printAmbassadorCards()">🎴 چاپ کارت همه سفیران</button>
           <button class="btn gold sm" onclick="printAmbassadorsPDF()">🖨️ خروجی PDF فهرست</button>
+          <button class="btn ghost sm" onclick="openAmbassadorCardSelector()">🎴 چاپ انتخابی کارت‌ها</button>
         </div>
         <div class="table-wrap">
           <table><thead><tr><th>نام</th><th>پایه</th><th>نقش</th><th>مسئولیت</th><th>والد</th><th style="width:110px">عملیات</th></tr></thead>
@@ -921,6 +905,21 @@ tr.dragging{opacity:.4}
     <button class="btn primary" onclick="confirmWhoGender('m')">۱ = پسر 🧒</button>
     <button class="btn gold" onclick="confirmWhoGender('f')">۲ = دختر 👧</button>
     <button class="btn ghost" onclick="closeModal('whoGenderModal')">انصراف</button>
+  </div>
+</div></div>
+
+<div class="modal" id="ambassadorCardSelectModal"><div class="modal-card" style="max-width:600px">
+  <button class="modal-close" onclick="closeModal('ambassadorCardSelectModal')">✕</button>
+  <h3>🎴 چاپ انتخابی کارت سفیران سلامت</h3>
+  <p class="hint">سفیران مورد نظر را انتخاب کنید:</p>
+  <div style="display:flex;gap:6px;margin:8px 0;flex-wrap:wrap">
+    <button class="btn ghost sm" onclick="ambassadorCardSelectAll(true)">✓ انتخاب همه</button>
+    <button class="btn ghost sm" onclick="ambassadorCardSelectAll(false)">✕ لغو همه</button>
+  </div>
+  <div id="ambassadorCardSelectList" style="max-height:400px;overflow:auto;background:var(--soft);border:1px solid var(--border);border-radius:8px;padding:8px"></div>
+  <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end;flex-wrap:wrap">
+    <button class="btn primary" onclick="printSelectedAmbassadorCards()">🖨️ چاپ انتخاب‌شده‌ها</button>
+    <button class="btn ghost" onclick="closeModal('ambassadorCardSelectModal')">انصراف</button>
   </div>
 </div></div>
 
@@ -1788,7 +1787,6 @@ function voiceSearch(inputId, btn){
       if(input) input.value=text;
       stopActiveVoice();
       if(inputId==='search') renderStudents();
-      else if(inputId==='dashSearch') renderDashboard();
       toast('🎤 «'+text+'» — برای اصلاح، ویرایش کنید');
     };
     rec.onerror=function(e){
@@ -1825,9 +1823,7 @@ function groupStudentsByGrade(students){
   });
   return groups;
 }
-/* مرتب‌سازی اعضای زیرگروه سفیران: subgroupOrder اولویت اول؛ اگر برابر بود، پایه نزولی؛ سپس نام.
-   این کار باعث می‌شود داده‌های قدیمی (subgroupOrder=0) به‌طور خودکار بر اساس پایه (ششم→اول) مرتب شوند،
-   اما دکمه‌های ↑↓ می‌توانند با تغییر subgroupOrder هر ترتیبی بسازند. */
+/* مرتب‌سازی اعضای زیرگروه سفیران: subgroupOrder اولویت اول؛ اگر برابر بود، پایه نزولی؛ سپس نام. */
 function compareSubgroupMembers(a, b){
   var oa = a.subgroupOrder || 0;
   var ob = b.subgroupOrder || 0;
@@ -1906,6 +1902,7 @@ var selectedStudentIds = new Set();
 var lastDeletedStudent = null;
 var ambassadorReportSort = { key:'grade', dir:1 };
 var _pendingImportData = null;
+var ambassadorCardSelection = new Set();
 
 var overviewSections = {
   ministry: true,
@@ -2369,7 +2366,6 @@ function loadAll(){
   loadOverviewSections();
   loadOverviewOrder();
   purgeOldTrash();
-  /* یک‌بار مهاجرت شماره‌گذاری اعضای زیرگروه بر اساس ترتیب پایه (ششم→اول) */
   if(migrateSubgroupOrders()){ saveDB(); }
 }
 function saveDB(){ try{ localStorage.setItem(DB_KEY,JSON.stringify(db)); invalidateHistoryCache(); _zScoreCache.clear(); scheduleAutoCloud(); }catch(e){ toast('خطای ذخیره'); } }
@@ -2402,8 +2398,6 @@ function ensureStudentFields(s){
 }
 
 /* ==================== مهاجرت و نرمال‌سازی ترتیب زیرگروه‌ها ==================== */
-/* یک بار در loadAll اجرا می‌شود تا داده‌های قدیمی (که subgroupOrder=0 هستند)
-   بر اساس ترتیب پایه (ششم→اول) شماره‌گذاری شوند. */
 function migrateSubgroupOrders(){
   var byVice = {};
   db.students.forEach(function(s){
@@ -2426,7 +2420,6 @@ function migrateSubgroupOrders(){
   return changed;
 }
 
-/* نرمال‌سازی شماره‌گذاری اعضای یک زیرگروه بر اساس ترتیب نمایش فعلی */
 function normalizeSubgroupOrdersFor(viceId){
   var siblings = db.students.filter(function(x){
     return x.isAmbassador && x.viceParentId === viceId && (x.ambassadorRole || 'member') === 'member';
@@ -2857,17 +2850,8 @@ function buildLetterOptions(){
   db.students.forEach(function(s){ var L=firstLetterOf(s.name); if(L) letters[L]=true; });
   var optsHtml='<option value="">همه</option>';
   ALPHABET.forEach(function(L){ if(!letters[L]) return; optsHtml+='<option value="'+L+'">'+L+'</option>'; });
-  ['filterLetter','dashFilterLetter'].forEach(function(id){
-    var sel=$('#'+id); if(!sel) return;
-    var v=sel.value; sel.innerHTML=optsHtml; if(v) sel.value=v;
-  });
-}
-function resetDashFilters(){
-  ['dashSearch','dashFilterGrade','dashFilterLetter','dashFilterStatus','dashFilterRisk'].forEach(function(id){
-    var el=$('#'+id); if(el) el.value='';
-  });
-  var h=$('#dashSearchHistory'); if(h) h.checked=false;
-  renderDashboard();
+  var sel=$('#filterLetter');
+  if(sel){ var v=sel.value; sel.innerHTML=optsHtml; if(v) sel.value=v; }
 }
 
 /* ==================== یادداشت ==================== */
@@ -3179,25 +3163,6 @@ function filterByScreening(type){
 /* ==================== داشبورد ==================== */
 function lastRecord(s){ if(!s.records||!s.records.length) return null; return s.records.slice().sort(function(a,b){ return b.ts-a.ts; })[0]; }
 function needsFollowUp(s){ var r=lastRecord(s); if(!r) return true; return r.vision==='ارجاع'||r.hearing==='ارجاع'||r.dental==='ارجاع'||r.skin==='مشکوک'; }
-function getFilteredStudentsForDash(){
-  var qRaw = ($('#dashSearch')?$('#dashSearch').value:'').trim();
-  var fg=$('#dashFilterGrade')?$('#dashFilterGrade').value:'';
-  var fl=$('#dashFilterLetter')?$('#dashFilterLetter').value:'';
-  var fs=$('#dashFilterStatus')?$('#dashFilterStatus').value:'';
-  var fr=$('#dashFilterRisk')?$('#dashFilterRisk').value:'';
-  var useHistory = $('#dashSearchHistory') && $('#dashSearchHistory').checked;
-  var parsed = parseSearchQuery(qRaw);
-  return db.students.filter(function(s){
-    ensureStudentFields(s);
-    if(qRaw && !applyParsedFilters(s, parsed, useHistory)) return false;
-    if(fg && s.grade!==fg) return false;
-    if(fl){ var L=firstLetterOf(s.name); if(L!==fl) return false; }
-    if(fs==='follow' && !needsFollowUp(s)) return false;
-    if(fs==='ok' && needsFollowUp(s)) return false;
-    if(fr){ var rl=getStudentRiskLevel(s); if(rl.key!==fr) return false; }
-    return true;
-  });
-}
 function _renderDashboard(){
   var list=db.students;
   var ow=0,uw=0,v=0,h=0,d=0,nr=0,amb=0,nb=0;
@@ -3223,10 +3188,9 @@ function _renderDashboard(){
     '<div class="stat bad"><div class="num">'+fa(h)+'</div><div class="lbl">شنوایی</div></div>'+
     '<div class="stat '+(nb?'warn':'ok')+'"><div class="num">'+fa(nb)+'</div><div class="lbl">بدون تاریخ تولد</div></div>';
   var fup=$('#followups'); if(!fup) return;
-  var filtered = getFilteredStudentsForDash();
-  var follow = filtered.filter(needsFollowUp);
+  var follow = list.filter(needsFollowUp);
   if(!follow.length){
-    fup.innerHTML='<div class="empty">'+(filtered.length?'✓ با فیلترهای فعلی، همه مطلوب':'داده‌ای یافت نشد')+'</div>';
+    fup.innerHTML='<div class="empty">'+(list.length?'✓ همه مطلوب':'داده‌ای یافت نشد')+'</div>';
     return;
   }
   var groups = groupStudentsByGrade(follow);
@@ -3644,9 +3608,7 @@ function setViceParent(memberId, viceId){
   var prevVice = s.viceParentId;
   s.viceParentId = viceId || '';
   if(viceId && prevVice !== viceId){
-    /* نرمال‌سازی گروه قبلی (در صورت وجود) تا شماره‌گذاری پیوسته بماند */
     if(prevVice){ normalizeSubgroupOrdersFor(prevVice); }
-    /* درج در گروه جدید بر اساس جایگاه پایه (ششم→اول) و شماره‌گذاری مجدد */
     var siblings = db.students.filter(function(x){
       return x.id !== s.id && x.isAmbassador && x.viceParentId === viceId && (x.ambassadorRole || 'member') === 'member';
     }).sort(compareSubgroupMembers);
@@ -3700,7 +3662,6 @@ function getSubgroupSiblings(s){
 function moveMemberUp(memberId){
   var s=getStudent(memberId); if(!s) return;
   if(s.ambassadorRole!=='member' || !s.viceParentId){ return; }
-  /* ابتدا شماره‌گذاری را نرمال کن تا swap درست انجام شود */
   var siblings = normalizeSubgroupOrdersFor(s.viceParentId);
   var idx = siblings.indexOf(s);
   if(idx <= 0){ toast('بالاترین جایگاه است'); return; }
@@ -3991,6 +3952,13 @@ function buildAmbassadorCardHTML(s){
       '</div>'+
     '</div>'+
     '<div class="amb-card-text">'+apptText+'</div>'+
+    '<div class="amb-card-duties">'+
+      '<div class="amb-duties-title">● برخی از شرح وظایف سفیران سلامت:</div>'+
+      '<div>۱- آموزش مفاهیم بهداشتی به سایر دانش‌آموزان</div>'+
+      '<div>۲- تهیه مطالب بهداشتی</div>'+
+      '<div>۳- همکاری با مراقب سلامت در برگزاری مراسم‌ها</div>'+
+      '<div>۴- مشارکت در کلاس‌های آموزشی بهداشت</div>'+
+    '</div>'+
     '<div class="amb-card-sign">'+
       '<div class="amb-sig">'+(profile.signatureImg?'<img src="'+profile.signatureImg+'" style="max-height:5mm;display:block;margin:0 auto 0.5mm">':'')+
         '<div class="amb-sig-line"></div><div class="amb-sig-label">'+esc(profile.signature||profile.assistant||'مراقب سلامت')+'</div>'+signatureBadgeMini()+'</div>'+
@@ -4016,6 +3984,9 @@ function ambassadorCardPrintCSS(){
     '.amb-card-info div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'+
     '.amb-card-text{flex:1;font-size:7.3pt;line-height:1.65;text-align:justify;padding:1.5mm 0;color:#333;overflow:hidden}'+
     '.amb-card-text b{color:#6a4f1f}'+
+    '.amb-card-duties{font-size:6.3pt;line-height:1.45;padding:1mm 0;border-top:0.3pt dashed #ccc;margin-top:1mm;flex-shrink:0;color:#333}'+
+    '.amb-duties-title{font-weight:800;color:#6a4f1f;margin-bottom:0.4mm;font-size:6.7pt}'+
+    '.amb-card-duties div{line-height:1.45}'+
     '.amb-card-sign{display:flex;gap:2.5mm;font-size:6.8pt;margin-top:1mm;padding-top:1mm;border-top:0.3pt dashed #ccc}'+
     '.amb-card-sign .amb-sig{flex:1;text-align:center}'+
     '.amb-card-sign .amb-sig-line{border-bottom:0.5pt solid #666;height:5mm;margin-bottom:0.8mm}'+
@@ -4043,6 +4014,60 @@ function printAmbassadorCard(id){
   var w=window.open('','_blank'); if(!w){ toast('لطفاً پاپ‌آپ را برای این سایت مجاز کنید'); return; }
   w.document.write(html); w.document.close();
   setTimeout(function(){ w.print(); },500);
+}
+
+/* ==================== چاپ انتخابی کارت سفیران ==================== */
+function openAmbassadorCardSelector(){
+  var list = getAmbassadorData().all;
+  if(!list.length){ toast('سفیری وجود ندارد'); return; }
+  ambassadorCardSelection.clear();
+  renderAmbassadorCardSelectorList();
+  openModal('ambassadorCardSelectModal');
+}
+function renderAmbassadorCardSelectorList(){
+  var el = $('#ambassadorCardSelectList'); if(!el) return;
+  var list = getAmbassadorData().all;
+  if(!list.length){ el.innerHTML = '<div class="empty">سفیری وجود ندارد.</div>'; return; }
+  var html = '';
+  list.forEach(function(s){
+    var role = s.ambassadorRole || 'member';
+    var roleLabel = ROLE_MAP[role];
+    var roleCls = role === 'head' ? 'b-head' : role === 'vice' ? 'b-vice' : 'b-member';
+    var checked = ambassadorCardSelection.has(s.id);
+    html += '<label style="display:flex;align-items:center;gap:8px;padding:6px 8px;cursor:pointer;border-radius:6px">';
+    html += '<input type="checkbox" class="amb-card-check" value="'+s.id+'" '+(checked?'checked':'')+' onchange="onAmbassadorCardToggle(\''+s.id+'\',this.checked)">';
+    html += '<span>'+esc(s.name)+' — '+esc(s.grade)+' <span class="badge '+roleCls+'" style="font-size:.66rem">'+roleLabel+'</span></span>';
+    html += '</label>';
+  });
+  el.innerHTML = html;
+}
+function onAmbassadorCardToggle(id, checked){
+  if(checked) ambassadorCardSelection.add(id);
+  else ambassadorCardSelection.delete(id);
+}
+function ambassadorCardSelectAll(v){
+  if(v){
+    getAmbassadorData().all.forEach(function(s){ ambassadorCardSelection.add(s.id); });
+  } else {
+    ambassadorCardSelection.clear();
+  }
+  renderAmbassadorCardSelectorList();
+}
+function printSelectedAmbassadorCards(){
+  if(!ambassadorCardSelection.size){ toast('هیچ سفیری انتخاب نشده'); return; }
+  var ids = Array.from(ambassadorCardSelection);
+  var students = ids.map(function(id){ return getStudent(id); }).filter(function(s){ return s && s.isAmbassador; });
+  if(!students.length){ toast('سفیری یافت نشد'); return; }
+  var cardsHtml = '';
+  students.forEach(function(s){ cardsHtml += buildAmbassadorCardHTML(s); });
+  var w = window.open('','_blank');
+  if(!w){ toast('لطفاً پاپ‌آپ را برای این سایت مجاز کنید'); return; }
+  var html = '<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="UTF-8"><title>کارت‌های سفیران سلامت</title><style>'+
+    ambassadorCardPrintCSS()+getPrintEconomyCSS()+'</style></head><body><div class="page-wrap"><div class="amb-cards-grid">'+cardsHtml+'</div></div></body></html>';
+  w.document.write(html); w.document.close();
+  setTimeout(function(){ w.print(); },500);
+  closeModal('ambassadorCardSelectModal');
+  toast('🖨️ '+fa(students.length)+' کارت آماده چاپ شد');
 }
 
 /* ==================== ثبت دانش‌آموز ==================== */
@@ -6438,7 +6463,6 @@ function attachAllHandlers(){
     });
   });
   var debouncedStd = debounce(renderStudents, 300);
-  var debouncedDash = debounce(renderDashboard, 300);
   ['search','filterLetter','filterBMI','filterStatus','filterRisk','filterBirthDate'].forEach(function(id){
     var el=document.getElementById(id); if(!el) return;
     if(id==='search') el.addEventListener('input', debouncedStd);
@@ -6446,15 +6470,7 @@ function attachAllHandlers(){
   });
   var fg=document.getElementById('filterGrade');
   if(fg) fg.addEventListener('change', renderStudents);
-  ['dashSearch','dashFilterLetter','dashFilterStatus','dashFilterRisk'].forEach(function(id){
-    var el=document.getElementById(id); if(!el) return;
-    if(id==='dashSearch') el.addEventListener('input', debouncedDash);
-    else el.addEventListener('change', renderDashboard);
-  });
-  var dfg=document.getElementById('dashFilterGrade');
-  if(dfg) dfg.addEventListener('change', renderDashboard);
   var ch1=$('#searchHistory'); if(ch1) ch1.addEventListener('change', renderStudents);
-  var ch2=$('#dashSearchHistory'); if(ch2) ch2.addEventListener('change', renderDashboard);
   document.addEventListener('input', function(e){
     if(e.target && e.target.id === 'manualAddSearch'){ _debouncedManualAddList(); }
   });
@@ -6512,4 +6528,4 @@ function attachAllHandlers(){
 })();
 </script>
 </body>
-                                                                    </html>
+                                                    </html>
