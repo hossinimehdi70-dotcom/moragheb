@@ -404,25 +404,28 @@ tr.dragging{opacity:.4}
 .inc-card .ic-status{display:inline-block;padding:0 1.5mm;border-radius:1mm;font-size:6.5pt;font-weight:700}
 .inc-card .ic-status.resolved{background:#e5f6ee;color:#1f5a38}
 .inc-card .ic-status.ongoing{background:#fdf3e2;color:#8a5a08}
-.amb-cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:3mm;padding:0;max-width:193mm;margin:0 auto}
-.amb-card{border:1.5pt solid #8a6a2c;border-radius:3mm;padding:2.5mm;height:70mm;box-sizing:border-box;display:flex;flex-direction:column;background:linear-gradient(180deg,#fffdf7 0%,#fdfbf4 100%);break-inside:avoid;page-break-inside:avoid;overflow:hidden;position:relative}
-.amb-card::before{content:"";position:absolute;top:0;right:0;width:100%;height:1.5mm;background:linear-gradient(90deg,#8a6a2c,#d4a017,#8a6a2c)}
-.amb-card-head{text-align:center;border-bottom:1pt solid #d4a017;padding:1mm 0 1.5mm;margin-bottom:2mm;padding-top:1mm}
-.amb-card-school{font-size:8pt;color:#6a4f1f;font-weight:700}
-.amb-card-title{font-size:11pt;font-weight:800;color:#8a6a2c;letter-spacing:.5px}
-.amb-card-subtitle{font-size:6.8pt;color:#999;letter-spacing:2px}
-.amb-card-body{display:flex;gap:2.5mm;align-items:center;margin-bottom:1.5mm;padding:1.5mm;background:rgba(212,160,23,.08);border-radius:2mm}
-.amb-card-avatar{width:13mm;height:13mm;border-radius:50%;background:linear-gradient(135deg,#8a6a2c,#d4a017);color:#fff;display:flex;align-items:center;justify-content:center;font-size:7mm;flex-shrink:0;box-shadow:0 1mm 2mm rgba(138,106,44,.3);border:0.5mm solid #fff}
-.amb-card-info{flex:1;font-size:8pt;line-height:1.6;min-width:0}
-.amb-card-info b{color:#6a4f1f}
-.amb-card-info div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.amb-card-text{flex:1;font-size:7.3pt;line-height:1.65;text-align:justify;padding:1.5mm 0;color:#333;overflow:hidden}
+.amb-cards-grid{display:grid;grid-template-columns:90mm 90mm;grid-auto-rows:75mm;gap:0;width:180mm;margin:0 auto}
+.amb-card{width:90mm;height:75mm;box-sizing:border-box;padding:2mm 2.5mm;border:0.4pt dashed #8a8a8a;display:flex;flex-direction:column;background:linear-gradient(180deg,#fffdf7 0%,#fdf6e3 100%);break-inside:avoid;page-break-inside:avoid;overflow:hidden;position:relative}
+.amb-card::before{content:"";position:absolute;top:0;right:0;left:0;height:1.2mm;background:linear-gradient(90deg,#8a6a2c,#d4a017,#8a6a2c)}
+.amb-card-head{text-align:center;padding:0.8mm 0 1mm;border-bottom:0.6pt solid #d4a017;margin-bottom:1mm;flex-shrink:0}
+.amb-card-bism{font-size:5pt;line-height:1;color:#8a6a2c;font-weight:700;letter-spacing:.3px}
+.amb-card-school{font-size:8pt;color:#5a3f10;font-weight:800;line-height:1.2}
+.amb-card-title{font-size:11pt;font-weight:900;color:#8a6a2c;letter-spacing:.6px;line-height:1.15;margin:.2mm 0}
+.amb-card-subtitle{font-size:5.5pt;color:#b8954a;letter-spacing:2px;font-weight:700;line-height:1.2}
+.amb-card-body{display:flex;gap:2mm;align-items:center;margin-bottom:1.2mm;padding:1mm 1.5mm;background:rgba(212,160,23,.08);border-radius:2mm;border:.3pt solid rgba(212,160,23,.3);flex-shrink:0}
+.amb-card-avatar{width:11mm;height:11mm;border-radius:50%;background:linear-gradient(135deg,#8a6a2c,#d4a017);color:#fff;display:flex;align-items:center;justify-content:center;font-size:6.5mm;flex-shrink:0;box-shadow:0 .6mm 1.5mm rgba(138,106,44,.3);border:.5mm solid #fff}
+.amb-card-info{flex:1;min-width:0;font-size:9pt;line-height:1.35}
+.amb-info-row{display:flex;gap:1mm;padding:.1mm 0}
+.amb-info-row .k{color:#6a4f1f;font-weight:700;min-width:13mm;font-size:9pt}
+.amb-info-row .v{color:#222;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:9pt}
+.amb-card-text{flex:1;font-size:9pt;line-height:1.55;text-align:justify;color:#333;padding:0.8mm 0;overflow:hidden}
 .amb-card-text b{color:#6a4f1f}
-.amb-card-sign{display:flex;gap:2.5mm;font-size:6.8pt;margin-top:1mm;padding-top:1mm;border-top:0.3pt dashed #ccc}
+.amb-card-sign{display:flex;gap:2.5mm;font-size:7pt;margin-top:auto;padding-top:0.8mm;border-top:.3pt dashed #bbb;flex-shrink:0}
 .amb-card-sign .amb-sig{flex:1;text-align:center}
-.amb-card-sign .amb-sig-line{border-bottom:0.5pt solid #666;height:5mm;margin-bottom:0.8mm}
-.amb-card-sign .amb-sig-box{border:0.5pt dashed #999;height:8mm;border-radius:1mm;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:6pt;margin-bottom:0.8mm}
-.amb-card-sign .amb-sig-label{color:#555;font-weight:700}
+.amb-card-sign .amb-sig img{max-height:4mm;max-width:100%;height:auto;display:block;margin:0 auto .3mm}
+.amb-card-sign .amb-sig-line{border-bottom:.5pt solid #666;height:4mm;margin-bottom:.5mm}
+.amb-card-sign .amb-sig-box{border:.5pt dashed #999;height:6mm;border-radius:1mm;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:5.5pt;margin-bottom:.5mm}
+.amb-card-sign .amb-sig-label{color:#555;font-weight:700;font-size:7pt}
 .ref-card{border:1.2pt solid #8a6a2c;border-radius:2.5mm;padding:2.5mm;min-height:138mm;box-sizing:border-box;display:flex;flex-direction:column;background:linear-gradient(180deg,#fffdf7 0%,#fdfbf4 100%);break-inside:avoid;page-break-inside:avoid;overflow:hidden;position:relative;color:#222}
 .ref-card::before{content:"";position:absolute;top:0;right:0;width:100%;height:1.2mm;background:linear-gradient(90deg,#8a6a2c,#d4a017,#8a6a2c)}
 .ref-card .rc-head{text-align:center;border-bottom:1pt solid #d4a017;padding:1mm 0 1.5mm;margin-bottom:1.5mm;padding-top:1mm;flex-shrink:0}
@@ -486,7 +489,7 @@ tr.dragging{opacity:.4}
       </div>
     </form>
     <div class="splash-links"><button type="button" onclick="resetProfile()">پاک کردن اطلاعات</button></div>
-    <div class="version-badge"><span class="dot"></span> نسخه ۱.۱.۴</div>
+    <div class="version-badge"><span class="dot"></span> نسخه ۱.۱.۵</div>
   </div>
 </div>
 
@@ -881,7 +884,7 @@ tr.dragging{opacity:.4}
       </div></div>
       <div class="settings-panel" id="set-about"><div class="card"><h2>درباره</h2>
         <div class="info-row"><span>نام</span><b>سامانه مراقب سلامت مدارس</b></div>
-        <div class="info-row"><span>نسخه</span><b>۱.۱.۴</b></div>
+        <div class="info-row"><span>نسخه</span><b>۱.۱.۵</b></div>
         <div class="info-row"><span>سازنده</span><b>مهدی حسینی</b></div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">
           <button class="btn ghost sm" onclick="openModal('helpModal')">راهنما</button>
@@ -1063,7 +1066,7 @@ tr.dragging{opacity:.4}
   <div class="help-section" id="help-9"><h4>👥 ۹. مسئولیت خودکار زیرگروه</h4>
     <p>وقتی روی مسئولیت یک زیرگروه مقداری ثبت می‌کنید، این مقدار به‌صورت خودکار برای همه اعضای آن زیرگروه نیز ثبت می‌شود. همچنین با اتصال عضو جدید به زیرگروه، مسئولیت زیرگروه به او ارث می‌رسد (در صورتی که عضو مسئولیت سفارشی نداشته باشد).</p>
   </div>
-  <div class="note-box" style="text-align:center;font-size:.75rem">خروجی از سامانه مراقبان سلامت — سازنده مهدی حسینی — نسخه ۱.۱.۴</div>
+  <div class="note-box" style="text-align:center;font-size:.75rem">خروجی از سامانه مراقبان سلامت — سازنده مهدی حسینی — نسخه ۱.۱.۵</div>
 </div></div>
 
 <div class="modal" id="aboutModal"><div class="modal-card" style="max-width:520px;padding:0;overflow:hidden">
@@ -1078,7 +1081,7 @@ tr.dragging{opacity:.4}
     </div>
     <div class="about-info-card">
       <div class="info-row"><span>📱 نام سامانه</span><b>سامانه مراقب سلامت مدارس</b></div>
-      <div class="info-row"><span>🏷️ نسخه</span><b>۱.۱.۴</b></div>
+      <div class="info-row"><span>🏷️ نسخه</span><b>۱.۱.۵</b></div>
       <div class="info-row"><span>👥 مخاطب</span><b>مراقبان سلامت مدارس ابتدایی</b></div>
       <div class="info-row"><span>🛠️ نوع کاربرد</span><b>رسمی — بهداشتی آموزشی</b></div>
       <div class="info-row"><span>💾 ذخیره‌سازی</span><b>محلی (بدون اینترنت)</b></div>
@@ -1221,9 +1224,18 @@ function confirmYesAction(){
 }
 
 /* ==================== نسخه ==================== */
-var APP_VERSION = '1.1.4';
+var APP_VERSION = '1.1.5';
 var SEEN_VERSION_KEY = 'moragheb_seen_version';
 var CHANGELOG = {
+  '1.1.5': [
+    '🎴 بازطراحی کامل کارت سفیر سلامت با طراحی مدرن و خوانا',
+    '📏 تنظیم ابعاد دقیق کارت‌ها: ۹×۷.۵ سانتی‌متر',
+    '🖨️ چیدمان ۲ ستون × ۳ ردیف در هر برگه A4',
+    '✂️ خطوط برش فرضی (خط‌چین) بین کارت‌ها',
+    '🔤 افزایش اندازه فونت‌ها برای خوانایی بهتر',
+    '➖ حذف نشانگر «امضا ثبت شده» از کارت‌ها',
+    '🔢 تغییر شماره نسخه به ۱.۱.۵'
+  ],
   '1.1.4': [
     '📊 ادغام گزارش‌های «آمار کلی» و «فرم وزارت» (اکنون با نام «آمار مدرسه») در گزارش جامع مدرسه',
     '💊 افزودن سابقه پزشکی و داروهای مصرفی دانش‌آموزان به گزارش جامع',
@@ -1632,20 +1644,8 @@ function birthSourceLabel(src){
   return '<span class="b-source" style="background:#f0f0f0;color:#888">❔ ندارد</span>';
 }
 
-/* ==================== نشانگر امضا ==================== */
+/* ==================== امضا (وضعیت) ==================== */
 function hasSignature(){ return !!(profile.signature || profile.signatureImg); }
-function signatureBadgeHTML(forPrint){
-  if(hasSignature()) return '<div class="'+(forPrint?'':'hint')+'" style="font-size:.7rem;color:#2e7a4f;font-weight:700;margin-top:3px">✓ امضا ثبت شده</div>';
-  return '<div class="'+(forPrint?'':'hint')+'" style="font-size:.7rem;color:#c98a1f;font-weight:700;margin-top:3px">⚠️ امضا ثبت نشده</div>';
-}
-function signatureBadgeMini(){
-  if(hasSignature()) return '<div style="font-size:5.5pt;color:#2e7a4f;font-weight:700;margin-top:0.3mm">✓ امضا ثبت شده</div>';
-  return '<div style="font-size:5.5pt;color:#c98a1f;font-weight:700;margin-top:0.3mm">⚠ ثبت نشده</div>';
-}
-function signatureBadgeForPrint(){
-  if(hasSignature()) return '<div style="font-size:10px;color:#2e7a4f;font-weight:700;margin-top:4px">✓ امضای مراقب سلامت ثبت شده است</div>';
-  return '<div style="font-size:10px;color:#c98a1f;font-weight:700;margin-top:4px">⚠️ امضای مراقب سلامت ثبت نشده است</div>';
-}
 
 /* ==================== جستجو ==================== */
 function normalizePersian(str){
@@ -3325,7 +3325,7 @@ function bulkPrintHealthCards(){
         '<div class="hc-row"><b>تاریخ:</b> '+faDate(last.ts)+'</div>'+
         '<div class="hc-row"><b>بینایی:</b> '+(esc(last.vision)||'—')+' • <b>شنوایی:</b> '+(esc(last.hearing)||'—')+' • <b>دندان:</b> '+(esc(last.dental)||'—')+'</div>':'')+
       '<div class="hc-sig"><div>'+(profile.signatureImg?'<img src="'+profile.signatureImg+'" style="max-height:40px">':'')+
-        '<div class="hc-sig-line"></div><div>'+esc(profile.signature||profile.assistant||'مراقب سلامت')+'</div>'+signatureBadgeForPrint()+'</div></div></div>';
+        '<div class="hc-sig-line"></div><div>'+esc(profile.signature||profile.assistant||'مراقب سلامت')+'</div></div></div></div>';
   });
   var w = window.open('','_blank');
   if(!w){ toast('لطفاً پاپ‌آپ را برای این سایت مجاز کنید'); return; }
@@ -3468,7 +3468,7 @@ function getPrintEconomyCSS(){
 
 /* ==================== Footer ==================== */
 function creatorFooterFa(){
-  return '<div style="margin-top:18px;padding-top:8px;border-top:1px solid #ddd;font-size:9.5px;color:#888;text-align:left;direction:rtl">خروجی از سامانه مراقبان سلامت — سازنده مهدی حسینی — نسخه ۱.۱.۴</div>';
+  return '<div style="margin-top:18px;padding-top:8px;border-top:1px solid #ddd;font-size:9.5px;color:#888;text-align:left;direction:rtl">خروجی از سامانه مراقبان سلامت — سازنده مهدی حسینی — نسخه ۱.۱.۵</div>';
 }
 
 function printTrainingsPDF(){
@@ -3514,7 +3514,7 @@ function printTrainingsPDF(){
   html += '<span>تاریخ چاپ: '+faDate(Date.now())+'</span></div>';
   html += itemsHtml;
   html += '<div class="footer">'+
-    '<div class="sig">'+(profile.signatureImg?'<img src="'+profile.signatureImg+'">':'')+'<div style="border-top:1px solid #666;padding-top:3px">'+esc(profile.signature||profile.assistant||'مراقب سلامت')+'</div>'+signatureBadgeForPrint()+'</div>'+
+    '<div class="sig">'+(profile.signatureImg?'<img src="'+profile.signatureImg+'">':'')+'<div style="border-top:1px solid #666;padding-top:3px">'+esc(profile.signature||profile.assistant||'مراقب سلامت')+'</div></div>'+
     '<div class="sig"><div class="stamp">محل مهر و امضای مدیر</div><div style="border-top:1px solid #666;padding-top:3px">'+esc(profile.manager||'مدیر مدرسه')+'</div></div>'+
   '</div>';
   html += creatorFooterFa();
@@ -3754,7 +3754,7 @@ function printSelectedAmbassadorCards(){
   var w = window.open('','_blank');
   if(!w){ toast('لطفاً پاپ‌آپ را برای این سایت مجاز کنید'); return; }
   var html = '<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="UTF-8"><title>کارت‌های سفیران انتخاب‌شده</title><style>'+
-    ambassadorCardPrintCSS()+getPrintEconomyCSS()+'</style></head><body><div class="page-wrap"><div class="amb-cards-grid">'+cardsHtml+'</div></div></body></html>';
+    ambassadorCardPrintCSS()+getPrintEconomyCSS()+'</style></head><body><div class="amb-cards-grid">'+cardsHtml+'</div></body></html>';
   w.document.write(html); w.document.close();
   setTimeout(function(){ w.print(); }, 500);
   toast('🖨️ ' + fa(list.length) + ' کارت آماده چاپ شد');
@@ -3868,7 +3868,7 @@ function renderAmbassadors(){
 function managerStampFooter(){
   return '<div style="margin-top:30px;padding-top:12px;border-top:1px dashed #999;display:flex;justify-content:space-between;flex-wrap:wrap;gap:20px">'+
     '<div style="text-align:center;min-width:180px">'+(profile.signatureImg?'<img src="'+profile.signatureImg+'" style="max-height:50px;display:block;margin:0 auto 4px">':'')+
-    '<div style="border-top:1px solid #666;padding-top:4px">'+esc(profile.signature||profile.assistant||'مراقب سلامت')+'</div>'+signatureBadgeForPrint()+'</div>'+
+    '<div style="border-top:1px solid #666;padding-top:4px">'+esc(profile.signature||profile.assistant||'مراقب سلامت')+'</div></div>'+
     '<div style="text-align:center;min-width:180px"><div style="border:1px dashed #999;min-height:80px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#888">محل مهر و امضای مدیر</div>'+
     '<div style="border-top:1px solid #666;padding-top:4px;margin-top:4px">'+esc(profile.manager||'مدیر مدرسه')+'</div></div>'+
     '<div style="text-align:center;min-width:180px;font-size:11px;color:#666">تاریخ: '+faDate(Date.now())+'</div>'+
@@ -3956,13 +3956,19 @@ function printAmbassadorsPDF(){
   w.document.write(html); w.document.close();
   setTimeout(function(){ w.print(); },400);
 }
+
+/* ==================== کارت سفیر سلامت — طراحی جدید ==================== */
 function buildAmbassadorCardHTML(s){
   var role = s.ambassadorRole||'member';
   var roleName = ROLE_MAP[role];
   var roleIcon = role==='head'?'🎯':role==='vice'?'🥈':'👤';
   var apptText = 'بدین‌وسیله <b>'+esc(s.name)+'</b> از پایه <b>'+esc(s.grade)+'</b> به‌عنوان <b>'+roleName+' سلامت</b> مدرسه منصوب می‌گردد.';
+  var respRow = s.responsibility
+    ? '<div class="amb-info-row"><span class="k">مسئولیت:</span><span class="v">'+esc(s.responsibility)+'</span></div>'
+    : '';
   return '<div class="amb-card">'+
     '<div class="amb-card-head">'+
+      '<div class="amb-card-bism">بسمه تعالی</div>'+
       '<div class="amb-card-school">'+esc(profile.school||'مدرسه')+'</div>'+
       '<div class="amb-card-title">کارت سفیر سلامت</div>'+
       '<div class="amb-card-subtitle">HEALTH AMBASSADOR</div>'+
@@ -3970,43 +3976,51 @@ function buildAmbassadorCardHTML(s){
     '<div class="amb-card-body">'+
       '<div class="amb-card-avatar">'+roleIcon+'</div>'+
       '<div class="amb-card-info">'+
-        '<div><b>نام:</b> '+esc(s.name)+'</div>'+
-        '<div><b>پایه:</b> '+esc(s.grade)+'</div>'+
-        '<div><b>نقش:</b> '+roleName+'</div>'+
-        (s.responsibility?'<div><b>مسئولیت:</b> '+esc(s.responsibility)+'</div>':'')+
+        '<div class="amb-info-row"><span class="k">نام:</span><span class="v">'+esc(s.name)+'</span></div>'+
+        '<div class="amb-info-row"><span class="k">پایه:</span><span class="v">'+esc(s.grade)+'</span></div>'+
+        '<div class="amb-info-row"><span class="k">نقش:</span><span class="v">'+roleName+'</span></div>'+
+        respRow+
       '</div>'+
     '</div>'+
     '<div class="amb-card-text">'+apptText+'</div>'+
     '<div class="amb-card-sign">'+
-      '<div class="amb-sig">'+(profile.signatureImg?'<img src="'+profile.signatureImg+'" style="max-height:5mm;display:block;margin:0 auto 0.5mm">':'')+
-        '<div class="amb-sig-line"></div><div class="amb-sig-label">'+esc(profile.signature||profile.assistant||'مراقب سلامت')+'</div>'+signatureBadgeMini()+'</div>'+
-      '<div class="amb-sig"><div class="amb-sig-box">مهر مدرسه</div><div class="amb-sig-label">'+esc(profile.manager||'مدیر مدرسه')+'</div></div>'+
+      '<div class="amb-sig">'+
+        (profile.signatureImg?'<img src="'+profile.signatureImg+'">':'')+
+        '<div class="amb-sig-line"></div>'+
+        '<div class="amb-sig-label">'+esc(profile.signature||profile.assistant||'مراقب سلامت')+'</div>'+
+      '</div>'+
+      '<div class="amb-sig">'+
+        '<div class="amb-sig-box">مهر مدرسه</div>'+
+        '<div class="amb-sig-label">'+esc(profile.manager||'مدیر مدرسه')+'</div>'+
+      '</div>'+
     '</div>'+
   '</div>';
 }
 function ambassadorCardPrintCSS(){
   return '@page{size:A4;margin:8mm}'+
     'body{font-family:Tahoma,sans-serif;direction:rtl;margin:0;background:#fff;color:#222}'+
-    '.page-wrap{padding:0}'+
-    '.amb-cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:3mm;padding:0;max-width:193mm;margin:0 auto}'+
-    '.amb-card{border:1.5pt solid #8a6a2c;border-radius:3mm;padding:2.5mm;height:70mm;box-sizing:border-box;display:flex;flex-direction:column;background:linear-gradient(180deg,#fffdf7 0%,#fdfbf4 100%);break-inside:avoid;page-break-inside:avoid;overflow:hidden;position:relative}'+
-    '.amb-card::before{content:"";position:absolute;top:0;right:0;width:100%;height:1.5mm;background:linear-gradient(90deg,#8a6a2c,#d4a017,#8a6a2c)}'+
-    '.amb-card-head{text-align:center;border-bottom:1pt solid #d4a017;padding:1mm 0 1.5mm;margin-bottom:2mm;padding-top:1mm}'+
-    '.amb-card-school{font-size:8pt;color:#6a4f1f;font-weight:700}'+
-    '.amb-card-title{font-size:11pt;font-weight:800;color:#8a6a2c;letter-spacing:.5px}'+
-    '.amb-card-subtitle{font-size:6.8pt;color:#999;letter-spacing:2px}'+
-    '.amb-card-body{display:flex;gap:2.5mm;align-items:center;margin-bottom:1.5mm;padding:1.5mm;background:rgba(212,160,23,.08);border-radius:2mm}'+
-    '.amb-card-avatar{width:13mm;height:13mm;border-radius:50%;background:linear-gradient(135deg,#8a6a2c,#d4a017);color:#fff;display:flex;align-items:center;justify-content:center;font-size:7mm;flex-shrink:0;box-shadow:0 1mm 2mm rgba(138,106,44,.3);border:0.5mm solid #fff}'+
-    '.amb-card-info{flex:1;font-size:8pt;line-height:1.6;min-width:0}'+
-    '.amb-card-info b{color:#6a4f1f}'+
-    '.amb-card-info div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'+
-    '.amb-card-text{flex:1;font-size:7.3pt;line-height:1.65;text-align:justify;padding:1.5mm 0;color:#333;overflow:hidden}'+
+    '.amb-cards-grid{display:grid;grid-template-columns:90mm 90mm;grid-auto-rows:75mm;gap:0;width:180mm;margin:0 auto}'+
+    '.amb-card{width:90mm;height:75mm;box-sizing:border-box;padding:2mm 2.5mm;border:0.4pt dashed #8a8a8a;display:flex;flex-direction:column;background:linear-gradient(180deg,#fffdf7 0%,#fdf6e3 100%);break-inside:avoid;page-break-inside:avoid;overflow:hidden;position:relative}'+
+    '.amb-card::before{content:"";position:absolute;top:0;right:0;left:0;height:1.2mm;background:linear-gradient(90deg,#8a6a2c,#d4a017,#8a6a2c)}'+
+    '.amb-card-head{text-align:center;padding:0.8mm 0 1mm;border-bottom:0.6pt solid #d4a017;margin-bottom:1mm;flex-shrink:0}'+
+    '.amb-card-bism{font-size:5pt;line-height:1;color:#8a6a2c;font-weight:700;letter-spacing:.3px}'+
+    '.amb-card-school{font-size:8pt;color:#5a3f10;font-weight:800;line-height:1.2}'+
+    '.amb-card-title{font-size:11pt;font-weight:900;color:#8a6a2c;letter-spacing:.6px;line-height:1.15;margin:.2mm 0}'+
+    '.amb-card-subtitle{font-size:5.5pt;color:#b8954a;letter-spacing:2px;font-weight:700;line-height:1.2}'+
+    '.amb-card-body{display:flex;gap:2mm;align-items:center;margin-bottom:1.2mm;padding:1mm 1.5mm;background:rgba(212,160,23,.08);border-radius:2mm;border:.3pt solid rgba(212,160,23,.3);flex-shrink:0}'+
+    '.amb-card-avatar{width:11mm;height:11mm;border-radius:50%;background:linear-gradient(135deg,#8a6a2c,#d4a017);color:#fff;display:flex;align-items:center;justify-content:center;font-size:6.5mm;flex-shrink:0;box-shadow:0 .6mm 1.5mm rgba(138,106,44,.3);border:.5mm solid #fff}'+
+    '.amb-card-info{flex:1;min-width:0;font-size:9pt;line-height:1.35}'+
+    '.amb-info-row{display:flex;gap:1mm;padding:.1mm 0}'+
+    '.amb-info-row .k{color:#6a4f1f;font-weight:700;min-width:13mm;font-size:9pt}'+
+    '.amb-info-row .v{color:#222;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:9pt}'+
+    '.amb-card-text{flex:1;font-size:9pt;line-height:1.55;text-align:justify;color:#333;padding:0.8mm 0;overflow:hidden}'+
     '.amb-card-text b{color:#6a4f1f}'+
-    '.amb-card-sign{display:flex;gap:2.5mm;font-size:6.8pt;margin-top:1mm;padding-top:1mm;border-top:0.3pt dashed #ccc}'+
+    '.amb-card-sign{display:flex;gap:2.5mm;font-size:7pt;margin-top:auto;padding-top:0.8mm;border-top:.3pt dashed #bbb;flex-shrink:0}'+
     '.amb-card-sign .amb-sig{flex:1;text-align:center}'+
-    '.amb-card-sign .amb-sig-line{border-bottom:0.5pt solid #666;height:5mm;margin-bottom:0.8mm}'+
-    '.amb-card-sign .amb-sig-box{border:0.5pt dashed #999;height:8mm;border-radius:1mm;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:6pt;margin-bottom:0.8mm}'+
-    '.amb-card-sign .amb-sig-label{color:#555;font-weight:700}'+
+    '.amb-card-sign .amb-sig img{max-height:4mm;max-width:100%;height:auto;display:block;margin:0 auto .3mm}'+
+    '.amb-card-sign .amb-sig-line{border-bottom:.5pt solid #666;height:4mm;margin-bottom:.5mm}'+
+    '.amb-card-sign .amb-sig-box{border:.5pt dashed #999;height:6mm;border-radius:1mm;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:5.5pt;margin-bottom:.5mm}'+
+    '.amb-card-sign .amb-sig-label{color:#555;font-weight:700;font-size:7pt}'+
     '@media print{.amb-card{break-inside:avoid;page-break-inside:avoid}}';
 }
 function printAmbassadorCards(){
@@ -4015,7 +4029,7 @@ function printAmbassadorCards(){
   var cardsHtml = '';
   list.forEach(function(s){ cardsHtml += buildAmbassadorCardHTML(s); });
   var html = '<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="UTF-8"><title>کارت‌های سفیران سلامت</title><style>'+
-    ambassadorCardPrintCSS()+getPrintEconomyCSS()+'</style></head><body><div class="page-wrap"><div class="amb-cards-grid">'+cardsHtml+'</div></div></body></html>';
+    ambassadorCardPrintCSS()+getPrintEconomyCSS()+'</style></head><body><div class="amb-cards-grid">'+cardsHtml+'</div></body></html>';
   var w=window.open('','_blank'); if(!w){ toast('لطفاً پاپ‌آپ را برای این سایت مجاز کنید'); return; }
   w.document.write(html); w.document.close();
   setTimeout(function(){ w.print(); },500);
@@ -4025,7 +4039,9 @@ function printAmbassadorCard(id){
   ensureStudentFields(s);
   if(!s.isAmbassador){ toast('این دانش‌آموز سفیر نیست'); return; }
   var html = '<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="UTF-8"><title>کارت سفیر</title><style>'+
-    ambassadorCardPrintCSS()+'@media print{.amb-cards-grid{grid-template-columns:1fr 1fr}}'+getPrintEconomyCSS()+'</style></head><body><div class="page-wrap"><div class="amb-cards-grid">'+buildAmbassadorCardHTML(s)+'</div></div></body></html>';
+    ambassadorCardPrintCSS()+
+    '.amb-cards-grid{grid-template-columns:90mm;width:90mm;margin:0 auto;justify-content:center}'+
+    getPrintEconomyCSS()+'</style></head><body><div class="amb-cards-grid">'+buildAmbassadorCardHTML(s)+'</div></body></html>';
   var w=window.open('','_blank'); if(!w){ toast('لطفاً پاپ‌آپ را برای این سایت مجاز کنید'); return; }
   w.document.write(html); w.document.close();
   setTimeout(function(){ w.print(); },500);
@@ -4618,7 +4634,6 @@ function buildAndSaveReferral(sid){
   html+='<p style="margin-top:10px">بدین‌وسیله دانش‌آموز فوق نیازمند بررسی بیشتر در زمینه <b>'+esc(type)+'</b> تشخیص داده شده است.</p>';
   if(notes) html+='<p><b>توضیحات:</b> '+esc(notes)+'</p>';
   html+='<p style="margin-top:14px">مراقب سلامت: '+(profile.signatureImg?'<img src="'+profile.signatureImg+'" style="max-height:50px;vertical-align:middle">':'')+esc(profile.signature||profile.assistant||'')+'</p>';
-  html+=signatureBadgeHTML(true);
   lastReferralHTMLByStudent[sid]=html;
   renderProfile(sid);
   var rp=$('#refPreview'); if(rp) rp.innerHTML=html;
@@ -5582,7 +5597,7 @@ function buildReferralCardHTML(s, typeKey){
       '<div class="rc-sig-item">'+
         (profile.signatureImg?'<img src="'+profile.signatureImg+'" style="max-height:5mm;display:block;margin:0 auto 0.5mm">':'')+
         '<div class="rc-sig-line"></div>'+
-        '<div class="rc-sig-label">'+esc(profile.signature||profile.assistant||'مراقب سلامت')+'</div>'+signatureBadgeMini()+
+        '<div class="rc-sig-label">'+esc(profile.signature||profile.assistant||'مراقب سلامت')+'</div>'+
       '</div>'+
       '<div class="rc-sig-item"><div class="rc-sig-box">مهر مدرسه</div><div class="rc-sig-label">'+esc(profile.manager||'مدیر مدرسه')+'</div></div>'+
     '</div>'+
@@ -6489,4 +6504,4 @@ function attachAllHandlers(){
 })();
 </script>
 </body>
-                                                   </html>
+  </html>
