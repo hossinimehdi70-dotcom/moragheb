@@ -404,7 +404,7 @@ tr.dragging{opacity:.4}
 .inc-card .ic-status{display:inline-block;padding:0 1.5mm;border-radius:1mm;font-size:6.5pt;font-weight:700}
 .inc-card .ic-status.resolved{background:#e5f6ee;color:#1f5a38}
 .inc-card .ic-status.ongoing{background:#fdf3e2;color:#8a5a08}
-.amb-cards-grid{display:grid;grid-template-columns:90mm 90mm;grid-auto-rows:75mm;gap:0;width:180mm;margin:0 auto}
+.amb-cards-grid{display:grid;grid-template-columns:90mm 90mm;grid-auto-rows:75mm;gap:4mm;width:184mm;margin:0 auto}
 .amb-card{width:90mm;height:75mm;box-sizing:border-box;padding:2mm 2.5mm;border:0.4pt dashed #8a8a8a;display:flex;flex-direction:column;background:linear-gradient(180deg,#fffdf7 0%,#fdf6e3 100%);break-inside:avoid;page-break-inside:avoid;overflow:hidden;position:relative}
 .amb-card::before{content:"";position:absolute;top:0;right:0;left:0;height:1.2mm;background:linear-gradient(90deg,#8a6a2c,#d4a017,#8a6a2c)}
 .amb-card-head{text-align:center;padding:0.8mm 0 1mm;border-bottom:0.6pt solid #d4a017;margin-bottom:1mm;flex-shrink:0}
@@ -3999,7 +3999,7 @@ function buildAmbassadorCardHTML(s){
 function ambassadorCardPrintCSS(){
   return '@page{size:A4;margin:8mm}'+
     'body{font-family:Tahoma,sans-serif;direction:rtl;margin:0;background:#fff;color:#222}'+
-    '.amb-cards-grid{display:grid;grid-template-columns:90mm 90mm;grid-auto-rows:75mm;gap:0;width:180mm;margin:0 auto}'+
+    '.amb-cards-grid{display:grid;grid-template-columns:90mm 90mm;grid-auto-rows:75mm;gap:4mm;width:184mm;margin:0 auto}'+
     '.amb-card{width:90mm;height:75mm;box-sizing:border-box;padding:2mm 2.5mm;border:0.4pt dashed #8a8a8a;display:flex;flex-direction:column;background:linear-gradient(180deg,#fffdf7 0%,#fdf6e3 100%);break-inside:avoid;page-break-inside:avoid;overflow:hidden;position:relative}'+
     '.amb-card::before{content:"";position:absolute;top:0;right:0;left:0;height:1.2mm;background:linear-gradient(90deg,#8a6a2c,#d4a017,#8a6a2c)}'+
     '.amb-card-head{text-align:center;padding:0.8mm 0 1mm;border-bottom:0.6pt solid #d4a017;margin-bottom:1mm;flex-shrink:0}'+
@@ -6504,4 +6504,4 @@ function attachAllHandlers(){
 })();
 </script>
 </body>
-  </html>
+            </html>
