@@ -379,21 +379,21 @@ tr.dragging{opacity:.4}
 .bulk-toolbar .btn{background:rgba(255,255,255,.2);color:#fff;border:0}
 .bulk-toolbar .btn:hover{background:rgba(255,255,255,.35)}
 .student-checkbox{transform:scale(1.2);cursor:pointer;accent-color:var(--primary)}
-.consent-cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:2.5mm;padding:0;max-width:100%;margin:0 auto}
-.consent-card{border:0.6pt solid #999;border-radius:1.5mm;padding:2mm 2.5mm;break-inside:avoid;page-break-inside:avoid;height:68mm;box-sizing:border-box;display:flex;flex-direction:column;font-size:7pt;line-height:1.4;background:#fff;color:#222;overflow:hidden}
-.consent-card .cc-head{text-align:center;border-bottom:0.6pt solid #8a6a2c;padding-bottom:0.8mm;margin-bottom:1mm;flex-shrink:0}
-.consent-card .cc-bism{font-size:6.5pt;color:#6a4f1f;font-weight:700}
-.consent-card .cc-title{font-weight:800;font-size:8.5pt;color:#6a4f1f;line-height:1.15}
-.consent-card .cc-school{font-size:6.5pt;color:#666;margin-top:0.3mm}
-.consent-card .cc-body{flex:1;overflow:hidden}
-.consent-card .cc-row{margin-bottom:0.4mm;font-size:6.8pt}
+.consent-cards-grid{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:87mm;gap:10mm;padding:0;max-width:196mm;margin:0 auto}
+.consent-card{border:0.6pt solid #999;border-radius:1.5mm;padding:3mm 3.5mm;break-inside:avoid;page-break-inside:avoid;height:87mm;box-sizing:border-box;display:flex;flex-direction:column;font-size:8.5pt;line-height:1.5;background:#fff;color:#222;overflow:hidden}
+.consent-card .cc-head{text-align:center;border-bottom:0.6pt solid #8a6a2c;padding-bottom:1.2mm;margin-bottom:1.5mm;flex-shrink:0}
+.consent-card .cc-bism{font-size:8pt;color:#6a4f1f;font-weight:700;line-height:1.2}
+.consent-card .cc-title{font-weight:800;font-size:11pt;color:#6a4f1f;line-height:1.2;margin:.4mm 0}
+.consent-card .cc-school{font-size:8pt;color:#666;line-height:1.2;margin-top:0.4mm}
+.consent-card .cc-body{flex:1;overflow:auto}
+.consent-card .cc-row{margin-bottom:0.8mm;font-size:8.5pt;line-height:1.5}
 .consent-card .cc-row b{color:#6a4f1f}
-.consent-card .cc-text{margin-top:0.8mm;padding-top:0.8mm;border-top:0.3pt dashed #ccc;font-size:6.5pt;line-height:1.45;text-align:justify;color:#333;max-height:22mm;overflow:hidden}
-.consent-card .cc-desc{margin-top:0.5mm;padding:0.6mm 1mm;background:#fdfbf4;border-radius:1mm;font-size:6.5pt;color:#444;border-right:2pt solid #d4a017}
-.consent-card .cc-sign{display:flex;gap:2mm;margin-top:0.8mm;padding-top:0.8mm;border-top:0.3pt dashed #ccc;font-size:6.2pt;flex-shrink:0}
+.consent-card .cc-text{margin-top:1.2mm;padding-top:1.2mm;border-top:0.3pt dashed #ccc;font-size:8pt;line-height:1.6;text-align:justify;color:#333;overflow:hidden}
+.consent-card .cc-desc{margin-top:0.8mm;padding:1mm 1.8mm;background:#fdfbf4;border-radius:1mm;font-size:8pt;color:#444;border-right:2pt solid #d4a017;line-height:1.5}
+.consent-card .cc-sign{display:flex;gap:3mm;margin-top:1.2mm;padding-top:1.2mm;border-top:0.3pt dashed #ccc;font-size:7.5pt;flex-shrink:0}
 .consent-card .cc-sig-item{flex:1;text-align:center}
-.consent-card .cc-sig-line{border-bottom:0.5pt solid #666;height:5mm;margin-top:0.8mm}
-.consent-card .cc-sig-box{border:0.5pt dashed #999;height:6.5mm;margin-top:0.8mm;border-radius:1mm;display:flex;align-items:center;justify-content:center;color:#999;font-size:5.5pt}
+.consent-card .cc-sig-line{border-bottom:0.5pt solid #666;height:7mm;margin-top:1mm}
+.consent-card .cc-sig-box{border:0.5pt dashed #999;height:9mm;margin-top:1mm;border-radius:1mm;display:flex;align-items:center;justify-content:center;color:#999;font-size:7pt}
 .inc-cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:2.5mm;padding:0}
 .inc-card{border:0.5pt solid #ccc;border-right:2pt solid #c98a1f;border-radius:1.5mm;padding:2mm 2.5mm;break-inside:avoid;page-break-inside:avoid;font-size:7.5pt;line-height:1.45;background:#fffdf7;color:#222}
 .inc-card .ic-head{display:flex;justify-content:space-between;align-items:center;border-bottom:0.3pt dashed #ccc;padding-bottom:0.8mm;margin-bottom:1mm;gap:2mm}
@@ -1037,7 +1037,7 @@ tr.dragging{opacity:.4}
   <div class="help-section" id="help-2"><h4>📈 ۲. گزارش‌ها و رضایت‌نامه</h4>
     <p>گزارش‌ها شامل گزارش جامع مدرسه، سابقه پزشکی و داروها، پرخطرها، بیماری واگیر، حوادث، الگو، رضایت‌نامه، نامه ارجاع گروهی و لیست‌های تفصیلی است.</p>
     <p><b>گزارش جامع:</b> شامل آمار مدرسه، آمار کلی، سابقه پزشکی، آموزش‌ها و حوادث. می‌توانید با چک‌باکس‌های بالای گزارش، انتخاب کنید کدام بخش‌ها در خروجی چاپ حاضر باشند و با دکمه‌های ↑↓ ترتیب آن‌ها را تغییر دهید. انتخاب‌ها و ترتیب در حافظه ذخیره می‌شود.</p>
-    <p><b>رضایت‌نامه:</b> ۸ فرم در یک برگه A4. چاپ در سه حالت: همه، بر اساس پایه، یا انتخاب مجزا. در صورت تمایل می‌توانید نام دانش‌آموز را روی فرم نمایش دهید یا برای حفظ محرمانگی، فرم را بدون نام چاپ کنید.</p>
+    <p><b>رضایت‌نامه:</b> ۶ فرم در یک برگه A4 با فاصله ۱ سانتی‌متر بین فرم‌ها. چاپ در سه حالت: همه، بر اساس پایه، یا انتخاب مجزا. با تیک ✔️ می‌توانید نام و پایه دانش‌آموز را روی فرم نمایش دهید یا برای حفظ محرمانگی، فرم را بدون نام و پایه چاپ کنید.</p>
   </div>
   <div class="help-section" id="help-3"><h4>👤 ۳. پروفایل و WHO</h4>
     <p>در صفحه پروفایل کامل دانش‌آموز، سابقه پزشکی در ابتدای بخش «💊 شرح‌حال و داروها» قابل ویرایش است. نمودار WHO با استفاده از تاریخ تولد و جنسیت. پس از بارگذاری جدول WHO در تنظیمات → WHO، Z-score و دسته‌بندی رشد به‌صورت خودکار محاسبه و نمایش داده می‌شود.</p>
@@ -1887,6 +1887,7 @@ var selectedAmbassadorIds = new Set();
 var lastDeletedStudent = null;
 var ambassadorReportSort = { key:'grade', dir:1 };
 var _pendingImportData = null;
+var consentPreviewReady = false;
 
 var overviewSections = {
   ministry: true,
@@ -4843,7 +4844,7 @@ var REPORT_CATS = [
   { key:'disease', icon:'💊', title:'بیماری واگیر', desc:'ثبت و پیگیری' },
   { key:'incidentsGeneral', icon:'📋', title:'گزارش کلی حوادث', desc:'همه حوادث (چند در یک برگه)' },
   { key:'pattern', icon:'⚠️', title:'تشخیص الگو', desc:'هشدار حوادث مشابه' },
-  { key:'consent', icon:'📝', title:'رضایت‌نامه گروهی', desc:'۸ در یک برگه A4' },
+  { key:'consent', icon:'📝', title:'رضایت‌نامه گروهی', desc:'۶ در یک برگه A4' },
   { key:'groupReferral', icon:'📄', title:'نامه ارجاع گروهی', desc:'چاپ ۴ نامه در یک A4' },
   { key:'noscreen', icon:'⏰', title:'بدون غربالگری', desc:'غربال نشده' },
   { key:'nobirth', icon:'📅', title:'بدون تاریخ تولد', desc:'نیازمند تکمیل داده' },
@@ -5218,9 +5219,9 @@ function buildConsentFormHTML(){
   html+='<div class="field"><label>متن رضایت‌نامه</label><textarea id="consentBody" style="min-height:90px">اینجانب والدین گرامی، با امضای این فرم رضایت خود را نسبت به مشارکت فرزندم در موضوع فوق اعلام می‌دارم.</textarea></div>';
   html+='<div class="grid2"><div class="field"><label>تاریخ (اختیاری)</label><input class="input" id="consentDate"></div>';
   html+='<div class="field"><label>ساعت (اختیاری)</label><input class="input" id="consentTime"></div></div>';
-  html+='<div class="field"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:400;color:var(--text)"><input type="checkbox" id="consentShowName" style="width:auto" checked> <span>نمایش نام دانش‌آموز روی فرم رضایت‌نامه</span></label>';
-  html+='<p class="hint" style="margin-top:4px">در صورت غیرفعال بودن، فرم‌ها بدون نام دانش‌آموز و برای حفظ محرمانگی چاپ می‌شوند.</p></div>';
-  html+='<div class="alert-info">📄 چیدمان: ۸ رضایت‌نامه در هر برگه A4 (۲ ستون × ۴ ردیف)</div>';
+  html+='<div class="field"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:400;color:var(--text)"><input type="checkbox" id="consentShowName" style="width:auto" checked> <span>✔️ نمایش نام و پایه دانش‌آموز روی فرم رضایت‌نامه</span></label>';
+  html+='<p class="hint" style="margin-top:4px">در صورت غیرفعال بودن، فرم‌ها بدون نام و پایه دانش‌آموز و برای حفظ محرمانگی چاپ می‌شوند.</p></div>';
+  html+='<div class="alert-info">📄 چیدمان: ۶ رضایت‌نامه در هر برگه A4 (۲ ستون × ۳ ردیف) با فاصله ۱ سانتی‌متر بین فرم‌ها</div>';
   html+='<div class="field"><label>حالت چاپ</label><select id="consentScope" onchange="onConsentScopeChange()">'+
     '<option value="all">چاپ همه دانش‌آموزان</option>'+
     '<option value="grade">چاپ بر اساس یک پایه</option>'+
@@ -5265,7 +5266,7 @@ function getConsentStudents(scope){
 function buildConsentCardHTML(s, subj, desc, body, dt, tm, showName){
   var studentLine = showName
     ? '<div class="cc-row"><b>دانش‌آموز:</b> '+esc(s.name)+' — <b>پایه:</b> '+esc(s.grade)+'</div>'
-    : '<div class="cc-row"><b>پایه:</b> '+esc(s.grade)+'</div>';
+    : '';
   return '<div class="consent-card">'+
     '<div class="cc-head">'+
       '<div class="cc-bism">بسمه تعالی</div>'+
@@ -5290,7 +5291,6 @@ function buildConsentHTML(subj, desc, body, dt, tm, students, showName){
   students.forEach(function(s){ cells += buildConsentCardHTML(s, subj, desc, body, dt, tm, showName); });
   return '<div class="consent-cards-grid">'+cells+'</div>';
 }
-var consentPreviewReady=false;
 function previewConsent(){
   var subj=$('#consentSubject').value.trim();
   var desc=$('#consentDescription').value.trim();
@@ -5304,26 +5304,37 @@ function previewConsent(){
   if(!students.length){ toast('دانش‌آموزی یافت نشد'); consentPreviewReady=false; return; }
   $('#consentPreview').innerHTML=buildConsentHTML(subj,desc,body,dt,tm,students,showName);
   consentPreviewReady=true;
-  toast(fa(students.length)+' رضایت‌نامه آماده شد — ۸ در هر A4');
+  var count = students.length;
+  setTimeout(function(){
+    var overflows = 0;
+    $$('#consentPreview .consent-card .cc-body').forEach(function(el){
+      if(el.scrollHeight > el.clientHeight + 1) overflows++;
+    });
+    if(overflows > 0){
+      toast('⚠️ ' + fa(overflows) + ' از ' + fa(count) + ' فرم دارای متن طولانی — در چاپ ممکن است بخشی از متن بریده شود');
+    } else {
+      toast(fa(count)+' رضایت‌نامه آماده شد — ۶ در هر A4');
+    }
+  }, 80);
 }
 function consentCardPrintCSS(){
-  return '@page{size:A4;margin:8mm}'+
+  return '@page{size:A4;margin:7mm}'+
     'body{font-family:Tahoma,sans-serif;direction:rtl;margin:0;background:#fff;color:#222}'+
-    '.consent-cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:2.5mm;padding:0;max-width:100%;margin:0 auto}'+
-    '.consent-card{border:0.6pt solid #999;border-radius:1.5mm;padding:2mm 2.5mm;break-inside:avoid;page-break-inside:avoid;height:68mm;box-sizing:border-box;display:flex;flex-direction:column;font-size:7pt;line-height:1.4;background:#fff;color:#222;overflow:hidden}'+
-    '.consent-card .cc-head{text-align:center;border-bottom:0.6pt solid #8a6a2c;padding-bottom:0.8mm;margin-bottom:1mm;flex-shrink:0}'+
-    '.consent-card .cc-bism{font-size:6.5pt;color:#6a4f1f;font-weight:700}'+
-    '.consent-card .cc-title{font-weight:800;font-size:8.5pt;color:#6a4f1f;line-height:1.15}'+
-    '.consent-card .cc-school{font-size:6.5pt;color:#666;margin-top:0.3mm}'+
+    '.consent-cards-grid{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:87mm;gap:10mm;padding:0;max-width:100%;margin:0 auto}'+
+    '.consent-card{border:0.6pt solid #999;border-radius:1.5mm;padding:3mm 3.5mm;break-inside:avoid;page-break-inside:avoid;height:87mm;box-sizing:border-box;display:flex;flex-direction:column;font-size:8.5pt;line-height:1.5;background:#fff;color:#222;overflow:hidden}'+
+    '.consent-card .cc-head{text-align:center;border-bottom:0.6pt solid #8a6a2c;padding-bottom:1.2mm;margin-bottom:1.5mm;flex-shrink:0}'+
+    '.consent-card .cc-bism{font-size:8pt;color:#6a4f1f;font-weight:700;line-height:1.2}'+
+    '.consent-card .cc-title{font-weight:800;font-size:11pt;color:#6a4f1f;line-height:1.2;margin:.4mm 0}'+
+    '.consent-card .cc-school{font-size:8pt;color:#666;line-height:1.2;margin-top:0.4mm}'+
     '.consent-card .cc-body{flex:1;overflow:hidden}'+
-    '.consent-card .cc-row{margin-bottom:0.4mm;font-size:6.8pt}'+
+    '.consent-card .cc-row{margin-bottom:0.8mm;font-size:8.5pt;line-height:1.5}'+
     '.consent-card .cc-row b{color:#6a4f1f}'+
-    '.consent-card .cc-text{margin-top:0.8mm;padding-top:0.8mm;border-top:0.3pt dashed #ccc;font-size:6.5pt;line-height:1.45;text-align:justify;color:#333;max-height:22mm;overflow:hidden}'+
-    '.consent-card .cc-desc{margin-top:0.5mm;padding:0.6mm 1mm;background:#fdfbf4;border-radius:1mm;font-size:6.5pt;color:#444;border-right:2pt solid #d4a017}'+
-    '.consent-card .cc-sign{display:flex;gap:2mm;margin-top:0.8mm;padding-top:0.8mm;border-top:0.3pt dashed #ccc;font-size:6.2pt;flex-shrink:0}'+
+    '.consent-card .cc-text{margin-top:1.2mm;padding-top:1.2mm;border-top:0.3pt dashed #ccc;font-size:8pt;line-height:1.6;text-align:justify;color:#333;overflow:hidden}'+
+    '.consent-card .cc-desc{margin-top:0.8mm;padding:1mm 1.8mm;background:#fdfbf4;border-radius:1mm;font-size:8pt;color:#444;border-right:2pt solid #d4a017;line-height:1.5}'+
+    '.consent-card .cc-sign{display:flex;gap:3mm;margin-top:1.2mm;padding-top:1.2mm;border-top:0.3pt dashed #ccc;font-size:7.5pt;flex-shrink:0}'+
     '.consent-card .cc-sig-item{flex:1;text-align:center}'+
-    '.consent-card .cc-sig-line{border-bottom:0.5pt solid #666;height:5mm;margin-top:0.8mm}'+
-    '.consent-card .cc-sig-box{border:0.5pt dashed #999;height:6.5mm;margin-top:0.8mm;border-radius:1mm;display:flex;align-items:center;justify-content:center;color:#999;font-size:5.5pt}'+
+    '.consent-card .cc-sig-line{border-bottom:0.5pt solid #666;height:7mm;margin-top:1mm}'+
+    '.consent-card .cc-sig-box{border:0.5pt dashed #999;height:9mm;margin-top:1mm;border-radius:1mm;display:flex;align-items:center;justify-content:center;color:#999;font-size:7pt}'+
     '@media print{.consent-card{break-inside:avoid;page-break-inside:avoid}}';
 }
 function printConsent(){
@@ -5703,24 +5714,31 @@ function buildReportIncidentsCSS(){
     '.inc-card .ic-status.resolved{background:#e5f6ee;color:#1f5a38}.inc-card .ic-status.ongoing{background:#fdf3e2;color:#8a5a08}';
 }
 function buildReportConsentCSS(){
-  return '.consent-cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:2.5mm}'+
-    '.consent-card{border:0.6pt solid #999;border-radius:1.5mm;padding:2mm 2.5mm;height:68mm;box-sizing:border-box;display:flex;flex-direction:column;font-size:7pt;line-height:1.4;background:#fff;break-inside:avoid;page-break-inside:avoid;overflow:hidden}'+
-    '.consent-card .cc-head{text-align:center;border-bottom:0.6pt solid #8a6a2c;padding-bottom:0.8mm;margin-bottom:1mm;flex-shrink:0}'+
-    '.consent-card .cc-title{font-weight:800;font-size:8.5pt;color:#6a4f1f}'+
-    '.consent-card .cc-school{font-size:6.5pt;color:#666}'+
-    '.consent-card .cc-bism{font-size:6.5pt;color:#6a4f1f;font-weight:700}'+
-    '.consent-card .cc-body{flex:1;overflow:hidden}.consent-card .cc-row b{color:#6a4f1f}.consent-card .cc-row{margin-bottom:0.4mm;font-size:6.8pt}'+
-    '.consent-card .cc-text{margin-top:0.8mm;padding-top:0.8mm;border-top:0.3pt dashed #ccc;font-size:6.5pt;line-height:1.45;max-height:22mm;overflow:hidden}'+
-    '.consent-card .cc-desc{margin-top:0.5mm;padding:0.6mm 1mm;background:#fdfbf4;border-radius:1mm;font-size:6.5pt;color:#444;border-right:2pt solid #d4a017}'+
-    '.consent-card .cc-sign{display:flex;gap:2mm;margin-top:0.8mm;padding-top:0.8mm;border-top:0.3pt dashed #ccc;font-size:6.2pt;flex-shrink:0}'+
-    '.consent-card .cc-sig-item{flex:1;text-align:center}.consent-card .cc-sig-line{border-bottom:0.5pt solid #666;height:5mm;margin-top:0.8mm}'+
-    '.consent-card .cc-sig-box{border:0.5pt dashed #999;height:6.5mm;margin-top:0.8mm;border-radius:1mm;display:flex;align-items:center;justify-content:center;color:#999;font-size:5.5pt}';
+  return '@page{size:A4;margin:7mm}'+
+    '.consent-cards-grid{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:87mm;gap:10mm}'+
+    '.consent-card{border:0.6pt solid #999;border-radius:1.5mm;padding:3mm 3.5mm;height:87mm;box-sizing:border-box;display:flex;flex-direction:column;font-size:8.5pt;line-height:1.5;background:#fff;break-inside:avoid;page-break-inside:avoid;overflow:hidden}'+
+    '.consent-card .cc-head{text-align:center;border-bottom:0.6pt solid #8a6a2c;padding-bottom:1.2mm;margin-bottom:1.5mm;flex-shrink:0}'+
+    '.consent-card .cc-bism{font-size:8pt;color:#6a4f1f;font-weight:700;line-height:1.2}'+
+    '.consent-card .cc-title{font-weight:800;font-size:11pt;color:#6a4f1f;line-height:1.2;margin:.4mm 0}'+
+    '.consent-card .cc-school{font-size:8pt;color:#666;line-height:1.2;margin-top:0.4mm}'+
+    '.consent-card .cc-body{flex:1;overflow:hidden}.consent-card .cc-row b{color:#6a4f1f}.consent-card .cc-row{margin-bottom:0.8mm;font-size:8.5pt;line-height:1.5}'+
+    '.consent-card .cc-text{margin-top:1.2mm;padding-top:1.2mm;border-top:0.3pt dashed #ccc;font-size:8pt;line-height:1.6;overflow:hidden}'+
+    '.consent-card .cc-desc{margin-top:0.8mm;padding:1mm 1.8mm;background:#fdfbf4;border-radius:1mm;font-size:8pt;color:#444;border-right:2pt solid #d4a017;line-height:1.5}'+
+    '.consent-card .cc-sign{display:flex;gap:3mm;margin-top:1.2mm;padding-top:1.2mm;border-top:0.3pt dashed #ccc;font-size:7.5pt;flex-shrink:0}'+
+    '.consent-card .cc-sig-item{flex:1;text-align:center}.consent-card .cc-sig-line{border-bottom:0.5pt solid #666;height:7mm;margin-top:1mm}'+
+    '.consent-card .cc-sig-box{border:0.5pt dashed #999;height:9mm;margin-top:1mm;border-radius:1mm;display:flex;align-items:center;justify-content:center;color:#999;font-size:7pt}';
 }
 function printReportResult(){
   if(!currentReportCat){ toast('دسته انتخاب نشده'); return; }
   if(currentReportCat === 'overview' && !anyOverviewSectionSelected()){
     toast('⚠️ هیچ بخشی برای چاپ انتخاب نشده است — ابتدا حداقل یک بخش را تیک بزنید');
     return;
+  }
+  if(currentReportCat === 'consent'){
+    if(!consentPreviewReady){
+      previewConsent();
+      if(!consentPreviewReady) return;
+    }
   }
   var cat=null; REPORT_CATS.forEach(function(c){ if(c.key===currentReportCat) cat=c; });
   if(!cat) return;
@@ -5736,6 +5754,8 @@ function printReportResult(){
   w.document.write('<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="UTF-8"><title>'+cat.title+'</title><style>'+reportCSS+'</style></head><body>');
   if(currentReportCat === 'overview'){
     w.document.write(buildReportPageHeader());
+  } else if(currentReportCat === 'consent'){
+    /* بدون سربرگ — کارت‌ها خودشان سربرگ دارند */
   } else {
     w.document.write('<h1>'+cat.icon+' '+cat.title+'</h1>');
     w.document.write('<div style="text-align:center;color:#666;font-size:11px;margin-bottom:14px">'+(profile.school||'')+(profile.year?' — '+profile.year:'')+'</div>');
@@ -6504,4 +6524,4 @@ function attachAllHandlers(){
 })();
 </script>
 </body>
-            </html>
+  </html>
